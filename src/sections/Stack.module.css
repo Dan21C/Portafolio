@@ -1,0 +1,116 @@
+.section { padding: 6rem 5%; background: var(--bg); }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+.col {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+}
+
+.colTitle {
+  font-family: var(--font-h);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--purple-l);
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.item {
+  font-size: 0.78rem;
+  color: var(--muted);
+  padding: 0.35rem 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.item:last-child { border-bottom: none; }
+
+.dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--purple);
+  flex-shrink: 0;
+}
+
+/* CLIENTS */
+.clientsSection {
+  background: var(--bg2);
+  padding: 3.5rem 5%;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.logos {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin-top: 1.5rem;
+}
+
+.logo {
+  font-family: var(--font-h);
+  font-size: 1rem;
+  font-weight: 800;
+  color: rgba(255,255,255,0.13);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: color 0.3s;
+  cursor: default;
+}
+.logo:hover { color: rgba(255,255,255,0.38); }
+
+/* CTA */
+.ctaSection {
+  padding: 5rem 5%;
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+}
+
+.ctaInner {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 3.5rem;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2rem;
+  align-items: center;
+}
+
+.ctaTitle {
+  font-family: var(--font-h);
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  font-weight: 800;
+  color: var(--white);
+  line-height: 1.2;
+  margin-bottom: 0.8rem;
+}
+
+.ctaSub { font-size: 0.92rem; color: var(--muted); line-height: 1.7; }
+
+.ctaActions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  align-items: flex-end;
+}
+
+@media (max-width: 860px) {
+  .grid { grid-template-columns: 1fr 1fr; }
+  .ctaInner { grid-template-columns: 1fr; }
+  .ctaActions { align-items: flex-start; }
+}
+@media (max-width: 540px) {
+  .grid { grid-template-columns: 1fr; }
+}

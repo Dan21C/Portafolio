@@ -1,0 +1,36 @@
+.ticker {
+  background: var(--purple);
+  padding: 0.55rem 0;
+  overflow: hidden;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.track {
+  display: flex;
+  gap: 0;
+  animation: scroll 28s linear infinite;
+  white-space: nowrap;
+}
+
+.item {
+  font-family: var(--font-h);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #fff;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.sep {
+  margin: 0 1.5rem;
+  opacity: 0.45;
+}
+
+@keyframes scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}

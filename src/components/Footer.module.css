@@ -1,0 +1,112 @@
+.footer {
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  padding: 4rem 5% 2rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+  gap: 2.5rem;
+  margin-bottom: 3rem;
+}
+
+.brand {}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 1rem;
+}
+.wordmark {
+  font-family: var(--font-h);
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--white);
+  letter-spacing: 0.06em;
+}
+
+.brandDesc {
+  font-size: 0.8rem;
+  color: var(--muted);
+  line-height: 1.7;
+  max-width: 240px;
+  margin-bottom: 1.2rem;
+}
+
+.socials { display: flex; gap: 0.6rem; }
+.social {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  transition: background 0.2s, color 0.2s;
+}
+.social:hover { background: rgba(123,92,240,0.15); color: var(--purple-l); }
+
+.col {}
+.colTitle {
+  font-family: var(--font-h);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--white);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.link {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--muted);
+  padding: 0.28rem 0;
+  transition: color 0.2s;
+}
+.link:hover { color: var(--purple-l); }
+
+.contactItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-bottom: 0.55rem;
+}
+.contactItem svg { color: var(--purple-l); flex-shrink: 0; }
+
+.ctaSmall {
+  margin-top: 1rem;
+  font-size: 0.75rem !important;
+  padding: 0.55rem 1.1rem !important;
+}
+
+.bottom {
+  border-top: 1px solid var(--border);
+  padding-top: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.bottom span { font-size: 0.73rem; color: var(--muted); }
+
+.legal { display: flex; gap: 1.5rem; }
+.legal a {
+  font-size: 0.73rem;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.legal a:hover { color: var(--purple-l); }
+
+@media (max-width: 1024px) {
+  .grid { grid-template-columns: 1fr 1fr 1fr; }
+}
+@media (max-width: 600px) {
+  .grid { grid-template-columns: 1fr 1fr; }
+}
