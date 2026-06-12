@@ -1,17 +1,16 @@
 import { useState, useEffect } from 'react';
-import BrainLogo from './BrainLogo';
 import styles from './Navbar.module.css';
 
 const links = [
-  { label: 'Inicio',    href: '#inicio'    },
-  { label: 'Servicios', href: '#servicios' },
-  { label: 'Proceso',   href: '#proceso'   },
-  { label: 'Casos',     href: '#casos'     },
-  { label: 'Nosotros',  href: '#nosotros'  },
-  { label: 'Blog',      href: '#blog'      },
+  { label: 'Inicio',    href: '/#inicio'    },
+  { label: 'Servicios', href: '/#servicios' },
+  { label: 'Proceso',   href: '/#proceso'   },
+  { label: 'Casos',     href: '/#casos'     },
+  { label: 'Nosotros',  href: '/#nosotros'  },
+  { label: 'Blog',      href: '/#blog'      },
 ];
 
-const Navbar = () => {
+const Navbar = ({ theme = 'dark', onThemeChange = () => {} }) => {
   const [scrolled,  setScrolled]  = useState(false);
   const [menuOpen,  setMenuOpen]  = useState(false);
 
@@ -24,7 +23,7 @@ const Navbar = () => {
   return (
     <nav className={`${styles.nav} ${scrolled ? styles.scrolled : ''}`}>
 
-      <a href="#inicio" className={styles.logo}>
+      <a href="/#inicio" className={styles.logo}>
         <span className={styles.wordmark}>APX</span>
       </a>
 
@@ -37,7 +36,25 @@ const Navbar = () => {
       </ul>
 
       <div className={styles.navRight}>
-        <a href="#contacto" className={styles.cta}>Hablemos</a>
+        <div className={styles.themeToggle} aria-label="Cambiar tema del sitio">
+          <button
+            type="button"
+            className={theme === 'dark' ? styles.themeActive : ''}
+            onClick={() => onThemeChange('dark')}
+            aria-pressed={theme === 'dark'}
+          >
+            Oscuro
+          </button>
+          <button
+            type="button"
+            className={theme === 'light' ? styles.themeActive : ''}
+            onClick={() => onThemeChange('light')}
+            aria-pressed={theme === 'light'}
+          >
+            Claro
+          </button>
+        </div>
+        <a href="/#contacto" className={styles.cta}>Hablemos</a>
         <button
           className={`${styles.burger} ${menuOpen ? styles.burgerOpen : ''}`}
           onClick={() => setMenuOpen(v => !v)}

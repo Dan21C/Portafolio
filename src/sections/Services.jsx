@@ -1,239 +1,452 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import styles from './Services.module.css';
 
-/* ─── Shared ─────────────────────────────────────────────────── */
-
 const Arrow = () => (
-  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <line x1="5" y1="12" x2="19" y2="12" />
+    <polyline points="12 5 19 12 12 19" />
   </svg>
 );
-
-/* ─── Visualizations ────────────────────────────────────────── */
-
-const NeuralViz = () => {
-  const l1 = [[38,22],[38,58],[38,94]];
-  const l2 = [[128,10],[128,38],[128,66],[128,94]];
-  const l3 = [[218,10],[218,38],[218,66],[218,94]];
-  const l4 = [[308,22],[308,58],[308,94]];
-  const hot = [[38,58],[128,38],[218,66],[308,58]];
-  const lines = (a, b, op) => a.flatMap(([x1,y1]) =>
-    b.map(([x2,y2]) => <line key={`${x1}${y1}${x2}${y2}`} x1={x1} y1={y1} x2={x2} y2={y2} stroke="rgba(16,185,129,1)" strokeWidth=".7" opacity={op} />)
-  );
-  return (
-    <svg viewBox="0 0 346 106" fill="none" className={styles.neuralSvg}>
-      <defs>
-        <filter id="nglow"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-      </defs>
-      {lines(l1,l2,.10)}{lines(l2,l3,.08)}{lines(l3,l4,.10)}
-      {hot.slice(0,-1).map(([x1,y1],i)=>{const[x2,y2]=hot[i+1];return<line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#10B981" strokeWidth="1.5" opacity=".55" filter="url(#nglow)"/>;})}
-      {[...l1,...l2,...l3,...l4].map(([cx,cy])=>(
-        <circle key={`n${cx}${cy}`} cx={cx} cy={cy} r="3.5" fill="rgba(16,185,129,.10)" stroke="rgba(16,185,129,.38)" strokeWidth=".8"/>
-      ))}
-      {hot.map(([cx,cy])=>(
-        <circle key={`h${cx}${cy}`} cx={cx} cy={cy} r="5" fill="rgba(16,185,129,.20)" stroke="#10B981" strokeWidth="1.5" filter="url(#nglow)"/>
-      ))}
-    </svg>
-  );
-};
-
-const StageViz = () => (
-  <svg viewBox="0 0 160 190" fill="none" className={styles.stageViz}>
-    <defs>
-      <linearGradient id="sl1" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stopColor="#06B6D4" stopOpacity=".55"/><stop offset="100%" stopColor="#06B6D4" stopOpacity="0"/>
-      </linearGradient>
-      <linearGradient id="sl2" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stopColor="#6366F1" stopOpacity=".38"/><stop offset="100%" stopColor="#6366F1" stopOpacity="0"/>
-      </linearGradient>
-    </defs>
-    <polygon points="8,0 28,0 96,190 0,190"  fill="url(#sl1)" opacity=".22"/>
-    <polygon points="68,0 88,0 160,190 68,190" fill="url(#sl2)" opacity=".16"/>
-    <circle cx="18" cy="5" r="5" fill="rgba(6,182,212,.55)" filter="url(#nglow)"/>
-    <circle cx="78" cy="5" r="5" fill="rgba(99,102,241,.50)" filter="url(#nglow)"/>
-    {[16,36,56,76,96,116,136].map(x=><circle key={x} cx={x} cy={152} r="2.5" fill="rgba(255,255,255,.10)"/>)}
-    {[8,28,48,68,88,108,128,148].map(x=><circle key={`r2${x}`} cx={x} cy={163} r="2" fill="rgba(255,255,255,.06)"/>)}
-    <rect x="14" y="172" width="132" height="14" rx="3" fill="rgba(6,182,212,.04)" stroke="rgba(6,182,212,.18)" strokeWidth="1"/>
-    <rect x="20" y="177" width="56" height="3" rx="1.5" fill="rgba(6,182,212,.28)"/>
-    <rect x="20" y="182" width="38" height="2.5" rx="1.5" fill="rgba(6,182,212,.14)"/>
-  </svg>
-);
-
-const WaveViz = () => (
-  <svg viewBox="0 0 260 58" fill="none" className={styles.waveViz}>
-    <defs>
-      <linearGradient id="wg1" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stopColor="#6366F1" stopOpacity=".32"/><stop offset="100%" stopColor="#6366F1" stopOpacity="0"/>
-      </linearGradient>
-    </defs>
-    <polygon points="0,52 38,38 76,46 114,22 152,34 190,10 228,20 260,6 260,58 0,58" fill="url(#wg1)"/>
-    <polyline points="0,52 38,38 76,46 114,22 152,34 190,10 228,20 260,6" stroke="#6366F1" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-    <polyline points="0,44 38,48 76,40 114,44 152,42 190,46 228,36 260,40" stroke="rgba(99,102,241,.18)" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"/>
-    {[[114,22],[190,10],[260,6]].map(([cx,cy])=><circle key={`${cx}${cy}`} cx={cx} cy={cy} r="3" fill="#6366F1" opacity=".85"/>)}
-  </svg>
-);
-
-const BadgeViz = () => (
-  <svg viewBox="0 0 190 52" fill="none" className={styles.badgeViz}>
-    {[{cx:26,cy:26,r:22,op:1},{cx:86,cy:26,r:18,op:.62},{cx:142,cy:26,r:14,op:.38}].map(({cx,cy,r,op},i)=>(
-      <g key={i} opacity={op}>
-        <circle cx={cx} cy={cy} r={r} fill="rgba(139,92,246,.06)" stroke="rgba(139,92,246,.26)" strokeWidth="1"/>
-        <circle cx={cx} cy={cy} r={r*.5} fill="rgba(139,92,246,.13)"/>
-        <text x={cx} y={cy+4} textAnchor="middle" fill="#A78BFA" fontSize="10" fontWeight="700" fontFamily="sans-serif">#{i+1}</text>
-      </g>
-    ))}
-    {[[26,50],[86,46],[142,42]].map(([x,y],i)=>(
-      <text key={i} x={x} y={y} textAnchor="middle" fill="rgba(245,158,11,.45)" fontSize="7" fontFamily="sans-serif">{'★'.repeat(5-i)}</text>
-    ))}
-  </svg>
-);
-
-const CodeViz = () => (
-  <svg viewBox="0 0 400 64" fill="none" className={styles.codeViz}>
-    {[
-      {x:18, y:10,w:65, c:'#06B6D4',op:.48},{x:38, y:22,w:105,c:'#6366F1',op:.32},
-      {x:38, y:34,w:76, c:'#94A3B8',op:.16},{x:56, y:46,w:96, c:'#94A3B8',op:.11},
-      {x:204,y:10,w:60, c:'#10B981',op:.44},{x:224,y:22,w:86, c:'#6366F1',op:.28},
-      {x:224,y:34,w:124,c:'#94A3B8',op:.14},{x:244,y:46,w:66, c:'#06B6D4',op:.20},
-    ].map(({x,y,w,c,op})=><rect key={`${x}${y}`} x={x} y={y} width={w} height="5" rx="2.5" fill={c} opacity={op}/>)}
-    <rect x="148" y="6"  width="44" height="54" rx="6" fill="rgba(6,182,212,.04)"  stroke="rgba(6,182,212,.13)"  strokeWidth="1"/>
-    <rect x="336" y="6"  width="52" height="54" rx="6" fill="rgba(99,102,241,.04)" stroke="rgba(99,102,241,.13)" strokeWidth="1"/>
-    <path d="M122 33 L148 33" stroke="rgba(6,182,212,.20)"  strokeWidth="1" strokeDasharray="3 3"/>
-    <path d="M192 33 L336 33" stroke="rgba(6,182,212,.16)"  strokeWidth="1" strokeDasharray="3 3"/>
-  </svg>
-);
-
-const FlowViz = () => (
-  <svg viewBox="0 0 250 56" fill="none" className={styles.flowViz}>
-    <defs>
-      <marker id="farr" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto">
-        <path d="M0,0 L5,2.5 L0,5 Z" fill="rgba(245,158,11,.55)"/>
-      </marker>
-    </defs>
-    {[[26,28],[94,12],[94,44],[178,28],[238,28]].map(([cx,cy],i)=>(
-      <g key={i}>
-        <circle cx={cx} cy={cy} r="13" fill="rgba(245,158,11,.07)" stroke="rgba(245,158,11,.26)" strokeWidth="1"/>
-        <circle cx={cx} cy={cy} r="4.5" fill="rgba(245,158,11,.35)"/>
-      </g>
-    ))}
-    <line x1="39"  y1="23" x2="81"  y2="14" stroke="rgba(245,158,11,.30)" strokeWidth="1.2" markerEnd="url(#farr)"/>
-    <line x1="39"  y1="33" x2="81"  y2="42" stroke="rgba(245,158,11,.30)" strokeWidth="1.2" markerEnd="url(#farr)"/>
-    <line x1="107" y1="12" x2="165" y2="26" stroke="rgba(245,158,11,.30)" strokeWidth="1.2" markerEnd="url(#farr)"/>
-    <line x1="107" y1="44" x2="165" y2="30" stroke="rgba(245,158,11,.30)" strokeWidth="1.2" markerEnd="url(#farr)"/>
-    <line x1="191" y1="28" x2="225" y2="28" stroke="rgba(245,158,11,.30)" strokeWidth="1.2" markerEnd="url(#farr)"/>
-  </svg>
-);
-
-/* ─── Icons ──────────────────────────────────────────────────── */
 
 const IconAI = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="6" y="6" width="12" height="12" rx="2"/>
-    <path d="M9 6V4M12 6V4M15 6V4M9 20v-2M12 20v-2M15 20v-2M6 9H4M6 12H4M6 15H4M20 9h-2M20 12h-2M20 15h-2"/>
-    <circle cx="12" cy="12" r="2" fill="currentColor" opacity=".45"/>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <rect x="6" y="6" width="12" height="12" rx="2" />
+    <path d="M9 6V4M12 6V4M15 6V4M9 20v-2M12 20v-2M15 20v-2M6 9H4M6 12H4M6 15H4M20 9h-2M20 12h-2M20 15h-2" />
+    <circle cx="12" cy="12" r="2" fill="currentColor" opacity=".45" />
   </svg>
 );
 
 const IconExp = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="2" y="4" width="20" height="14" rx="2"/>
-    <path d="M8 21h8M12 18v3M9 10l-2 2 2 2M15 10l2 2-2 2"/>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <rect x="2.5" y="4" width="19" height="14" rx="2" />
+    <path d="M8 21h8M12 18v3M9 10l-2 2 2 2M15 10l2 2-2 2" />
   </svg>
 );
 
 const IconData = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M3 13C5 10.5 7 16 9 13C11 10 13 16 15 11.5C17 7 19 9.5 21 7.5"/>
-    <circle cx="9" cy="13" r="1.5" fill="currentColor" opacity=".45"/>
-    <circle cx="15" cy="11.5" r="1.5" fill="currentColor" opacity=".45"/>
-    <circle cx="21" cy="7.5"  r="1.5" fill="currentColor" opacity=".65"/>
-    <path d="M3 20h18" opacity=".18"/>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M3 13c2-2.5 4 3 6 0 2-3 4 3 6-1.5 2-4.5 4-2 6-4" />
+    <path d="M4 20h16" opacity=".22" />
+    <circle cx="9" cy="13" r="1.5" fill="currentColor" opacity=".45" />
+    <circle cx="15" cy="11.5" r="1.5" fill="currentColor" opacity=".45" />
+    <circle cx="21" cy="7.5" r="1.5" fill="currentColor" opacity=".65" />
   </svg>
 );
 
-const IconGamif = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17.3l-6.2 4 2.4-7.4L2 9.4h7.6z"/>
+const IconEvents = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <rect x="3" y="5" width="18" height="15" rx="2" />
+    <path d="M7 3v4M17 3v4M3 10h18" />
+    <path d="M8 15h3M13 15h3M8 18h2" />
   </svg>
 );
 
 const IconDev = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="16 18 22 12 16 6"/>
-    <polyline points="8 6 2 12 8 18"/>
-    <path d="M12 4v16" opacity=".30"/>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <polyline points="16 18 22 12 16 6" />
+    <polyline points="8 6 2 12 8 18" />
+    <path d="M12 4v16" opacity=".3" />
   </svg>
 );
-
-const IconAuto = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
-    <circle cx="12" cy="12" r="3"/>
-  </svg>
-);
-
-/* ─── Data ───────────────────────────────────────────────────── */
 
 const SERVICES = [
   {
-    id: 'ai',    accent: '#10B981', rgb: '16,185,129',
-    pill: 'IA Empresarial', Icon: IconAI, Viz: NeuralViz,
-    title: 'Inteligencia Artificial',
-    desc: 'Implementamos IA para personalización, predicción y optimización. LLMs, computer vision y automatización inteligente aplicada al negocio.',
-    metric: { num: '94.6%', label: 'precisión promedio de modelos' },
+    id: 'ai',
+    accent: '#10B981',
+    rgb: '16,185,129',
+    pill: 'IA + Automatizacion',
+    Icon: IconAI,
+    title: 'IA y automatizacion inteligente',
+    desc: 'Automatizamos procesos con IA, LLMs, RAG, bots, RPA e integraciones para reducir trabajo manual y acelerar operaciones.',
+    outcome: 'Flujos inteligentes que entienden informacion, responden, ejecutan tareas y conectan herramientas del negocio.',
+    metric: '+40%',
+    metricLabel: 'eficiencia operativa',
+    timeline: ['Diagnostico de oportunidades IA', 'Prototipo funcional con tus datos', 'Automatizacion integrada y medible'],
+    deliverables: ['LLMs y RAG', 'Bots y agentes IA', 'RPA e integraciones'],
+    motion: 'AI automation flow',
   },
   {
-    id: 'exp',   accent: '#06B6D4', rgb: '6,182,212',
-    pill: 'Activaciones', Icon: IconExp, Viz: StageViz,
+    id: 'exp',
+    accent: '#06B6D4',
+    rgb: '6,182,212',
+    pill: 'Activaciones',
+    Icon: IconExp,
     title: 'Experiencias',
-    desc: 'Experiencias interactivas que conectan con usuarios y generan engagement medible. Tótems, pantallas y activaciones en vivo.',
+    desc: 'Pantallas, totens y activaciones interactivas que vuelven visible la marca y medible cada punto de contacto.',
+    outcome: 'Mayor permanencia, captura de leads y recuerdo de marca.',
+    metric: '+35%',
+    metricLabel: 'engagement',
+    timeline: ['Concepto de interaccion', 'Prototipo visual', 'Activacion en vivo'],
+    deliverables: ['Micrositios', 'Pantallas tactiles', 'Experiencias de evento'],
+    motion: 'Interactive UX show',
   },
   {
-    id: 'gamif', accent: '#8B5CF6', rgb: '139,92,246',
-    pill: 'Engagement', Icon: IconGamif, Viz: BadgeViz,
-    title: 'Gamificación',
-    desc: 'Mecánicas que aumentan participación, retención y conversión. Rankings, retos y recompensas que motivan e involucran.',
+    id: 'events',
+    accent: '#8B5CF6',
+    rgb: '139,92,246',
+    pill: 'Marketing',
+    Icon: IconEvents,
+    title: 'Produccion de eventos 360',
+    desc: 'Disenamos y producimos eventos de marca: activaciones, merch, stands corporativos, lanzamientos, conferencias y locaciones.',
+    outcome: 'Experiencias presenciales que posicionan marca y convierten audiencias en comunidad.',
+    metric: '360',
+    metricLabel: 'experiencia integral',
+    timeline: ['Estrategia y concepto', 'Produccion y montaje', 'Operacion del evento'],
+    deliverables: ['Activaciones', 'Merch y stands', 'Lanzamientos y conferencias'],
+    motion: 'Event 360 flow',
   },
   {
-    id: 'data',  accent: '#6366F1', rgb: '99,102,241',
-    pill: 'Analytics', Icon: IconData, Viz: WaveViz,
-    title: 'Análisis de datos',
-    desc: 'Transformamos datos en decisiones accionables. Dashboards, pipelines y reportería automatizada para operar con inteligencia real.',
+    id: 'data',
+    accent: '#6366F1',
+    rgb: '99,102,241',
+    pill: 'Analytics',
+    Icon: IconData,
+    title: 'Analisis de datos',
+    desc: 'Dashboards, reporterias y pipelines para leer el negocio con menos ruido y mas velocidad.',
+    outcome: 'Datos accionables para decisiones de producto, ventas y operaciones.',
+    metric: '-32%',
+    metricLabel: 'costo operativo',
+    timeline: ['Fuentes y eventos', 'Modelo de datos', 'Tableros ejecutivos'],
+    deliverables: ['Dashboards', 'Pipelines', 'Alertas automaticas'],
+    motion: 'Insight dashboard',
   },
   {
-    id: 'dev',   accent: '#06B6D4', rgb: '6,182,212',
-    pill: 'Plataformas', Icon: IconDev, Viz: CodeViz,
+    id: 'dev',
+    accent: '#14B8A6',
+    rgb: '20,184,166',
+    pill: 'Plataformas',
+    Icon: IconDev,
     title: 'Desarrollo de software',
-    desc: 'Construimos plataformas, apps y soluciones a medida. Código limpio, escalable y optimizado para cada dispositivo y escala de operación.',
-  },
-  {
-    id: 'auto',  accent: '#F59E0B', rgb: '245,158,11',
-    pill: 'Operaciones', Icon: IconAuto, Viz: FlowViz,
-    title: 'Automatización',
-    desc: 'Eliminamos fricción operativa y escalamos procesos. Workflows inteligentes para operaciones más eficientes y rentables.',
+    desc: 'Desarrollo a la medida para marketing, operaciones, ventas, datos y equipos internos que necesitan herramientas propias.',
+    outcome: 'Soluciones digitales adaptadas a cada area del negocio, listas para operar y escalar.',
+    metric: '2x',
+    metricLabel: 'velocidad de entrega',
+    timeline: ['Diagnostico del area', 'Producto a la medida', 'Deploy y mejora continua'],
+    deliverables: ['Web apps', 'CRMs internos', 'Portales y paneles'],
+    motion: 'Custom software build',
   },
 ];
 
-/* ─── Component ──────────────────────────────────────────────── */
+const AI_CAPABILITIES = [
+  {
+    id: 'llm',
+    label: 'LLM',
+    title: 'Asistente conversacional',
+    desc: 'Un celular respondiendo preguntas con lenguaje natural, contexto del negocio y tono de marca.',
+  },
+  {
+    id: 'rag',
+    label: 'RAG',
+    title: 'Busqueda con documentos',
+    desc: 'Documentos, vectores y fuentes internas conectadas para respuestas precisas y verificables.',
+  },
+  {
+    id: 'agents',
+    label: 'Bots y agentes IA',
+    title: 'Agentes que ejecutan tareas',
+    desc: 'Bots que clasifican solicitudes, consultan sistemas, responden usuarios y escalan casos.',
+  },
+  {
+    id: 'rpa',
+    label: 'RPA e integraciones',
+    title: 'Automatizacion operativa',
+    desc: 'Flujos que conectan CRMs, hojas de calculo, correos, APIs y herramientas internas.',
+  },
+];
 
-const Services = () => {
-  const ref = useRef(null);
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([e]) => { if (e.isIntersecting) setVisible(true); },
-      { threshold: 0.06 }
+const CapabilityVisual = ({ active }) => {
+  if (active.id === 'rag') {
+    return (
+      <div className={`${styles.capabilityVisual} ${styles.ragVisual}`}>
+        <div className={styles.docStack}>
+          <span />
+          <span />
+          <span />
+        </div>
+        <div className={styles.vectorCloud}>
+          {Array.from({ length: 9 }).map((_, index) => <i key={index} />)}
+        </div>
+        <div className={styles.answerNode}>Respuesta con fuentes</div>
+      </div>
     );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
+  }
+
+  if (active.id === 'agents') {
+    return (
+      <div className={`${styles.capabilityVisual} ${styles.agentVisual}`}>
+        <div className={styles.agentPulse} />
+        <div className={styles.agentHub}>
+          <strong>Agente IA</strong>
+          <small>orquesta tareas</small>
+        </div>
+        <svg className={styles.agentLinks} viewBox="0 0 420 220" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M210 110 C125 40 78 38 48 58" />
+          <path d="M210 110 C305 42 356 42 382 62" />
+          <path d="M210 110 C118 178 78 178 46 158" />
+          <path d="M210 110 C304 176 356 176 382 154" />
+        </svg>
+        <span><b>Lead</b><small>califica</small></span>
+        <span><b>CRM</b><small>actualiza</small></span>
+        <span><b>Email</b><small>responde</small></span>
+        <span><b>Soporte</b><small>escala</small></span>
+      </div>
+    );
+  }
+
+  if (active.id === 'rpa') {
+    return (
+      <div className={`${styles.capabilityVisual} ${styles.rpaVisual}`}>
+        {['Captura', 'Valida', 'Ejecuta', 'Reporta'].map((step, index) => (
+          <div key={step} className={styles.rpaStep} style={{ '--step': index }}>
+            <span>{String(index + 1).padStart(2, '0')}</span>
+            <strong>{step}</strong>
+          </div>
+        ))}
+        <div className={styles.rpaRunner} />
+      </div>
+    );
+  }
 
   return (
-    <section ref={ref} id="servicios" className={`${styles.section} ${visible ? styles.visible : ''}`}>
+    <div className={`${styles.capabilityVisual} ${styles.phoneVisual}`}>
+      <div className={styles.phoneShell}>
+        <div className={styles.phoneTop} />
+        <div className={styles.chatBubble}>Hola, quiero conocer el servicio.</div>
+        <div className={styles.chatBubbleAlt}>Claro. Podemos automatizar atencion, ventas y soporte con IA.</div>
+        <div className={styles.typingDots}><span /><span /><span /></div>
+      </div>
+    </div>
+  );
+};
 
+const AIAutomationReel = ({ service, activeCapability }) => (
+  <div className={styles.aiReel} style={{ '--accent': service.accent, '--rgb': service.rgb }}>
+    <div className={styles.reelTop}>
+      <div className={styles.windowDots} aria-hidden="true">
+        <span />
+        <span />
+        <span />
+      </div>
+      <span className={styles.reelLabel}>{activeCapability.title}</span>
+      <span className={styles.liveDot}>IA</span>
+    </div>
+    <div className={styles.aiReelBody}>
+      <CapabilityVisual active={activeCapability} />
+      <div className={styles.capabilityCopy}>
+        <span>{activeCapability.label}</span>
+        <strong>{activeCapability.title}</strong>
+        <p>{activeCapability.desc}</p>
+      </div>
+    </div>
+  </div>
+);
+
+const UXReel = ({ service }) => (
+  <div className={styles.reel} style={{ '--accent': service.accent, '--rgb': service.rgb }}>
+    <div className={styles.reelTop}>
+      <div className={styles.windowDots} aria-hidden="true">
+        <span />
+        <span />
+        <span />
+      </div>
+      <span className={styles.reelLabel}>{service.motion}</span>
+      <span className={styles.liveDot}>LIVE</span>
+    </div>
+
+    <div className={styles.reelStage}>
+      <div className={styles.prototype}>
+        <div className={styles.sideNav}>
+          <span />
+          <span />
+          <span />
+          <span />
+        </div>
+        <div className={styles.canvas}>
+          <div className={styles.heroWire}>
+            <span />
+            <span />
+          </div>
+          <div className={styles.motionCard}>
+            <service.Icon />
+            <div>
+              <strong>{service.title}</strong>
+              <small>{service.outcome}</small>
+            </div>
+          </div>
+          <div className={styles.flowLine} />
+          <div className={styles.chartGrid}>
+            <span />
+            <span />
+            <span />
+            <span />
+          </div>
+        </div>
+        <div className={styles.cursor} />
+      </div>
+    </div>
+  </div>
+);
+
+const Services = ({ theme = 'dark', onThemeChange = () => {} }) => {
+  const sectionRef = useRef(null);
+  const dockRef = useRef(null);
+  const showcaseRef = useRef(null);
+  const itemRefs = useRef({});
+  const [visible, setVisible] = useState(true);
+  const [activeId, setActiveId] = useState(SERVICES[0].id);
+  const [activeCapabilityId, setActiveCapabilityId] = useState(AI_CAPABILITIES[0].id);
+
+  const activeService = useMemo(
+    () => SERVICES.find((service) => service.id === activeId) ?? SERVICES[0],
+    [activeId]
+  );
+  const activeCapability = useMemo(
+    () => AI_CAPABILITIES.find((item) => item.id === activeCapabilityId) ?? AI_CAPABILITIES[0],
+    [activeCapabilityId]
+  );
+  const isAIService = activeService.id === 'ai';
+
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) setVisible(true);
+      },
+      { threshold: 0.06 }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    let frame = 0;
+
+    const syncActiveService = () => {
+      frame = 0;
+
+      const items = SERVICES
+        .map((service) => itemRefs.current[service.id])
+        .filter(Boolean);
+
+      if (!items.length) return;
+
+      const guideY = window.innerHeight * 0.46;
+      let closestId = items[0].dataset.serviceId;
+      let closestDistance = Number.POSITIVE_INFINITY;
+
+      for (const item of items) {
+        const rect = item.getBoundingClientRect();
+        const centerY = rect.top + rect.height / 2;
+        const distance = Math.abs(centerY - guideY);
+
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestId = item.dataset.serviceId;
+        }
+      }
+
+      if (closestId) {
+        setActiveId((current) => (current === closestId ? current : closestId));
+      }
+    };
+
+    const requestSync = () => {
+      if (frame) return;
+      frame = window.requestAnimationFrame(syncActiveService);
+    };
+
+    syncActiveService();
+    window.addEventListener('scroll', requestSync, { passive: true });
+    window.addEventListener('resize', requestSync);
+
+    return () => {
+      if (frame) window.cancelAnimationFrame(frame);
+      window.removeEventListener('scroll', requestSync);
+      window.removeEventListener('resize', requestSync);
+    };
+  }, []);
+
+  useEffect(() => {
+    const dock = dockRef.current;
+    const panel = showcaseRef.current;
+    if (!dock || !panel) return;
+
+    let frame = 0;
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const syncPanelToScroll = () => {
+      frame = 0;
+
+      if (window.matchMedia('(max-width: 1180px)').matches) {
+        dock.style.setProperty('--panel-y', '0px');
+        dock.style.setProperty('--scroll-progress', '0');
+        return;
+      }
+
+      const scrollY = window.scrollY || window.pageYOffset;
+      const dockTop = dock.getBoundingClientRect().top + scrollY;
+      const dockHeight = dock.offsetHeight;
+      const panelHeight = panel.offsetHeight;
+      const navbarOffset = 112;
+      const maxY = Math.max(0, dockHeight - panelHeight);
+      const y = clamp(scrollY + navbarOffset - dockTop, 0, maxY);
+      const progress = maxY > 0 ? y / maxY : 0;
+
+      dock.style.setProperty('--panel-y', `${y.toFixed(1)}px`);
+      dock.style.setProperty('--scroll-progress', progress.toFixed(3));
+    };
+
+    const requestSync = () => {
+      if (frame) return;
+      frame = window.requestAnimationFrame(syncPanelToScroll);
+    };
+
+    syncPanelToScroll();
+    window.addEventListener('scroll', requestSync, { passive: true });
+    window.addEventListener('resize', requestSync);
+
+    return () => {
+      if (frame) window.cancelAnimationFrame(frame);
+      window.removeEventListener('scroll', requestSync);
+      window.removeEventListener('resize', requestSync);
+    };
+  }, [activeId]);
+
+  const handleShowcaseMove = (event) => {
+    const box = showcaseRef.current;
+    if (!box) return;
+
+    const rect = box.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    const px = x / rect.width - 0.5;
+    const py = y / rect.height - 0.5;
+
+    box.style.setProperty('--mx', `${x}px`);
+    box.style.setProperty('--my', `${y}px`);
+    box.style.setProperty('--tilt-x', `${(-py * 3).toFixed(2)}deg`);
+    box.style.setProperty('--tilt-y', `${(px * 3).toFixed(2)}deg`);
+  };
+
+  const handleShowcaseLeave = () => {
+    const box = showcaseRef.current;
+    if (!box) return;
+
+    box.style.setProperty('--mx', '50%');
+    box.style.setProperty('--my', '30%');
+    box.style.setProperty('--tilt-x', '0deg');
+    box.style.setProperty('--tilt-y', '0deg');
+  };
+
+  return (
+    <section
+      ref={sectionRef}
+      id="servicios"
+      className={`${styles.section} ${styles[theme]} ${visible ? styles.visible : ''}`}
+    >
       <div className={styles.bgGlow1} />
       <div className={styles.bgGlow2} />
       <div className={styles.bgGrid} />
@@ -245,63 +458,148 @@ const Services = () => {
           SERVICIOS
         </div>
         <h2 className={styles.headline}>
-          Soluciones que combinan<br />
-          creatividad, tecnología e{' '}
-          <span className={styles.gradWord}>inteligencia</span>.
+          Servicios que se sienten como<br />
+          una experiencia <span className={styles.gradWord}>interactiva</span>.
         </h2>
         <p className={styles.sub}>
-          No listamos entregables. Posicionamos valor real para tu negocio.
-          Cada solución está diseñada para escalar con tu operación.
+          Explora cada linea de trabajo como si fuera un prototipo: cambia el servicio,
+          mira el flujo y descubre que entregamos para mover tu negocio.
         </p>
+        <div className={styles.themeToggle} aria-label="Cambiar fondo de servicios">
+          <button
+            type="button"
+            className={theme === 'dark' ? styles.themeActive : ''}
+            onClick={() => onThemeChange('dark')}
+            aria-pressed={theme === 'dark'}
+          >
+            Oscuro
+          </button>
+          <button
+            type="button"
+            className={theme === 'light' ? styles.themeActive : ''}
+            onClick={() => onThemeChange('light')}
+            aria-pressed={theme === 'light'}
+          >
+            Claro
+          </button>
+        </div>
       </div>
 
-      <div className={styles.bento}>
-        {SERVICES.map(({ id, accent, rgb, pill, Icon, Viz, title, desc, metric }, i) => (
-          <div
-            key={id}
-            className={`${styles.card} ${styles[`card_${id}`]}`}
-            style={{ '--accent': accent, '--rgb': rgb, '--delay': `${i * 80}ms` }}
-          >
-            <div className={styles.cardGlow} />
-            <div className={styles.accentBar} style={{ background: `linear-gradient(90deg, ${accent}CC, transparent)` }} />
+      <div className={styles.experience}>
+        <div className={styles.serviceRail} aria-label="Servicios interactivos">
+          {SERVICES.map((service, index) => {
+            const isActive = service.id === activeId;
 
-            {Viz && <div className={styles.vizWrap}><Viz /></div>}
-
-            <div
-              className={styles.pill}
-              style={{ color: accent, borderColor: `rgba(${rgb},.22)`, background: `rgba(${rgb},.08)` }}
-            >
-              {pill}
-            </div>
-
-            <div
-              className={styles.iconWrap}
-              style={{ borderColor: `rgba(${rgb},.22)`, background: `rgba(${rgb},.08)`, color: accent }}
-            >
-              <Icon />
-            </div>
-
-            <div className={styles.content}>
-              <h3 className={styles.cardTitle}>{title}</h3>
-              <p className={styles.cardDesc}>{desc}</p>
-            </div>
-
-            {metric && (
-              <div className={styles.metricBlock}>
-                <span className={styles.metricNum} style={{ color: accent, textShadow: `0 0 22px rgba(${rgb},.50)` }}>
-                  {metric.num}
+            return (
+              <button
+                key={service.id}
+                ref={(node) => {
+                  itemRefs.current[service.id] = node;
+                }}
+                type="button"
+                data-service-id={service.id}
+                className={`${styles.serviceButton} ${isActive ? styles.activeService : ''}`}
+                style={{ '--accent': service.accent, '--rgb': service.rgb, '--delay': `${index * 80}ms` }}
+                onClick={() => setActiveId(service.id)}
+                onFocus={() => setActiveId(service.id)}
+                onMouseEnter={() => setActiveId(service.id)}
+                aria-pressed={isActive}
+              >
+                <span className={styles.serviceIndex}>{String(index + 1).padStart(2, '0')}</span>
+                <span className={styles.serviceIcon}>
+                  <service.Icon />
                 </span>
-                <span className={styles.metricLabel}>{metric.label}</span>
-              </div>
+                <span className={styles.serviceText}>
+                  <span className={styles.servicePill}>{service.pill}</span>
+                  <strong>{service.title}</strong>
+                  <small>{service.desc}</small>
+                </span>
+                <span className={styles.serviceArrow}>
+                  <Arrow />
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        <div ref={dockRef} className={styles.showcaseDock}>
+          <aside
+            ref={showcaseRef}
+            className={styles.showcase}
+            style={{
+              '--accent': activeService.accent,
+              '--rgb': activeService.rgb,
+              '--mx': '50%',
+              '--my': '30%',
+              '--tilt-x': '0deg',
+              '--tilt-y': '0deg',
+            }}
+            onMouseMove={handleShowcaseMove}
+            onMouseLeave={handleShowcaseLeave}
+          >
+            <div className={styles.showcaseHeader}>
+              <span className={styles.showcaseKicker}>{activeService.pill}</span>
+              <h3>{activeService.title}</h3>
+              <p>{activeService.outcome}</p>
+            </div>
+
+            {isAIService ? (
+              <AIAutomationReel service={activeService} activeCapability={activeCapability} />
+            ) : (
+              <UXReel service={activeService} />
             )}
 
-            <a href="#contacto" className={styles.link} style={{ color: accent }}>
-              Explorar <span className={styles.arrowWrap}><Arrow /></span>
-            </a>
-          </div>
-        ))}
-      </div>
+            <div className={styles.showcaseGrid}>
+              <div className={styles.metric}>
+                <span>{activeService.metric}</span>
+                <small>{activeService.metricLabel}</small>
+              </div>
 
+              <div className={styles.timeline}>
+                {activeService.timeline.map((item, index) => (
+                  <div key={item} className={styles.timelineItem}>
+                    <span>{index + 1}</span>
+                    <p>{item}</p>
+                  </div>
+                ))}
+              </div>
+
+              {isAIService ? (
+                <div className={styles.deliverables}>
+                  {AI_CAPABILITIES.map((item) => (
+                    <button
+                      key={item.id}
+                      type="button"
+                      className={item.id === activeCapabilityId ? styles.activeChip : ''}
+                      onClick={() => setActiveCapabilityId(item.id)}
+                      onMouseEnter={() => setActiveCapabilityId(item.id)}
+                    >
+                      {item.label}
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <div className={styles.deliverables}>
+                  {activeService.deliverables.map((item) => (
+                    <span key={item}>{item}</span>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className={styles.showcaseActions}>
+              <a href="#contacto" className={styles.cta}>
+                Cotizar este servicio <Arrow />
+              </a>
+              {isAIService && (
+                <a href="/servicios/ia-automatizacion" className={styles.moreInfo}>
+                  Mas informacion <Arrow />
+                </a>
+              )}
+            </div>
+          </aside>
+        </div>
+      </div>
     </section>
   );
 };
