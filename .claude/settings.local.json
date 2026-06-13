@@ -2,7 +2,10 @@
   "permissions": {
     "allow": [
       "Bash(git add *)",
-      "Bash(git rebase *)"
+      "Bash(git rebase *)",
+      "Read(//c/Users/Pipec/.claude/skills/ui-ux-pro-max/**)",
+      "Bash(python scripts/search.py \"B2B agency transformation results outcomes use cases dark premium\" --design-system)",
+      "Bash(python scripts/search.py \"problem solution ROI conversion trust B2B tech agency\" --domain landing -n 4)"
     ]
   }
 }

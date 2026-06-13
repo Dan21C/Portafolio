@@ -178,7 +178,7 @@
 
 .headline {
   font-family: var(--font-h);
-  font-size: clamp(2.2rem, 4vw, 3.8rem);
+  font-size: clamp(1.7rem, 2.6vw, 2.6rem);
   font-weight: 700;
   line-height: 1;
   letter-spacing: 0;

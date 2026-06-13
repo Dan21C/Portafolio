@@ -465,24 +465,6 @@ const Services = ({ theme = 'dark', onThemeChange = () => {} }) => {
           Explora cada linea de trabajo como si fuera un prototipo: cambia el servicio,
           mira el flujo y descubre que entregamos para mover tu negocio.
         </p>
-        <div className={styles.themeToggle} aria-label="Cambiar fondo de servicios">
-          <button
-            type="button"
-            className={theme === 'dark' ? styles.themeActive : ''}
-            onClick={() => onThemeChange('dark')}
-            aria-pressed={theme === 'dark'}
-          >
-            Oscuro
-          </button>
-          <button
-            type="button"
-            className={theme === 'light' ? styles.themeActive : ''}
-            onClick={() => onThemeChange('light')}
-            aria-pressed={theme === 'light'}
-          >
-            Claro
-          </button>
-        </div>
       </div>
 
       <div className={styles.experience}>

@@ -6,8 +6,6 @@ import Ticker from './components/Ticker';
 import Hero from './sections/Hero';
 import Services from './sections/Services';
 import Process from './sections/Process';
-import Cases from './sections/Cases';
-import About from './sections/About';
 import Stack from './sections/Stack';
 import AIAutomationPage from './pages/AIAutomationPage';
 
@@ -31,8 +29,6 @@ function App() {
           <Ticker />
           <Services theme={theme} onThemeChange={setTheme} />
           <Process />
-          <Cases />
-          <About />
           <Stack />
         </main>
       )}
