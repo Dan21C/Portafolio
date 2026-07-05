@@ -768,7 +768,7 @@ const Services = ({ theme = 'dark' }) => {
 
       if (!items.length) return;
 
-      const guideY = window.innerHeight * 0.48;
+      const guideY = window.innerHeight * 0.58;
       let closestKey = items[0].dataset.serviceKey;
       let closestDistance = Number.POSITIVE_INFINITY;
 
