@@ -1,9 +1,11 @@
 .ticker {
-  background: var(--purple);
+  background:
+    linear-gradient(90deg, rgba(255,70,77,.88), rgba(155,36,43,.94), rgba(255,70,77,.88));
   padding: 0.55rem 0;
   overflow: hidden;
-  border-top: 1px solid rgba(255,255,255,0.08);
-  border-bottom: 1px solid rgba(255,255,255,0.08);
+  border-top: 1px solid rgba(255,255,255,0.12);
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 16px 38px rgba(0,0,0,.22);
 }
 
 .track {
@@ -20,6 +22,7 @@
   letter-spacing: 0.15em;
   text-transform: uppercase;
   color: #fff;
+  text-shadow: 0 0 18px rgba(255,255,255,.16);
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -27,7 +30,14 @@
 
 .sep {
   margin: 0 1.5rem;
-  opacity: 0.45;
+  opacity: 0.55;
+}
+
+:global([data-theme='light']) .ticker {
+  background:
+    linear-gradient(90deg, #FF464D, #B92D34, #FF464D);
+  border-color: rgba(17,20,23,.10);
+  box-shadow: 0 14px 38px rgba(255,70,77,.16);
 }
 
 @keyframes scroll {

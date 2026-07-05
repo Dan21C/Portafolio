@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,400&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,400&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
 *, *::before, *::after {
   box-sizing: border-box;
@@ -7,25 +7,25 @@
 }
 
 :root {
-  --bg:        #08091A;
-  --bg2:       #0D1028;
-  --bg3:       #111433;
-  --card:      #0F1230;
-  --border:    rgba(123, 92, 240, 0.18);
+  --bg:        #070A0D;
+  --bg2:       #101417;
+  --bg3:       #171C20;
+  --card:      rgba(17, 21, 24, 0.86);
+  --border:    rgba(255, 70, 77, 0.18);
   --border-w:  rgba(255, 255, 255, 0.07);
-  --purple:    #7B5CF0;
-  --purple-l:  #9B7FFF;
-  --purple-d:  #5A3ED4;
-  --glow:      rgba(123, 92, 240, 0.25);
-  --text:      #E8EAF6;
-  --muted:     #7B80A8;
+  --purple:    #FF464D;
+  --purple-l:  #FF464D;
+  --purple-d:  #9B242B;
+  --glow:      rgba(255, 70, 77, 0.25);
+  --text:      #F3F4F4;
+  --muted:     rgba(236, 239, 240, 0.62);
   --white:     #FFFFFF;
   --font-h:    'Syne', sans-serif;
   --font-b:    'DM Sans', sans-serif;
   --radius:    10px;
   --radius-lg: 16px;
-  --app-bg:    #050714;
-  --app-text:  #E8EAF6;
+  --app-bg:    #070A0D;
+  --app-text:  #F3F4F4;
   --nav-bg: rgba(255, 255, 255, 0.03);
   --nav-scrolled-bg: rgba(5, 7, 20, 0.82);
   --nav-border: rgba(255, 255, 255, 0.06);
@@ -39,17 +39,17 @@
 }
 
 :root[data-theme='light'] {
-  --bg:        #E9F7FF;
-  --bg2:       #F5FBFF;
-  --bg3:       #DFF2FA;
-  --card:      rgba(255, 255, 255, 0.78);
-  --border:    rgba(6, 182, 212, 0.22);
-  --border-w:  rgba(7, 17, 30, 0.12);
-  --text:      #07111E;
-  --muted:     #40566D;
-  --white:     #07111E;
-  --app-bg:    #E9F7FF;
-  --app-text:  #07111E;
+  --bg:        #F8F8F6;
+  --bg2:       #FFFFFF;
+  --bg3:       #ECEFF1;
+  --card:      rgba(255, 255, 255, 0.82);
+  --border:    rgba(255, 70, 77, 0.18);
+  --border-w:  rgba(17, 20, 23, 0.12);
+  --text:      #111417;
+  --muted:     rgba(17, 20, 23, 0.64);
+  --white:     #111417;
+  --app-bg:    #F8F8F6;
+  --app-text:  #111417;
   --nav-bg: rgba(255, 255, 255, 0.74);
   --nav-scrolled-bg: rgba(255, 255, 255, 0.88);
   --nav-border: rgba(7, 17, 30, 0.12);
@@ -139,12 +139,12 @@ img { max-width: 100%; display: block; }
   align-items: center;
   gap: 8px;
   transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
-  box-shadow: 0 4px 24px rgba(123, 92, 240, 0.3);
+  box-shadow: 0 4px 24px rgba(255, 70, 77, 0.3);
 }
 .btn-primary:hover {
   background: var(--purple-l);
   transform: translateY(-2px);
-  box-shadow: 0 8px 32px rgba(123, 92, 240, 0.45);
+  box-shadow: 0 8px 32px rgba(255, 70, 77, 0.45);
 }
 
 .btn-secondary {

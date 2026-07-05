@@ -6,7 +6,7 @@ import styles from './Process.module.css';
 const CHALLENGES = [
   {
     num: '01',
-    accent: '#6366F1', rgb: '99,102,241',
+    accent: '#FF464D', rgb: '255,70,77',
     quote: 'Tenemos datos pero nadie los entiende.',
     solution: 'Construimos dashboards ejecutivos en tiempo real que convierten números crudos en decisiones de negocio.',
     metric: 72, metricPrefix: '−', metricSuffix: '%',
@@ -15,7 +15,7 @@ const CHALLENGES = [
   },
   {
     num: '02',
-    accent: '#06B6D4', rgb: '6,182,212',
+    accent: '#E4585E', rgb: '228,88,94',
     quote: 'Nuestros sistemas no se hablan entre sí.',
     solution: 'Integramos tu ecosistema completo: ERP, bases de datos, APIs y cloud en un flujo 100% automatizado.',
     metric: null, metricText: 'Cero',
@@ -24,7 +24,7 @@ const CHALLENGES = [
   },
   {
     num: '03',
-    accent: '#10B981', rgb: '16,185,129',
+    accent: '#C9353D', rgb: '201,53,61',
     quote: 'Necesitamos software pero no sabemos por dónde empezar.',
     solution: 'Del briefing a producción en semanas. Software construido para tu proceso exacto, no una plantilla adaptada.',
     metric: null, metricText: '3–6 sem',
@@ -33,7 +33,7 @@ const CHALLENGES = [
   },
   {
     num: '04',
-    accent: '#F59E0B', rgb: '245,158,11',
+    accent: '#B6BEC8', rgb: '182,190,200',
     quote: 'Hacemos eventos pero no capturamos datos ni generamos leads.',
     solution: 'Integramos tecnología en cada punto del evento: registro digital, activaciones medibles y análisis post-evento accionable.',
     metric: null, metricText: '+3x',
@@ -42,7 +42,7 @@ const CHALLENGES = [
   },
   {
     num: '05',
-    accent: '#EC4899', rgb: '236,72,153',
+    accent: '#FF6B70', rgb: '255,107,112',
     quote: 'La gente asiste, pero no interactúa con la marca.',
     solution: 'Pantallas táctiles, gamificación y activaciones interactivas que convierten espectadores en participantes comprometidos.',
     metric: 35, metricPrefix: '+', metricSuffix: '%',
@@ -51,7 +51,7 @@ const CHALLENGES = [
   },
   {
     num: '06',
-    accent: '#8B5CF6', rgb: '139,92,246',
+    accent: '#8A939E', rgb: '138,147,158',
     quote: 'Nuestro equipo pierde horas en tareas que debería automatizar.',
     solution: 'Identificamos qué consume más tiempo y lo automatizamos con IA: reportes, clasificación, respuestas y flujos de trabajo.',
     metric: 80, metricPrefix: '−', metricSuffix: '%',

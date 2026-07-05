@@ -34,22 +34,22 @@ const Arrow = () => (
 const SOLUTIONS = [
   {
     id: 'exp',
-    accent: '#8B5CF6', rgb: '139,92,246',
+    accent: '#FF464D', rgb: '255,70,77',
     Icon: IScreen,
     label: 'EXPERIENCIAS',
     headline: 'Experiencias que activan marcas.',
     desc: 'Tecnología inmersiva en cada punto de contacto. Convertimos presencia física en participación medible y recuerdo de marca que dura.',
     isMain: true,
     services: [
-      { dot: '#8B5CF6', dotRgb: '139,92,246', name: 'Activaciones interactivas', detail: 'Pantallas táctiles · Totems · Kioscos' },
-      { dot: '#06B6D4', dotRgb: '6,182,212',  name: 'Gamificación & Loyalty',    detail: 'Puntos · Retos · Rankings · Recompensas' },
-      { dot: '#10B981', dotRgb: '16,185,129', name: 'Micrositios & Registro',    detail: 'Landing de evento · Formularios · QR' },
-      { dot: '#F59E0B', dotRgb: '245,158,11', name: 'Contenido & Motion',        detail: 'Video · Animación · Branding digital' },
+      { dot: '#FF464D', dotRgb: '255,70,77',  name: 'Activaciones interactivas', detail: 'Pantallas táctiles · Totems · Kioscos' },
+      { dot: '#E4585E', dotRgb: '228,88,94',  name: 'Gamificación & Loyalty',    detail: 'Puntos · Retos · Rankings · Recompensas' },
+      { dot: '#C9353D', dotRgb: '201,53,61',  name: 'Micrositios & Registro',    detail: 'Landing de evento · Formularios · QR' },
+      { dot: '#B6BEC8', dotRgb: '182,190,200', name: 'Contenido & Motion',       detail: 'Video · Animación · Branding digital' },
     ],
   },
   {
     id: 'events',
-    accent: '#F59E0B', rgb: '245,158,11',
+    accent: '#C9353D', rgb: '201,53,61',
     Icon: IStar,
     label: 'EVENTOS 360',
     headline: 'Del concepto al evento. Sin detalles perdidos.',
@@ -59,7 +59,7 @@ const SOLUTIONS = [
   },
   {
     id: 'merch',
-    accent: '#10B981', rgb: '16,185,129',
+    accent: '#8A939E', rgb: '138,147,158',
     Icon: ITag,
     label: 'MERCH & STANDS',
     headline: 'Marca en cada detalle.',
@@ -86,8 +86,6 @@ const Stack = () => {
     name:'', lastName:'', email:'', phone:'', company:'', role:'', country:'',
     type:'', budget:'', urgency:'', source:'', msg:'',
   });
-
-  const showBack = rotation > 90;
 
   // Stack section reveal
   useEffect(() => {
@@ -122,14 +120,11 @@ const Stack = () => {
       const rawProgress = Math.min(1, scrolled / totalScrollable);
 
       // Hold at 0° for first 15%, flip between 15–85%, hold at 180° last 15%
-      let deg = 0;
-      if (rawProgress < 0.15) {
-        deg = 0;
-      } else if (rawProgress > 0.85) {
-        deg = 180;
-      } else {
-        deg = ((rawProgress - 0.15) / 0.70) * 180;
-      }
+      const deg = rawProgress < 0.15
+        ? 0
+        : rawProgress > 0.85
+          ? 180
+          : ((rawProgress - 0.15) / 0.70) * 180;
       setRotation(deg);
     };
 
@@ -391,7 +386,7 @@ const Stack = () => {
                   /* ── Success ── */
                   <div className={styles.ctaSuccess}>
                     <div className={styles.ctaSuccessIcon}>
-                      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FF464D" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
                       </svg>
                     </div>
@@ -564,17 +559,17 @@ const Stack = () => {
 
           <div className={styles.ctaTrust}>
             <span className={styles.ctaTrustItem}>
-              <span className={styles.ctaTrustDot} style={{ background: '#10B981' }} />
+              <span className={styles.ctaTrustDot} style={{ background: '#FF464D' }} />
               Respuesta en &lt; 24h
             </span>
             <span className={styles.ctaTrustSep} />
             <span className={styles.ctaTrustItem}>
-              <span className={styles.ctaTrustDot} style={{ background: '#06B6D4' }} />
+              <span className={styles.ctaTrustDot} style={{ background: '#E4585E' }} />
               Sin compromiso inicial
             </span>
             <span className={styles.ctaTrustSep} />
             <span className={styles.ctaTrustItem}>
-              <span className={styles.ctaTrustDot} style={{ background: '#8B5CF6' }} />
+              <span className={styles.ctaTrustDot} style={{ background: '#B6BEC8' }} />
               +80 marcas atendidas
             </span>
           </div>

@@ -20,12 +20,12 @@ function App() {
 
   return (
     <div className="app-shell" data-theme={theme}>
-      <Navbar theme={theme} onThemeChange={setTheme} />
+      {isAIAutomationPage && <Navbar theme={theme} onThemeChange={setTheme} />}
       {isAIAutomationPage ? (
         <AIAutomationPage theme={theme} onThemeChange={setTheme} />
       ) : (
         <main>
-          <Hero />
+          <Hero theme={theme} onThemeChange={setTheme} />
           <Ticker />
           <Services theme={theme} onThemeChange={setTheme} />
           <Process />

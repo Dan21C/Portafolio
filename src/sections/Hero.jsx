@@ -1,360 +1,329 @@
-import { useEffect, useRef } from 'react';
-import { Hexagon, Cpu, BarChart2, Zap } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { BarChart3, BrainCircuit, Boxes, Code2, Cpu, Hand, Hexagon, Sparkles } from 'lucide-react';
 import styles from './Hero.module.css';
 
+const darkHeroVideo = '/Assets/Animation/hazme_una_animacion_cursor.mp4';
+const lightHeroVideo = '/Assets/Animation/ahora_quiero_una_naimacion_cursor.mp4';
+const videoScrubStart = 2;
+const videoScrubEnd = 8.15;
+const defaultPointer = { x: 0.68, y: 0.45 };
+
+const getVideoTimeFromPointer = (x) => videoScrubStart + x * (videoScrubEnd - videoScrubStart);
+
+const navLinks = [
+  { label: 'Inicio', href: '#inicio' },
+  { label: 'Servicios', href: '#servicios' },
+  { label: 'Proceso', href: '#proceso' },
+  { label: 'Casos', href: '#casos' },
+  { label: 'Nosotros', href: '#nosotros' },
+  { label: 'Blog', href: '#blog' },
+];
+
 const metrics = [
-  { color: '#00AFFF', metricColor: '#00D1FF', metric: '+80',  label: 'marcas'     },
-  { color: '#22C55E', metricColor: '#4ADE80', metric: '+35%', label: 'engagement' },
-  { color: '#8B5CF6', metricColor: '#A78BFA', metric: '6',    label: 'verticales' },
+  { value: '+80', label: 'marcas', caption: 'Confían en nosotros', icon: Hexagon },
+  { value: '+35%', label: 'engagement', caption: 'Resultados medibles', icon: Hexagon },
+  { value: '6', label: 'verticales', caption: 'Industrias clave', icon: Boxes },
+];
+
+const services = [
+  { id: '01', label: 'IA y automatización', icon: BrainCircuit },
+  { id: '02', label: 'Experiencias interactivas', icon: Hand },
+  { id: '03', label: 'Eventos 360', icon: Sparkles },
+  { id: '04', label: 'Analítica de datos', icon: BarChart3 },
+  { id: '05', label: 'Desarrollo de software', icon: Code2 },
+  { id: '06', label: 'Producción 360', icon: Cpu },
 ];
 
 const Arrow = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-    <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" aria-hidden="true">
+    <line x1="5" y1="12" x2="19" y2="12" />
+    <polyline points="12 5 19 12 12 19" />
   </svg>
 );
 
-const Hero = () => {
-  const canvasRef = useRef(null);
+const scrollToTarget = (event, href) => {
+  const target = document.querySelector(href);
+  if (!target) return;
+
+  event.preventDefault();
+  target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  window.history.replaceState(null, '', href);
+};
+
+const Hero = ({ theme = 'dark', onThemeChange = () => {} }) => {
+  const heroRef = useRef(null);
+  const videoRef = useRef(null);
+  const videoTargetTimeRef = useRef(getVideoTimeFromPointer(defaultPointer.x));
+  const videoDisplayTimeRef = useRef(getVideoTimeFromPointer(defaultPointer.x));
+  const lastVideoSetRef = useRef(0);
+  const videoReadyRef = useRef(false);
+  const [activeService, setActiveService] = useState(0);
+
+  const heroVideoSrc = theme === 'dark' ? darkHeroVideo : lightHeroVideo;
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    let animId;
-    const mouse = { x: -9999, y: -9999 };
+    const section = heroRef.current;
+    if (!section) return;
 
-    const resize = () => {
-      canvas.width  = canvas.offsetWidth  || window.innerWidth;
-      canvas.height = canvas.offsetHeight || window.innerHeight;
+    let frame = 0;
+
+    const syncPointer = (event) => {
+      if (frame) cancelAnimationFrame(frame);
+
+      frame = requestAnimationFrame(() => {
+        const rect = section.getBoundingClientRect();
+        const x = Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width));
+        const y = Math.max(0, Math.min(1, (event.clientY - rect.top) / rect.height));
+
+        section.style.setProperty('--mouse-x', x.toFixed(3));
+        section.style.setProperty('--mouse-y', y.toFixed(3));
+
+        videoTargetTimeRef.current = getVideoTimeFromPointer(x);
+        setActiveService(Math.min(services.length - 1, Math.floor(x * services.length)));
+      });
     };
-    resize();
 
-    const onResize = () => resize();
-    const onMouse  = (e) => {
-      const r = canvas.getBoundingClientRect();
-      mouse.x = e.clientX - r.left;
-      mouse.y = e.clientY - r.top;
+    const resetPointer = () => {
+      section.style.setProperty('--mouse-x', String(defaultPointer.x));
+      section.style.setProperty('--mouse-y', String(defaultPointer.y));
+      videoTargetTimeRef.current = getVideoTimeFromPointer(defaultPointer.x);
+      setActiveService(0);
     };
-    window.addEventListener('resize',    onResize);
-    window.addEventListener('mousemove', onMouse);
 
-    const N = 85;
-    const nodes = Array.from({ length: N }, () => ({
-      x:  Math.random() * canvas.width,
-      y:  Math.random() * canvas.height,
-      vx: (Math.random() - 0.5) * 0.28,
-      vy: (Math.random() - 0.5) * 0.28,
-      r:  0.8 + Math.random() * 0.7,
-    }));
+    window.addEventListener('pointermove', syncPointer, { passive: true });
+    window.addEventListener('pointerleave', resetPointer);
+    resetPointer();
 
-    const tick = () => {
-      const W = canvas.width;
-      const H = canvas.height;
-      ctx.clearRect(0, 0, W, H);
+    return () => {
+      if (frame) cancelAnimationFrame(frame);
+      window.removeEventListener('pointermove', syncPointer);
+      window.removeEventListener('pointerleave', resetPointer);
+    };
+  }, []);
 
-      const mx = (mouse.x / W - 0.5) * 0.06;
-      const my = (mouse.y / H - 0.5) * 0.06;
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return undefined;
 
-      for (const n of nodes) {
-        n.x += n.vx + mx;
-        n.y += n.vy + my;
-        if (n.x < 0) n.x = W;
-        if (n.x > W) n.x = 0;
-        if (n.y < 0) n.y = H;
-        if (n.y > H) n.y = 0;
+    let raf = 0;
+    const startTime = getVideoTimeFromPointer(defaultPointer.x);
+    videoTargetTimeRef.current = startTime;
+    videoDisplayTimeRef.current = startTime;
+    lastVideoSetRef.current = 0;
+    videoReadyRef.current = false;
+
+    const primeVideo = () => {
+      videoReadyRef.current = true;
+      video.pause();
+      try {
+        video.currentTime = startTime;
+      } catch {
+        // Some browsers wait until enough data is buffered before allowing seeks.
       }
+    };
 
-      for (let i = 0; i < N; i++) {
-        for (let j = i + 1; j < N; j++) {
-          const dx = nodes[i].x - nodes[j].x;
-          const dy = nodes[i].y - nodes[j].y;
-          const d  = Math.sqrt(dx * dx + dy * dy);
-          if (d < 130) {
-            ctx.beginPath();
-            ctx.strokeStyle = `rgba(6,182,212,${(1 - d / 130) * 0.30})`;
-            ctx.lineWidth   = 1;
-            ctx.moveTo(nodes[i].x, nodes[i].y);
-            ctx.lineTo(nodes[j].x, nodes[j].y);
-            ctx.stroke();
+    if (video.readyState >= 1) {
+      primeVideo();
+    } else {
+      video.addEventListener('loadedmetadata', primeVideo, { once: true });
+    }
+
+    const animateScrub = (now) => {
+      if (videoReadyRef.current) {
+        const targetTime = videoTargetTimeRef.current;
+        const currentTime = videoDisplayTimeRef.current;
+        const distance = targetTime - currentTime;
+        const nextTime = Math.abs(distance) > 1.1
+          ? targetTime
+          : Math.abs(distance) < 0.004
+            ? targetTime
+            : currentTime + distance * 0.34;
+
+        videoDisplayTimeRef.current = nextTime;
+
+        if (Math.abs(video.currentTime - nextTime) > 0.01 && now - lastVideoSetRef.current > 16) {
+          try {
+            video.currentTime = nextTime;
+            lastVideoSetRef.current = now;
+          } catch {
+            // Ignore rare seek races while the browser is still buffering.
           }
         }
       }
 
-      for (const n of nodes) {
-        ctx.beginPath();
-        ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(6,182,212,1)';
-        ctx.fill();
-      }
-
-      animId = requestAnimationFrame(tick);
+      raf = requestAnimationFrame(animateScrub);
     };
 
-    tick();
+    raf = requestAnimationFrame(animateScrub);
 
     return () => {
-      cancelAnimationFrame(animId);
-      window.removeEventListener('resize',    onResize);
-      window.removeEventListener('mousemove', onMouse);
+      cancelAnimationFrame(raf);
+      video.removeEventListener('loadedmetadata', primeVideo);
     };
-  }, []);
+  }, [heroVideoSrc]);
 
   return (
-    <section className={styles.hero} id="inicio">
+    <section ref={heroRef} className={styles.hero} id="inicio" data-mode={theme}>
+      <div className={styles.shell}>
+        <nav className={styles.nav} aria-label="Navegación principal">
+          <a href="#inicio" className={styles.logo} onClick={(event) => scrollToTarget(event, '#inicio')}>APX</a>
 
-      {/* Layer 2 — massive radial glow */}
-      <div className={styles.glowMain} />
+          <div className={styles.navLinks}>
+            {navLinks.map(({ label, href }) => (
+              <a
+                key={href}
+                href={href}
+                className={label === 'Inicio' ? styles.navActive : ''}
+                onClick={(event) => scrollToTarget(event, href)}
+              >
+                {label}
+              </a>
+            ))}
+          </div>
 
-      {/* Layer 3 — aurora clouds */}
-      <div className={`${styles.aurora} ${styles.auroraA}`} />
-      <div className={`${styles.aurora} ${styles.auroraB}`} />
-      <div className={`${styles.aurora} ${styles.auroraC}`} />
-
-      {/* Layer 4 — space dust */}
-      <div className={styles.stars} />
-
-      {/* Layer 5 — AI network canvas */}
-      <canvas ref={canvasRef} className={styles.network} />
-
-      {/* Layer 6 — perspective grid */}
-      <div className={styles.perspGrid} />
-
-      {/* Layer 7 — energy streaks */}
-      <div className={styles.streakA} />
-      <div className={styles.streakB} />
-      <div className={styles.streakC} />
-
-      {/* LEFT */}
-      <div className={styles.left}>
-
-        <h1 className={styles.headline}>
-          Experiencias que conectan.<br />
-          <span className={styles.headlineGrad}>Datos que impulsan.</span>
-        </h1>
-
-        <p className={styles.sub}>
-          Diseñamos, desarrollamos e implementamos soluciones de gamificación,
-          analítica e inteligencia artificial para transformar marcas y operaciones.
-        </p>
-
-        <div className={styles.metricCards}>
-          {metrics.map(({ color, metricColor, metric, label }) => (
-            <div key={label} className={styles.metricCard}>
-              <div
-                className={styles.iconGlow}
-                style={{ background: `radial-gradient(circle, ${color} 0%, transparent 70%)` }}
-              />
-              <Hexagon
-                size={28}
-                strokeWidth={1.8}
-                color={color}
-                className={styles.metricIcon}
-                style={{ filter: `drop-shadow(0 0 8px ${color})` }}
-              />
-              <div className={styles.metricText}>
-                <span className={styles.metricValue} style={{ color: metricColor }}>{metric}</span>
-                <span className={styles.metricLabel}>{label}</span>
-              </div>
+          <div className={styles.navActions}>
+            <div className={styles.themeSwitch} aria-label="Cambiar tema">
+              <button
+                type="button"
+                className={theme === 'dark' ? styles.themeActive : ''}
+                onClick={() => onThemeChange('dark')}
+              >
+                Oscuro
+              </button>
+              <button
+                type="button"
+                className={theme === 'light' ? styles.themeActive : ''}
+                onClick={() => onThemeChange('light')}
+              >
+                Claro
+              </button>
             </div>
+            <a href="#contacto" className={styles.talkBtn} onClick={(event) => scrollToTarget(event, '#contacto')}>
+              Hablemos
+            </a>
+          </div>
+        </nav>
+
+        <aside className={styles.sideRail} aria-hidden="true">
+          <span>APX</span>
+          <span>IA</span>
+          <span>Datos</span>
+          <span>Experiencias</span>
+          <strong>01</strong>
+        </aside>
+
+        <div className={styles.content}>
+          <p className={styles.kicker}>
+            <span />
+            Industrial AI partners
+          </p>
+
+          <h1 className={styles.title}>
+            Experiencias<br />
+            que conectan.<br />
+            <strong>Datos que impulsan.</strong>
+          </h1>
+
+          <p className={styles.copy}>
+            Diseñamos, desarrollamos e implementamos soluciones de gamificación,
+            analítica e inteligencia artificial para transformar marcas y operaciones.
+          </p>
+
+          <div className={styles.metrics}>
+            {metrics.map(({ value, label, caption, icon: Icon }) => (
+              <div key={label} className={styles.metricCard}>
+                <Icon size={23} strokeWidth={1.45} />
+                <div>
+                  <strong>{value}</strong>
+                  <span>{label}</span>
+                </div>
+                <small>{caption}</small>
+              </div>
+            ))}
+          </div>
+
+          <div className={styles.ctas}>
+            <a href="#contacto" className={styles.primaryBtn} onClick={(event) => scrollToTarget(event, '#contacto')}>
+              Agendar demo <Arrow />
+            </a>
+            <a href="#servicios" className={styles.secondaryBtn} onClick={(event) => scrollToTarget(event, '#servicios')}>
+              Ver soluciones <Arrow />
+            </a>
+          </div>
+
+          <p className={styles.trust}>
+            Conectado por marcas en
+            <img src="https://flagcdn.com/16x12/co.png" width="16" height="12" alt="Colombia" />
+            Colombia
+            <img src="https://flagcdn.com/16x12/mx.png" width="16" height="12" alt="México" />
+            México
+            <img src="https://flagcdn.com/16x12/ar.png" width="16" height="12" alt="Argentina" />
+            Argentina
+          </p>
+        </div>
+
+        <div className={styles.visual} aria-hidden="true">
+          <div className={styles.lightBeam} />
+          <div className={styles.platform} />
+          <svg className={styles.connectorLines} viewBox="0 0 720 760" preserveAspectRatio="none">
+            <defs>
+              <marker id="hero-arrow" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+                <path d="M 0 0 L 9 4.5 L 0 9 Z" />
+              </marker>
+            </defs>
+            <path className={styles.connectorOrbit} d="M 126 80 C 276 16 462 36 602 126" />
+            <path className={styles.connectorOrbit} d="M 122 696 C 292 742 488 714 604 612" />
+            <path className={styles.connectorScan} d="M 132 130 L 318 130 L 482 108" />
+            <path className={styles.connectorScan} d="M 166 250 L 346 250 L 482 215" />
+            <path className={styles.connectorScan} d="M 198 365 L 376 365 L 482 326" />
+            <path className={styles.connectorScan} d="M 198 468 L 376 468 L 482 434" />
+            <path className={styles.connectorScan} d="M 166 585 L 346 585 L 482 542" />
+            <path className={styles.connectorScan} d="M 132 675 L 318 675 L 482 650" />
+            <path className={styles.connectorStrong} d="M 318 130 L 472 130 L 530 108" markerEnd="url(#hero-arrow)" />
+            <path className={styles.connectorStrong} d="M 346 250 L 482 250 L 530 216" markerEnd="url(#hero-arrow)" />
+            <path className={styles.connectorStrong} d="M 376 365 L 494 365 L 530 325" markerEnd="url(#hero-arrow)" />
+            <path className={styles.connectorStrong} d="M 376 468 L 494 468 L 530 433" markerEnd="url(#hero-arrow)" />
+            <path className={styles.connectorStrong} d="M 346 585 L 482 585 L 530 542" markerEnd="url(#hero-arrow)" />
+            <path className={styles.connectorStrong} d="M 318 675 L 472 675 L 530 650" markerEnd="url(#hero-arrow)" />
+            <circle cx="318" cy="130" r="3" />
+            <circle cx="346" cy="250" r="3" />
+            <circle cx="376" cy="365" r="3" />
+            <circle cx="376" cy="468" r="3" />
+            <circle cx="346" cy="585" r="3" />
+            <circle cx="318" cy="675" r="3" />
+            <rect className={styles.connectorMark} x="88" y="150" width="34" height="1" />
+            <rect className={styles.connectorMark} x="105" y="560" width="44" height="1" />
+            <rect className={styles.connectorMark} x="292" y="704" width="70" height="1" />
+          </svg>
+          <div className={styles.videoStage}>
+            <video
+              key={heroVideoSrc}
+              ref={videoRef}
+              className={styles.heroVideo}
+              src={heroVideoSrc}
+              muted
+              playsInline
+              preload="auto"
+            />
+          </div>
+          <span className={styles.visualLabel}>APX_01</span>
+        </div>
+
+        <div className={styles.servicesPanel}>
+          {services.map(({ id, label, icon: Icon }, index) => (
+            <a
+              key={label}
+              href="#servicios"
+              className={`${styles.serviceTag} ${activeService === index ? styles.serviceActive : ''}`}
+              onClick={(event) => scrollToTarget(event, '#servicios')}
+            >
+              <span>{id}</span>
+              <Icon size={18} strokeWidth={1.55} />
+              <strong>{label}</strong>
+            </a>
           ))}
         </div>
-
-        <div className={styles.actions}>
-          <a href="#contacto" className={styles.btnPrimary}>
-            Agendar demo <Arrow />
-          </a>
-          <a href="#servicios" className={styles.btnSecondary}>
-            Ver soluciones <Arrow />
-          </a>
-        </div>
-
-        <p className={styles.trust}>
-          Confiado por marcas en&nbsp;
-          <img src="https://flagcdn.com/16x12/co.png" width="16" height="12" alt="Colombia" className={styles.flag} /> Colombia&nbsp;·&nbsp;
-          <img src="https://flagcdn.com/16x12/mx.png" width="16" height="12" alt="México" className={styles.flag} /> México&nbsp;·&nbsp;
-          <img src="https://flagcdn.com/16x12/ar.png" width="16" height="12" alt="Argentina" className={styles.flag} /> Argentina
-        </p>
-
       </div>
-
-      {/* RIGHT — Command center */}
-      <div className={styles.right}>
-        <div className={styles.frameOuter}>
-          <div className={styles.visualFrame}>
-
-            {/* Corner glows */}
-            <div className={styles.cornerTR} />
-            <div className={styles.cornerBL} />
-
-            {/* Holographic rings platform */}
-            <div className={styles.ringsWrap}>
-              <div className={styles.lightBeam} />
-              <div className={`${styles.ring} ${styles.r1}`} />
-              <div className={`${styles.ring} ${styles.r2}`} />
-              <div className={`${styles.ring} ${styles.r3}`} />
-              <div className={`${styles.ring} ${styles.r4}`} />
-            </div>
-
-            {/* Network data-flow SVG */}
-            <svg className={styles.netSvg} viewBox="0 0 620 600" preserveAspectRatio="none">
-              <path d="M 165 190 C 255 140 365 175 465 225" className={`${styles.fp} ${styles.fp1}`} />
-              <path d="M 165 320 C 255 290 365 295 465 340" className={`${styles.fp} ${styles.fp2}`} />
-              <path d="M 165 430 C 255 405 365 410 465 445" className={`${styles.fp} ${styles.fp3}`} />
-              <path d="M 215 145 C 325 105 445 170 515 255" className={`${styles.fp} ${styles.fp4}`} />
-              <path d="M 205 500 C 325 470 435 462 515 428" className={`${styles.fp} ${styles.fp5}`} />
-            </svg>
-
-            {/* Globe */}
-            <div className={styles.globeWrap}>
-              <div className={styles.globeAura} />
-              <img src="/Assets/Hero/Planet.png" alt="" className={styles.globe} />
-            </div>
-
-            {/* Left — Capability Modules */}
-            <div className={styles.leftModules}>
-              {[
-                { Icon: Cpu,       color: '#6366f1', accent: 'rgba(99,102,241,.40)',  title: 'Inteligencia Artificial',  desc: 'Modelos predictivos en tiempo real' },
-                { Icon: BarChart2, color: '#06b6d4', accent: 'rgba(6,182,212,.40)',   title: 'Analytics 360°',           desc: 'Insights accionables y datos vivos' },
-                { Icon: Zap,       color: '#10b981', accent: 'rgba(16,185,129,.40)',  title: 'Automatización',           desc: 'Flujos inteligentes y orquestación' },
-              ].map(({ Icon, color, accent, title, desc }, i) => (
-                <div key={title} className={`${styles.moduleCard} ${styles[`mc${i + 1}`]}`}>
-                  <div className={styles.moduleGlow} style={{ background: `radial-gradient(circle, ${color} 0%, transparent 70%)` }} />
-                  <div className={styles.moduleIcon} style={{ borderColor: accent, boxShadow: `0 0 14px ${color}22` }}>
-                    <Icon size={16} strokeWidth={1.5} color={color} style={{ filter: `drop-shadow(0 0 5px ${color})` }} />
-                  </div>
-                  <div className={styles.moduleText}>
-                    <span className={styles.moduleTitle}>{title}</span>
-                    <span className={styles.moduleDesc}>{desc}</span>
-                  </div>
-                  <div className={styles.moduleAccent} style={{ background: `linear-gradient(90deg, ${color}88, transparent)` }} />
-                </div>
-              ))}
-            </div>
-
-            {/* Right — Service Cards */}
-            <div className={styles.rightCards}>
-
-              {/* EXPERIENCIAS */}
-              <div className={`${styles.svcCard} ${styles.sc1}`}>
-                <div className={styles.svcHeader}>
-                  <div>
-                    <div className={styles.svcTitle}>Experiencias</div>
-                    <div className={styles.svcSub}>Gamificación &amp; Engagement</div>
-                  </div>
-                  <span className={styles.svcDot} />
-                </div>
-                <svg viewBox="0 0 170 34" fill="none" className={styles.svcChart}>
-                  <defs>
-                    <linearGradient id="ecg1" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#06b6d4" stopOpacity="0.38" />
-                      <stop offset="100%" stopColor="#06b6d4" stopOpacity="0" />
-                    </linearGradient>
-                  </defs>
-                  <polygon points="0,30 25,26 50,28 80,16 105,20 130,8 155,4 170,1 170,34 0,34" fill="url(#ecg1)" />
-                  <polyline points="0,30 25,26 50,28 80,16 105,20 130,8 155,4 170,1"
-                    stroke="#06b6d4" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
-                    className={styles.svcLine}
-                  />
-                  <circle cx="130" cy="8"  r="2.5" fill="#22d3ee" opacity="0.9" />
-                  <circle cx="170" cy="1"  r="3"   fill="#22d3ee" style={{ filter: 'drop-shadow(0 0 5px #06b6d4)' }} />
-                </svg>
-                <div className={styles.svcBottom}>
-                  <span className={styles.svcVal}>+35%</span>
-                  <span className={styles.svcLabel}>vs. trimestre anterior</span>
-                </div>
-              </div>
-
-              {/* DESARROLLO */}
-              <div className={`${styles.svcCard} ${styles.sc2}`}>
-                <div className={styles.svcHeader}>
-                  <div>
-                    <div className={styles.svcTitle}>Desarrollo</div>
-                    <div className={styles.svcSub}>Full-Stack &amp; Arquitectura</div>
-                  </div>
-                  <span className={styles.svcDot} style={{ background: '#6366f1', boxShadow: '0 0 10px rgba(99,102,241,.80)' }} />
-                </div>
-                <div className={styles.stackBars}>
-                  {[
-                    { label: 'Frontend', pct: 88, color: '#6366f1' },
-                    { label: 'Backend',  pct: 94, color: '#06b6d4' },
-                    { label: 'AI / ML',  pct: 76, color: '#10b981' },
-                  ].map(({ label, pct, color }, idx) => (
-                    <div key={label} className={styles.barRow}>
-                      <span className={styles.barLabel}>{label}</span>
-                      <div className={styles.barTrack}>
-                        <div
-                          className={styles.barFill}
-                          style={{
-                            width: `${pct}%`,
-                            background: color,
-                            boxShadow: `0 0 8px ${color}55`,
-                            animationDelay: `${idx * 0.14 + 0.5}s`,
-                          }}
-                        />
-                      </div>
-                      <span className={styles.barPct} style={{ color }}>{pct}%</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* SOLUCIONES IA */}
-              <div className={`${styles.svcCard} ${styles.sc3}`}>
-                <div className={styles.svcHeader}>
-                  <div>
-                    <div className={styles.svcTitle}>Soluciones IA</div>
-                    <div className={styles.svcSub}>Precisión del modelo</div>
-                  </div>
-                  <span className={styles.svcDot} style={{ background: '#10b981', boxShadow: '0 0 10px rgba(16,185,129,.80)' }} />
-                </div>
-                <div className={styles.iaRow}>
-                  <svg viewBox="0 0 70 70" className={styles.iaDonut}>
-                    <defs>
-                      <filter id="gglow">
-                        <feGaussianBlur stdDeviation="1.8" result="blur"/>
-                        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-                      </filter>
-                    </defs>
-                    <circle cx="35" cy="35" r="27" stroke="rgba(16,185,129,0.10)" strokeWidth="4.5" fill="none" />
-                    <circle cx="35" cy="35" r="27" stroke="#10b981" strokeWidth="4.5" fill="none"
-                      strokeLinecap="round" transform="rotate(-90 35 35)"
-                      className={styles.iaArc} filter="url(#gglow)"
-                    />
-                    <text x="35" y="32" textAnchor="middle" fill="#4ade80" fontSize="11" fontWeight="700" fontFamily="sans-serif">94.6%</text>
-                    <text x="35" y="43" textAnchor="middle" fill="rgba(255,255,255,.35)" fontSize="6.5" fontFamily="sans-serif" letterSpacing="0.08em">ACCURACY</text>
-                  </svg>
-                  <div className={styles.iaSide}>
-                    <span className={styles.iaTrend}>↑ 18%</span>
-                    <svg viewBox="0 0 84 28" fill="none" className={styles.iaSparkline}>
-                      <defs>
-                        <linearGradient id="iag1" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%"   stopColor="#10b981" stopOpacity="0.35" />
-                          <stop offset="100%" stopColor="#10b981" stopOpacity="0"    />
-                        </linearGradient>
-                      </defs>
-                      <polygon points="0,24 14,20 28,22 42,14 56,16 70,8 84,5 84,28 0,28" fill="url(#iag1)" />
-                      <polyline points="0,24 14,20 28,22 42,14 56,16 70,8 84,5"
-                        stroke="#10b981" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
-                      />
-                    </svg>
-                    <span className={styles.iaVsText}>vs. trimestre anterior</span>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-
-            {/* Bottom info bar */}
-            <div className={styles.infoBar}>
-              <span className={styles.statusDot} />
-              <span>Soluciones diseñadas para escalar negocios en Latinoamérica</span>
-            </div>
-
-          </div>
-        </div>
-      </div>
-
     </section>
   );
 };

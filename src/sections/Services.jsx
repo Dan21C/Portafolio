@@ -52,25 +52,29 @@ const IconDev = () => (
 const SERVICES = [
   {
     id: 'ai',
-    accent: '#10B981',
-    rgb: '16,185,129',
-    pill: 'IA + Automatizacion',
+    accent: '#FF464D',
+    rgb: '255,70,77',
+    pill: 'IA + Automatización',
     Icon: IconAI,
-    title: 'IA y automatizacion inteligente',
+    intentTitle: 'Automatizar tareas',
+    intentDesc: 'Procesos más rápidos, menos trabajo manual.',
+    title: 'IA y automatización inteligente',
     desc: 'Automatizamos procesos con IA, LLMs, RAG, bots, RPA e integraciones para reducir trabajo manual y acelerar operaciones.',
-    outcome: 'Flujos inteligentes que entienden informacion, responden, ejecutan tareas y conectan herramientas del negocio.',
+    outcome: 'Flujos inteligentes que entienden información, responden, ejecutan tareas y conectan herramientas del negocio.',
     metric: '+40%',
     metricLabel: 'eficiencia operativa',
-    timeline: ['Diagnostico de oportunidades IA', 'Prototipo funcional con tus datos', 'Automatizacion integrada y medible'],
+    timeline: ['Diagnóstico de oportunidades IA', 'Prototipo funcional con tus datos', 'Automatización integrada y medible'],
     deliverables: ['LLMs y RAG', 'Bots y agentes IA', 'RPA e integraciones'],
     motion: 'AI automation flow',
   },
   {
     id: 'exp',
-    accent: '#06B6D4',
-    rgb: '6,182,212',
+    accent: '#E4585E',
+    rgb: '228,88,94',
     pill: 'Activaciones',
     Icon: IconExp,
+    intentTitle: 'Activar mi marca',
+    intentDesc: 'Experiencias que conectan y generan impacto.',
     title: 'Experiencias',
     desc: 'Pantallas, totens y activaciones interactivas que vuelven visible la marca y medible cada punto de contacto.',
     outcome: 'Mayor permanencia, captura de leads y recuerdo de marca.',
@@ -82,12 +86,14 @@ const SERVICES = [
   },
   {
     id: 'events',
-    accent: '#8B5CF6',
-    rgb: '139,92,246',
+    accent: '#C9353D',
+    rgb: '201,53,61',
     pill: 'Marketing',
     Icon: IconEvents,
-    title: 'Produccion de eventos 360',
-    desc: 'Disenamos y producimos eventos de marca: activaciones, merch, stands corporativos, lanzamientos, conferencias y locaciones.',
+    intentTitle: 'Producir un evento',
+    intentDesc: 'Producción 360 con tecnología y creatividad.',
+    title: 'Producción de eventos 360',
+    desc: 'Diseñamos y producimos eventos de marca: activaciones, merch, stands corporativos, lanzamientos, conferencias y locaciones.',
     outcome: 'Experiencias presenciales que posicionan marca y convierten audiencias en comunidad.',
     metric: '360',
     metricLabel: 'experiencia integral',
@@ -97,12 +103,14 @@ const SERVICES = [
   },
   {
     id: 'data',
-    accent: '#6366F1',
-    rgb: '99,102,241',
+    accent: '#B6BEC8',
+    rgb: '182,190,200',
     pill: 'Analytics',
     Icon: IconData,
-    title: 'Analisis de datos',
-    desc: 'Dashboards, reporterias y pipelines para leer el negocio con menos ruido y mas velocidad.',
+    intentTitle: 'Entender mis datos',
+    intentDesc: 'Datos claros para tomar mejores decisiones.',
+    title: 'Análisis de datos',
+    desc: 'Dashboards, reporterías y pipelines para leer el negocio con menos ruido y más velocidad.',
     outcome: 'Datos accionables para decisiones de producto, ventas y operaciones.',
     metric: '-32%',
     metricLabel: 'costo operativo',
@@ -112,16 +120,18 @@ const SERVICES = [
   },
   {
     id: 'dev',
-    accent: '#14B8A6',
-    rgb: '20,184,166',
+    accent: '#8A939E',
+    rgb: '138,147,158',
     pill: 'Plataformas',
     Icon: IconDev,
+    intentTitle: 'Crear una plataforma',
+    intentDesc: 'Software a la medida para tu negocio.',
     title: 'Desarrollo de software',
     desc: 'Desarrollo a la medida para marketing, operaciones, ventas, datos y equipos internos que necesitan herramientas propias.',
-    outcome: 'Soluciones digitales adaptadas a cada area del negocio, listas para operar y escalar.',
+    outcome: 'Soluciones digitales adaptadas a cada área del negocio, listas para operar y escalar.',
     metric: '2x',
     metricLabel: 'velocidad de entrega',
-    timeline: ['Diagnostico del area', 'Producto a la medida', 'Deploy y mejora continua'],
+    timeline: ['Diagnóstico del área', 'Producto a la medida', 'Deploy y mejora continua'],
     deliverables: ['Web apps', 'CRMs internos', 'Portales y paneles'],
     motion: 'Custom software build',
   },
@@ -287,7 +297,7 @@ const UXReel = ({ service }) => (
   </div>
 );
 
-const Services = ({ theme = 'dark', onThemeChange = () => {} }) => {
+const Services = ({ theme = 'dark' }) => {
   const sectionRef = useRef(null);
   const dockRef = useRef(null);
   const showcaseRef = useRef(null);
@@ -458,17 +468,21 @@ const Services = ({ theme = 'dark', onThemeChange = () => {} }) => {
           SERVICIOS
         </div>
         <h2 className={styles.headline}>
-          Servicios que se sienten como<br />
-          una experiencia <span className={styles.gradWord}>interactiva</span>.
+          ¿Qué quieres <span className={styles.gradWord}>mejorar</span>?
         </h2>
         <p className={styles.sub}>
-          Explora cada linea de trabajo como si fuera un prototipo: cambia el servicio,
-          mira el flujo y descubre que entregamos para mover tu negocio.
+          Elige el reto principal y te mostramos cómo podemos ayudarte con tecnología,
+          creatividad y operación.
         </p>
       </div>
 
       <div className={styles.experience}>
-        <div className={styles.serviceRail} aria-label="Servicios interactivos">
+        <div className={styles.serviceRail} aria-label="Opciones de mejora">
+          <div className={styles.railIntro}>
+            <span>Nuestros servicios</span>
+            <strong>Selecciona tu prioridad</strong>
+          </div>
+
           {SERVICES.map((service, index) => {
             const isActive = service.id === activeId;
 
@@ -486,16 +500,17 @@ const Services = ({ theme = 'dark', onThemeChange = () => {} }) => {
                 onFocus={() => setActiveId(service.id)}
                 onMouseEnter={() => setActiveId(service.id)}
                 aria-pressed={isActive}
+                aria-label={`${service.intentTitle}: ${service.intentDesc}`}
               >
                 <span className={styles.serviceIndex}>{String(index + 1).padStart(2, '0')}</span>
                 <span className={styles.serviceIcon}>
                   <service.Icon />
                 </span>
                 <span className={styles.serviceText}>
-                  <span className={styles.servicePill}>{service.pill}</span>
-                  <strong>{service.title}</strong>
-                  <small>{service.desc}</small>
+                  <strong>{service.intentTitle}</strong>
+                  <small>{service.intentDesc}</small>
                 </span>
+                {isActive && <span className={styles.selectedBadge}>Seleccionado</span>}
                 <span className={styles.serviceArrow}>
                   <Arrow />
                 </span>
@@ -520,7 +535,7 @@ const Services = ({ theme = 'dark', onThemeChange = () => {} }) => {
             onMouseLeave={handleShowcaseLeave}
           >
             <div className={styles.showcaseHeader}>
-              <span className={styles.showcaseKicker}>{activeService.pill}</span>
+              <span className={styles.showcaseKicker}>{activeService.intentTitle}</span>
               <h3>{activeService.title}</h3>
               <p>{activeService.outcome}</p>
             </div>
@@ -575,7 +590,7 @@ const Services = ({ theme = 'dark', onThemeChange = () => {} }) => {
               </a>
               {isAIService && (
                 <a href="/servicios/ia-automatizacion" className={styles.moreInfo}>
-                  Mas informacion <Arrow />
+                  Más información <Arrow />
                 </a>
               )}
             </div>

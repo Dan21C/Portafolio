@@ -13,7 +13,7 @@
   padding: 1.8rem 1.4rem;
   transition: border-color 0.3s, transform 0.2s;
 }
-.card:hover { border-color: rgba(123, 92, 240, 0.35); transform: translateY(-4px); }
+.card:hover { border-color: rgba(255, 70, 77, 0.35); transform: translateY(-4px); }
 
 .iconWrap {
   width: 44px; height: 44px;
