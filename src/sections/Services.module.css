@@ -1096,6 +1096,1029 @@
   color: var(--accent);
 }
 
+.brandActivationCatalog {
+  position: relative;
+  isolation: isolate;
+  width: min(1420px, 100%);
+  margin: 34px auto 0;
+  padding: 28px;
+  overflow: hidden;
+  border: 1px solid rgba(var(--rgb),.22);
+  border-radius: 22px;
+  background:
+    radial-gradient(ellipse 900px 420px at 72% 18%, rgba(var(--rgb),.13), transparent 66%),
+    radial-gradient(ellipse 680px 360px at 18% 84%, rgba(var(--rgb),.09), transparent 68%),
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+    rgba(6,10,13,.82);
+  background-size: auto, auto, 44px 44px, 44px 44px, auto;
+  box-shadow: 0 34px 110px rgba(0,0,0,.26), inset 0 1px 0 rgba(255,255,255,.05);
+  scroll-margin-top: 120px;
+}
+
+.brandActivationCatalog::before {
+  content: '';
+  position: absolute;
+  inset: 4% -12% auto 8%;
+  height: 260px;
+  background:
+    radial-gradient(circle at 38% 52%, rgba(var(--rgb),.22), transparent 5%),
+    radial-gradient(circle at 72% 44%, rgba(var(--rgb),.18), transparent 4%),
+    linear-gradient(100deg, transparent 0 12%, rgba(var(--rgb),.16) 26%, transparent 44% 100%);
+  filter: blur(3px);
+  opacity: .65;
+  pointer-events: none;
+}
+
+.light .brandActivationCatalog {
+  background:
+    radial-gradient(ellipse 900px 420px at 72% 18%, rgba(var(--rgb),.10), transparent 66%),
+    radial-gradient(ellipse 680px 360px at 18% 84%, rgba(17,21,26,.05), transparent 68%),
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+    rgba(255,255,255,.76);
+  box-shadow: 0 30px 90px rgba(31,41,55,.12), inset 0 1px 0 rgba(255,255,255,.45);
+}
+
+.activationHero {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(280px, .82fr) minmax(360px, 1.12fr) minmax(240px, .72fr);
+  gap: 26px;
+  align-items: center;
+}
+
+.activationHeroCopy > span,
+.activationDetailCopy > span,
+.activationExtraHead span {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--accent);
+  font-family: var(--font-b);
+  font-size: .72rem;
+  font-weight: 900;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+.activationHeroCopy > span i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 18px rgba(var(--rgb),.72);
+}
+
+.activationHeroCopy h2 {
+  max-width: 13ch;
+  margin-top: 14px;
+  color: var(--section-text);
+  font-family: var(--display-font);
+  font-size: clamp(2rem, 3.5vw, 3.75rem);
+  line-height: 1.02;
+}
+
+.activationHeroCopy p {
+  max-width: 48ch;
+  margin-top: 16px;
+  color: var(--section-muted);
+  font-family: var(--font-b);
+  font-size: .96rem;
+  line-height: 1.62;
+}
+
+.activationPrimaryCta,
+.activationActions a,
+.activationFinalCta a {
+  min-height: 46px;
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+  padding: 11px 20px;
+  border-radius: 10px;
+  color: var(--button-ink);
+  background: linear-gradient(135deg, #FF4B4B, #D92F37);
+  font-family: var(--display-font);
+  font-size: .86rem;
+  font-weight: 800;
+  box-shadow: 0 18px 46px rgba(var(--rgb),.24);
+}
+
+.activationPrimaryCta svg,
+.activationActions svg,
+.activationFinalCta svg {
+  width: 17px;
+  height: 17px;
+}
+
+.activationHeroVideo {
+  min-width: 0;
+}
+
+.activationMedia {
+  position: relative;
+  min-height: 310px;
+  overflow: hidden;
+  border: 1px solid rgba(var(--rgb),.34);
+  border-radius: 18px;
+  --poster-a: rgba(255, 57, 64, .72);
+  --poster-b: rgba(88, 20, 28, .66);
+  --poster-c: rgba(11, 18, 22, .94);
+  background:
+    radial-gradient(circle at 50% 46%, rgba(var(--rgb),.24), transparent 46%),
+    linear-gradient(135deg, rgba(255,255,255,.06), rgba(255,255,255,.015));
+  box-shadow: 0 26px 72px rgba(0,0,0,.24), inset 0 1px 0 rgba(255,255,255,.06);
+}
+
+.activationMedia_showreel {
+  min-height: 270px;
+  --poster-a: rgba(255, 56, 64, .9);
+  --poster-b: rgba(119, 20, 38, .72);
+  --poster-c: rgba(18, 8, 14, .96);
+}
+
+.activationMedia_emotion-lab {
+  --poster-a: rgba(255, 68, 88, .88);
+  --poster-b: rgba(120, 22, 52, .72);
+}
+
+.activationMedia_game-arena {
+  --poster-a: rgba(255, 47, 64, .78);
+  --poster-b: rgba(44, 16, 84, .72);
+}
+
+.activationMedia_faceplay {
+  --poster-a: rgba(255, 70, 104, .82);
+  --poster-b: rgba(34, 18, 76, .74);
+}
+
+.activationMedia_touch-journey {
+  --poster-a: rgba(255, 65, 55, .78);
+  --poster-b: rgba(21, 64, 72, .62);
+}
+
+.activationMedia_immersive-room,
+.activationMedia_hologramas {
+  --poster-a: rgba(176, 58, 255, .62);
+  --poster-b: rgba(255, 44, 61, .68);
+}
+
+.activationMedia_pisos {
+  --poster-a: rgba(33, 218, 183, .55);
+  --poster-b: rgba(255, 45, 61, .65);
+}
+
+.activationMedia_pantallas {
+  --poster-a: rgba(57, 123, 255, .62);
+  --poster-b: rgba(255, 48, 72, .68);
+}
+
+.activationMedia_simuladores {
+  --poster-a: rgba(255, 128, 55, .58);
+  --poster-b: rgba(121, 24, 35, .68);
+}
+
+.activationMedia_photobooth {
+  --poster-a: rgba(255, 74, 116, .78);
+  --poster-b: rgba(36, 93, 121, .56);
+}
+
+.activationMediaCompact {
+  min-height: 190px;
+  border-radius: 14px;
+}
+
+.activationMedia video {
+  width: 100%;
+  height: 100%;
+  min-height: inherit;
+  display: block;
+  object-fit: cover;
+}
+
+.activationMedia img {
+  width: 100%;
+  height: 100%;
+  min-height: inherit;
+  display: block;
+  object-fit: cover;
+  filter: saturate(1.08) contrast(1.04) brightness(.82);
+}
+
+.activationMediaPlaceholder {
+  position: relative;
+  min-height: inherit;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 10px;
+  padding: 24px;
+  color: var(--section-soft);
+  font-family: var(--font-b);
+  text-align: center;
+}
+
+.activationMediaPlaceholder::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(115deg, rgba(0,0,0,.3) 0 18%, rgba(255,255,255,.08) 38%, rgba(0,0,0,.28) 64% 100%),
+    radial-gradient(circle at 58% 42%, var(--poster-a), transparent 30%),
+    radial-gradient(circle at 38% 74%, var(--poster-b), transparent 32%),
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: auto, auto, 34px 34px, 34px 34px;
+  opacity: .84;
+}
+
+.activationPosterScene {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.posterScreen {
+  position: absolute;
+  left: 13%;
+  right: 13%;
+  top: 18%;
+  bottom: 24%;
+  border: 1px solid rgba(255, 77, 82, .46);
+  border-radius: 16px;
+  background:
+    radial-gradient(circle at 54% 48%, rgba(255,255,255,.18), transparent 18%),
+    radial-gradient(circle at 50% 50%, var(--poster-a), transparent 42%),
+    linear-gradient(135deg, rgba(255,255,255,.09), rgba(255,255,255,.02));
+  box-shadow: 0 0 44px rgba(255, 57, 64, .18), inset 0 0 28px rgba(0,0,0,.32);
+}
+
+.posterPerson {
+  position: absolute;
+  left: 50%;
+  top: 34%;
+  width: 58px;
+  height: 82px;
+  border-radius: 42px 42px 16px 16px;
+  background:
+    radial-gradient(circle at 50% 20%, rgba(255,255,255,.9) 0 7px, transparent 8px),
+    linear-gradient(180deg, rgba(255,255,255,.45), rgba(0,0,0,.16)),
+    var(--poster-b);
+  box-shadow: 0 0 34px var(--poster-a);
+  opacity: .74;
+  transform: translateX(-50%);
+}
+
+.posterCrowd {
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  bottom: 16%;
+  height: 34px;
+  background:
+    radial-gradient(circle at 8% 80%, rgba(0,0,0,.9) 0 13px, transparent 14px),
+    radial-gradient(circle at 19% 64%, rgba(0,0,0,.86) 0 15px, transparent 16px),
+    radial-gradient(circle at 32% 76%, rgba(0,0,0,.9) 0 12px, transparent 13px),
+    radial-gradient(circle at 72% 72%, rgba(0,0,0,.9) 0 13px, transparent 14px),
+    radial-gradient(circle at 86% 66%, rgba(0,0,0,.86) 0 16px, transparent 17px),
+    radial-gradient(circle at 98% 80%, rgba(0,0,0,.9) 0 12px, transparent 13px);
+  opacity: .82;
+  filter: drop-shadow(0 -10px 26px rgba(255, 49, 60, .2));
+}
+
+.posterHudOne,
+.posterHudTwo {
+  position: absolute;
+  width: 110px;
+  height: 76px;
+  border: 1px solid rgba(255, 77, 82, .32);
+  border-radius: 12px;
+  background:
+    linear-gradient(90deg, rgba(255,255,255,.22), transparent 45%) 16px 22px / 68px 5px no-repeat,
+    linear-gradient(90deg, var(--poster-a), transparent 52%) 16px 38px / 84px 5px no-repeat,
+    rgba(10,14,18,.5);
+  box-shadow: 0 0 24px rgba(255, 57, 64, .12);
+}
+
+.posterHudOne {
+  right: 8%;
+  top: 22%;
+}
+
+.posterHudTwo {
+  left: 8%;
+  bottom: 24%;
+  transform: scale(.82);
+  opacity: .76;
+}
+
+.activationMediaPlaceholder svg,
+.activationMediaPlaceholder span {
+  position: relative;
+  z-index: 1;
+}
+
+.activationMediaPlaceholder svg {
+  width: 34px;
+  height: 34px;
+  color: var(--accent);
+}
+
+.activationPlay {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 2;
+  width: 66px;
+  height: 66px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255,255,255,.64);
+  border-radius: 50%;
+  color: #fff;
+  background: rgba(0,0,0,.28);
+  translate: -50% -50%;
+  backdrop-filter: blur(8px);
+}
+
+.activationPlay svg {
+  width: 26px;
+  height: 26px;
+  transform: translateX(2px);
+}
+
+.activationBenefits {
+  display: grid;
+  gap: 16px;
+}
+
+.activationBenefits div {
+  display: grid;
+  grid-template-columns: 58px minmax(0, 1fr);
+  gap: 5px 14px;
+  align-items: center;
+}
+
+.activationBenefits span {
+  grid-row: 1 / span 2;
+  width: 58px;
+  height: 58px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(var(--rgb),.28);
+  border-radius: 50%;
+  color: var(--accent);
+  background: rgba(var(--rgb),.055);
+}
+
+.activationBenefits svg {
+  width: 24px;
+  height: 24px;
+}
+
+.activationBenefits strong {
+  color: var(--section-text);
+  font-family: var(--display-font);
+  font-size: 1rem;
+}
+
+.activationBenefits p {
+  color: var(--section-muted);
+  font-family: var(--font-b);
+  font-size: .82rem;
+  line-height: 1.4;
+}
+
+.activationProductsLayout {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(320px, .52fr) minmax(0, 1fr);
+  gap: 18px;
+  margin-top: 26px;
+}
+
+.activationProductList {
+  display: grid;
+  gap: 10px;
+}
+
+.activationProductButton {
+  min-height: 76px;
+  display: grid;
+  grid-template-columns: 38px 62px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  color: var(--section-text);
+  background: rgba(255,255,255,.035);
+  text-align: left;
+  cursor: pointer;
+  transition: transform 180ms ease, border-color 180ms ease, background 180ms ease, box-shadow 180ms ease;
+}
+
+.activationProductButton > span {
+  color: var(--section-soft);
+  font-family: var(--display-font);
+  font-size: .88rem;
+  font-weight: 800;
+}
+
+.activationProductButton i {
+  width: 58px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(var(--rgb),.24);
+  border-radius: 10px;
+  color: var(--accent);
+  background:
+    radial-gradient(circle at 50% 30%, rgba(var(--rgb),.24), transparent 42%),
+    rgba(var(--rgb),.06);
+  font-style: normal;
+}
+
+.activationProductButton i svg {
+  width: 23px;
+  height: 23px;
+}
+
+.activationProductButton strong {
+  display: block;
+  color: var(--section-text);
+  font-family: var(--display-font);
+  font-size: .96rem;
+}
+
+.activationProductButton small {
+  display: block;
+  margin-top: 3px;
+  color: var(--section-muted);
+  font-family: var(--font-b);
+  font-size: .72rem;
+  line-height: 1.34;
+}
+
+.activationProductButton:hover,
+.activationProductButton:focus-visible,
+.activationProductActive {
+  border-color: rgba(var(--rgb),.68);
+  background:
+    radial-gradient(circle at 18% 50%, rgba(var(--rgb),.20), transparent 38%),
+    rgba(var(--rgb),.075);
+  box-shadow: 0 18px 54px rgba(var(--rgb),.12), inset 0 1px 0 rgba(255,255,255,.06);
+  transform: translateX(3px);
+  outline: none;
+}
+
+.activationProductDetail {
+  position: relative;
+  overflow: hidden;
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 74% 26%, rgba(var(--rgb),.12), transparent 38%),
+    rgba(255,255,255,.04);
+  box-shadow: 0 24px 76px rgba(0,0,0,.20), inset 0 1px 0 rgba(255,255,255,.05);
+}
+
+.activationProductDetail article {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, .82fr);
+  gap: 20px;
+  align-items: center;
+}
+
+.activationOrganicLine {
+  position: absolute;
+  left: -10%;
+  top: 18%;
+  width: 76%;
+  height: 150px;
+  pointer-events: none;
+}
+
+.activationOrganicLine path {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 14px rgba(var(--rgb),.58));
+}
+
+.activationDetailCopy h3 {
+  margin-top: 10px;
+  color: var(--section-text);
+  font-family: var(--display-font);
+  font-size: clamp(1.45rem, 2.6vw, 2.3rem);
+  line-height: 1.04;
+}
+
+.activationDetailCopy p {
+  max-width: 52ch;
+  margin-top: 10px;
+  color: var(--section-muted);
+  font-family: var(--font-b);
+  font-size: .9rem;
+  line-height: 1.55;
+}
+
+.activationDetailCopy ul {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+  list-style: none;
+}
+
+.activationDetailCopy li {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--section-soft);
+  font-family: var(--font-b);
+  font-size: .82rem;
+}
+
+.activationDetailCopy li svg {
+  width: 16px;
+  height: 16px;
+  color: var(--accent);
+  flex: 0 0 auto;
+}
+
+.activationTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.activationTags span {
+  min-height: 28px;
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border: 1px solid rgba(var(--rgb),.22);
+  border-radius: 999px;
+  color: var(--section-soft);
+  background: rgba(var(--rgb),.045);
+  font-family: var(--font-b);
+  font-size: .72rem;
+  font-weight: 800;
+}
+
+.activationResult {
+  min-height: 58px;
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid rgba(var(--rgb),.20);
+  border-radius: 14px;
+  background: rgba(var(--rgb),.055);
+}
+
+.activationResult svg {
+  color: var(--accent);
+}
+
+.activationResult strong {
+  color: var(--section-text);
+  font-family: var(--display-font);
+  font-size: 1rem;
+  line-height: 1.18;
+}
+
+.activationActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.activationActions button {
+  min-height: 46px;
+  padding: 11px 20px;
+  border: 1px solid rgba(var(--rgb),.28);
+  border-radius: 10px;
+  color: var(--section-text);
+  background: rgba(255,255,255,.045);
+  font-family: var(--display-font);
+  font-size: .86rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.activationActions a {
+  margin-top: 0;
+}
+
+.activationExtraBlock {
+  position: relative;
+  z-index: 1;
+  margin-top: 22px;
+}
+
+.activationExtraHead {
+  margin-bottom: 12px;
+}
+
+.activationExtraCarousel {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(180px, 1fr));
+  gap: 14px;
+}
+
+.activationExtraCarousel article {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(255,255,255,.035);
+}
+
+.activationExtraCarousel .activationMedia {
+  min-height: 112px;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.activationExtraCarousel .activationPlay {
+  width: 38px;
+  height: 38px;
+}
+
+.activationExtraCarousel .activationPlay svg {
+  width: 17px;
+  height: 17px;
+}
+
+.activationExtraCarousel strong,
+.activationExtraCarousel p {
+  display: block;
+  padding-inline: 12px;
+}
+
+.activationExtraCarousel strong {
+  margin-top: 10px;
+  color: var(--section-text);
+  font-family: var(--display-font);
+  font-size: .9rem;
+}
+
+.activationExtraCarousel p {
+  margin: 4px 0 12px;
+  color: var(--section-muted);
+  font-family: var(--font-b);
+  font-size: .72rem;
+  line-height: 1.35;
+}
+
+.activationFinalCta {
+  position: relative;
+  z-index: 1;
+  min-height: 92px;
+  display: grid;
+  grid-template-columns: 60px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+  margin-top: 20px;
+  padding: 18px 22px;
+  overflow: hidden;
+  border: 1px solid rgba(var(--rgb),.32);
+  border-radius: 16px;
+  background:
+    radial-gradient(circle at 90% 80%, rgba(var(--rgb),.18), transparent 34%),
+    rgba(var(--rgb),.045);
+}
+
+.activationFinalCta > span {
+  width: 54px;
+  height: 54px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(var(--rgb),.26);
+  border-radius: 50%;
+  color: var(--accent);
+  background: rgba(var(--rgb),.055);
+}
+
+.activationFinalCta h3 {
+  color: var(--section-text);
+  font-family: var(--display-font);
+  font-size: clamp(1.2rem, 2vw, 1.7rem);
+}
+
+.activationFinalCta p {
+  margin-top: 4px;
+  color: var(--section-muted);
+  font-family: var(--font-b);
+  font-size: .86rem;
+}
+
+.activationFinalCta a {
+  margin-top: 0;
+}
+
+.brandActivationCatalog {
+  width: min(1280px, 100%);
+  padding: 24px;
+  border-color: rgba(var(--rgb), .36);
+  background:
+    radial-gradient(ellipse 760px 360px at 65% 14%, rgba(var(--rgb),.14), transparent 64%),
+    radial-gradient(ellipse 520px 280px at 88% 90%, rgba(var(--rgb),.11), transparent 66%),
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+    rgba(4,8,10,.88);
+  background-size: auto, auto, 38px 38px, 38px 38px, auto;
+}
+
+.activationHero {
+  grid-template-columns: minmax(270px, .86fr) minmax(420px, 1.05fr) minmax(230px, .62fr);
+  gap: 22px;
+  align-items: center;
+}
+
+.activationHeroCopy h2 {
+  max-width: 17ch;
+  margin-top: 10px;
+  font-size: clamp(2rem, 2.85vw, 2.95rem);
+  line-height: 1.06;
+}
+
+.activationHeroCopy p {
+  max-width: 42ch;
+  margin-top: 12px;
+  font-size: .88rem;
+  line-height: 1.55;
+}
+
+.activationPrimaryCta {
+  min-width: 210px;
+  margin-top: 18px;
+}
+
+.activationHeroVideo .activationMedia {
+  min-height: 0;
+  aspect-ratio: 16 / 8.6;
+  border-radius: 18px;
+  box-shadow: 0 22px 64px rgba(0,0,0,.32), 0 0 54px rgba(var(--rgb),.12);
+}
+
+.activationHeroVideo .activationMedia::after,
+.activationProductDetail .activationMedia::after,
+.activationExtraCarousel .activationMedia::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(0,0,0,.06), rgba(0,0,0,.22)),
+    radial-gradient(circle at 70% 28%, rgba(var(--rgb),.18), transparent 28%);
+}
+
+.activationPlay {
+  z-index: 3;
+  background: rgba(18, 20, 24, .28);
+}
+
+.activationBenefits {
+  gap: 18px;
+}
+
+.activationBenefits div {
+  grid-template-columns: 58px minmax(0, 1fr);
+}
+
+.activationBenefits strong {
+  font-size: .96rem;
+}
+
+.activationBenefits p {
+  max-width: 26ch;
+}
+
+.activationProductsLayout {
+  grid-template-columns: minmax(300px, .38fr) minmax(0, 1fr);
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.activationProductList {
+  gap: 8px;
+}
+
+.activationProductButton {
+  min-height: 58px;
+  grid-template-columns: 44px 76px minmax(0, 1fr);
+  gap: 10px;
+  padding: 9px 10px;
+  border-radius: 10px;
+}
+
+.activationProductButton > span:first-child {
+  grid-column: 1;
+  color: var(--accent);
+  font-size: .8rem;
+}
+
+.activationProductButton i {
+  position: relative;
+  width: 76px;
+  height: 44px;
+  overflow: hidden;
+  border-color: rgba(var(--rgb), .34);
+  border-radius: 9px;
+  background: rgba(255,255,255,.04);
+}
+
+.activationProductButton i img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(1.12) contrast(1.06) brightness(.86);
+}
+
+.activationProductButton i svg {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  z-index: 1;
+  width: 17px;
+  height: 17px;
+  padding: 2px;
+  border-radius: 6px;
+  color: #fff;
+  background: rgba(var(--rgb), .68);
+  box-sizing: content-box;
+}
+
+.activationProductText {
+  min-width: 0;
+  display: block;
+}
+
+.activationProductText strong {
+  font-size: .86rem;
+}
+
+.activationProductText small {
+  max-width: 28ch;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  font-size: .66rem;
+}
+
+.activationProductActive {
+  transform: translateX(0);
+}
+
+.activationProductDetail {
+  min-height: 282px;
+  padding: 18px;
+  border-color: rgba(255,255,255,.12);
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 82% 50%, rgba(var(--rgb),.16), transparent 38%),
+    linear-gradient(135deg, rgba(255,255,255,.065), rgba(255,255,255,.025));
+}
+
+.activationProductDetail article {
+  grid-template-columns: minmax(0, 1fr) minmax(320px, .62fr);
+  grid-template-areas:
+    "copy media"
+    "result actions";
+  gap: 14px 18px;
+}
+
+.activationDetailCopy {
+  grid-area: copy;
+}
+
+.activationProductDetail .activationMedia {
+  grid-area: media;
+  min-height: 0;
+  aspect-ratio: 16 / 7.1;
+}
+
+.activationResult {
+  grid-area: result;
+  min-height: 54px;
+}
+
+.activationActions {
+  grid-area: actions;
+  display: grid;
+  grid-template-columns: minmax(0, .9fr) minmax(0, 1fr);
+}
+
+.activationActions button,
+.activationActions a {
+  width: 100%;
+  min-height: 44px;
+}
+
+.activationDetailCopy h3 {
+  max-width: 15ch;
+  font-size: clamp(1.45rem, 2.25vw, 2rem);
+}
+
+.activationDetailCopy p {
+  max-width: 46ch;
+  font-size: .82rem;
+}
+
+.activationDetailCopy ul {
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.activationDetailCopy li {
+  font-size: .76rem;
+}
+
+.activationOrganicLine {
+  left: -3%;
+  top: 50%;
+  width: 55%;
+  height: 92px;
+  opacity: .55;
+}
+
+.activationTags span {
+  min-height: 24px;
+  padding: 5px 9px;
+  font-size: .66rem;
+}
+
+.activationExtraBlock {
+  margin-top: 18px;
+}
+
+.activationExtraHead {
+  margin-bottom: 10px;
+}
+
+.activationExtraCarousel {
+  grid-template-columns: repeat(5, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+.activationExtraCarousel article {
+  border-color: rgba(255,255,255,.13);
+  background: rgba(255,255,255,.04);
+}
+
+.activationExtraCarousel .activationMedia {
+  min-height: 0;
+  aspect-ratio: 16 / 7.4;
+}
+
+.activationExtraCarousel strong {
+  margin-top: 8px;
+  font-size: .82rem;
+}
+
+.activationExtraCarousel p {
+  min-height: 32px;
+  font-size: .68rem;
+}
+
+.activationFinalCta {
+  min-height: 76px;
+  grid-template-columns: 52px minmax(0, 1fr) minmax(200px, auto);
+  margin-top: 16px;
+  padding: 14px 18px;
+  border-radius: 14px;
+}
+
+.activationFinalCta > span {
+  width: 44px;
+  height: 44px;
+}
+
+.activationFinalCta h3 {
+  font-size: clamp(1.05rem, 1.7vw, 1.45rem);
+}
+
 .automationProducts {
   position: relative;
   isolation: isolate;
@@ -2076,6 +3099,23 @@
     grid-template-columns: 1fr;
   }
 
+  .activationHero,
+  .activationProductsLayout {
+    grid-template-columns: 1fr;
+  }
+
+  .activationBenefits {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .activationProductList {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .activationExtraCarousel {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
   .productCard,
   .productCard:nth-child(4),
   .productCard:nth-child(5) {
@@ -2239,6 +3279,23 @@
     grid-template-columns: 1fr;
   }
 
+  .activationProductDetail article {
+    grid-template-columns: 1fr;
+  }
+
+  .activationExtraCarousel {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .activationFinalCta {
+    grid-template-columns: 54px minmax(0, 1fr);
+  }
+
+  .activationFinalCta a {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+
   .automationBenefits {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -2344,6 +3401,49 @@
     border-radius: 18px;
   }
 
+  .brandActivationCatalog {
+    padding: 18px;
+    border-radius: 18px;
+  }
+
+  .activationHeroCopy h2 {
+    max-width: none;
+  }
+
+  .activationMedia {
+    min-height: 230px;
+  }
+
+  .activationBenefits,
+  .activationProductList,
+  .activationExtraCarousel {
+    grid-template-columns: 1fr;
+  }
+
+  .activationProductButton {
+    grid-template-columns: 34px 54px minmax(0, 1fr);
+  }
+
+  .activationProductDetail {
+    padding: 18px;
+  }
+
+  .activationActions,
+  .activationActions button,
+  .activationActions a,
+  .activationPrimaryCta {
+    width: 100%;
+  }
+
+  .activationFinalCta {
+    grid-template-columns: 1fr;
+  }
+
+  .activationFinalCta > span {
+    width: 46px;
+    height: 46px;
+  }
+
   .automationBenefits,
   .productCard,
   .automationCta {
@@ -2417,6 +3517,22 @@
 
   .productModal {
     width: 100%;
+  }
+
+  .activationHeroCopy h2 {
+    font-size: clamp(2rem, 11vw, 3.1rem);
+  }
+
+  .activationProductButton {
+    grid-template-columns: 42px minmax(0, 1fr);
+  }
+
+  .activationProductButton i {
+    display: none;
+  }
+
+  .activationMediaCompact {
+    min-height: 170px;
   }
 }
 

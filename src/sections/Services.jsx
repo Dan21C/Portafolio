@@ -7,6 +7,7 @@ import {
   Blocks,
   Bot,
   BrainCircuit,
+  Camera,
   CalendarDays,
   ChartNoAxesCombined,
   ClipboardCheck,
@@ -17,6 +18,8 @@ import {
   FileCheck2,
   FileText,
   Gauge,
+  Gamepad2,
+  Heart,
   LayoutDashboard,
   Link2,
   MapPin,
@@ -26,6 +29,7 @@ import {
   Package,
   PanelRightOpen,
   Paintbrush,
+  Play,
   Radio,
   Rocket,
   Search,
@@ -34,6 +38,7 @@ import {
   Sparkles,
   Target,
   Users,
+  Video,
   Workflow,
   X,
   Zap,
@@ -247,6 +252,126 @@ const automationProducts = [
     what: 'Procesa PDFs, formularios y archivos internos para extraer datos, validar campos y ordenar documentos por tipo.',
     ideal: 'Backoffice, administración, compras, legal u operaciones con alto volumen de documentos repetitivos.',
     tech: ['OCR', 'Clasificación IA', 'Validación', 'Extracción estructurada'],
+  },
+];
+
+const activationVideo = '/Assets/Animation/A_premium_brand_activation_whe.mp4';
+const activationImage = (name) => `/Assets/Activation/${name}.jpg`;
+
+const brandActivationProducts = [
+  {
+    key: 'emotion-lab',
+    number: '01',
+    name: 'APX Emotion Lab',
+    title: 'Conecta desde la emoción.',
+    description: 'Detectamos emociones y creamos experiencias personalizadas que generan impacto real.',
+    benefits: ['Conexión emocional auténtica', 'Experiencias visuales personalizadas', 'Datos que revelan lo que sienten'],
+    result: 'Más conexión emocional y resultados medibles.',
+    tags: ['Emociones', 'Personalización', 'Resultados'],
+    video: activationVideo,
+    poster: activationImage('emotion-lab'),
+    thumbnail: activationImage('emotion-lab'),
+    Icon: Heart,
+    what: 'Una experiencia que interpreta señales de participación y las convierte en momentos personalizados para cada usuario.',
+    ideal: 'Lanzamientos, stands, activaciones de alto impacto y campañas donde la marca quiere generar recuerdo emocional.',
+    tech: ['Cámara', 'IA visual', 'Pantallas', 'Analítica de interacción'],
+  },
+  {
+    key: 'game-arena',
+    number: '02',
+    name: 'APX Game Arena',
+    title: 'Convierte tu marca en un reto.',
+    description: 'Creamos juegos físicos y digitales para que las personas participen, compitan y recuerden tu marca.',
+    benefits: ['Mayor tiempo de permanencia', 'Ranking y competencia en vivo', 'Participación medible'],
+    result: 'Más emoción, más interacción y más recordación.',
+    tags: ['Juegos', 'Ranking', 'Gamificación'],
+    poster: activationImage('game-arena'),
+    thumbnail: activationImage('game-arena'),
+    Icon: Gamepad2,
+    what: 'Juegos de marca diseñados para atraer personas, sostener su atención y convertir la participación en datos útiles.',
+    ideal: 'Ferias, centros comerciales, eventos internos, activaciones retail y campañas que buscan alto engagement.',
+    tech: ['Juegos web', 'Sensores', 'Ranking', 'Pantallas'],
+  },
+  {
+    key: 'faceplay',
+    number: '03',
+    name: 'APX FacePlay',
+    title: 'Haz que tu audiencia se transforme.',
+    description: 'Creamos filtros, avatares y experiencias con cámara para generar contenido compartible.',
+    benefits: ['Contenido para redes', 'Filtros personalizados', 'Experiencias con cámara'],
+    result: 'Más alcance orgánico y contenido generado por usuarios.',
+    tags: ['Filtros', 'Cámara', 'Contenido'],
+    poster: activationImage('faceplay'),
+    thumbnail: activationImage('faceplay'),
+    Icon: Camera,
+    what: 'Una experiencia visual con cámara que transforma a los usuarios en parte de la campaña y facilita compartir contenido.',
+    ideal: 'Marcas que quieren conversación en redes, piezas compartibles y participación rápida en espacios de alto tráfico.',
+    tech: ['Cámara', 'Filtros', 'Avatares', 'Micrositios'],
+  },
+  {
+    key: 'touch-journey',
+    number: '04',
+    name: 'APX Touch Journey',
+    title: 'Guía a tus usuarios con pantallas interactivas.',
+    description: 'Diseñamos recorridos en pantallas, tótems y kioscos para registrar, educar, jugar o vender.',
+    benefits: ['Flujos fáciles de usar', 'Captura de registros', 'Interacción guiada'],
+    result: 'Más claridad, más datos y mejor experiencia de usuario.',
+    tags: ['Tótems', 'Pantallas', 'Registros'],
+    poster: activationImage('touch-journey'),
+    thumbnail: activationImage('touch-journey'),
+    Icon: MonitorSmartphone,
+    what: 'Interfaces táctiles para que las personas naveguen, se registren, participen o descubran productos sin fricción.',
+    ideal: 'Stands corporativos, salas de venta, puntos de atención, ferias y activaciones con captura de datos.',
+    tech: ['Tótems', 'Kioscos', 'UX táctil', 'Formularios'],
+  },
+  {
+    key: 'immersive-room',
+    number: '05',
+    name: 'APX Immersive Room',
+    title: 'Convierte un espacio en una historia.',
+    description: 'Creamos experiencias inmersivas con luz, sonido, pantallas, sensores y narrativa de marca.',
+    benefits: ['Impacto sensorial', 'Momentos memorables', 'Narrativa de marca'],
+    result: 'Una experiencia premium, memorable y medible.',
+    tags: ['Inmersivo', 'Sensores', 'Storytelling'],
+    poster: activationImage('immersive-room'),
+    thumbnail: activationImage('immersive-room'),
+    Icon: Sparkles,
+    what: 'Una instalación sensorial que combina tecnología, contenido y narrativa para envolver a las personas en la marca.',
+    ideal: 'Lanzamientos, experiencias VIP, showrooms, eventos premium y campañas con foco en impacto visual.',
+    tech: ['Sensores', 'LED', 'Audio', 'Mapping'],
+  },
+];
+
+const extraExperiences = [
+  {
+    key: 'pisos',
+    name: 'Pisos interactivos',
+    description: 'Movimiento, luz y reacción en cada paso.',
+    poster: activationImage('pisos-interactivos'),
+  },
+  {
+    key: 'hologramas',
+    name: 'Hologramas & Mapping',
+    description: 'Visuales que sorprenden y cuentan historias.',
+    poster: activationImage('hologramas-mapping'),
+  },
+  {
+    key: 'pantallas',
+    name: 'Pantallas LED',
+    description: 'Contenido dinámico para cada momento.',
+    poster: activationImage('pantallas-led'),
+  },
+  {
+    key: 'simuladores',
+    name: 'Simuladores',
+    description: 'Experiencias realistas que retan y entretienen.',
+    poster: activationImage('simuladores'),
+  },
+  {
+    key: 'photobooth',
+    name: 'Photobooth',
+    description: 'Recuerdos tangibles que la gente se lleva.',
+    poster: activationImage('photobooth'),
   },
 ];
 
@@ -615,6 +740,219 @@ const ProductModal = ({ product, onClose }) => {
   );
 };
 
+const ActivationMedia = ({ item, label, compact = false }) => {
+  const [failedVideo, setFailedVideo] = useState(false);
+  const [failedImage, setFailedImage] = useState(false);
+  const visualClass = item?.key ? (styles[`activationMedia_${item.key}`] ?? '') : '';
+  const imageSource = item?.poster || item?.thumbnail;
+
+  return (
+    <div className={`${styles.activationMedia} ${visualClass} ${compact ? styles.activationMediaCompact : ''}`}>
+      {!failedVideo && item?.video ? (
+        <video
+          key={item.video}
+          src={item.video}
+          poster={imageSource}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          onError={() => setFailedVideo(true)}
+        />
+      ) : !failedImage && imageSource ? (
+        <img
+          src={imageSource}
+          alt=""
+          loading="lazy"
+          onError={() => setFailedImage(true)}
+        />
+      ) : (
+        <div className={styles.activationMediaPlaceholder}>
+          <div className={styles.activationPosterScene} aria-hidden="true">
+            <span className={styles.posterScreen} />
+            <span className={styles.posterPerson} />
+            <span className={styles.posterCrowd} />
+            <span className={styles.posterHudOne} />
+            <span className={styles.posterHudTwo} />
+          </div>
+          <Video />
+          <span>{label}</span>
+        </div>
+      )}
+      {item?.video && (
+        <span className={styles.activationPlay}>
+          <Play />
+        </span>
+      )}
+    </div>
+  );
+};
+
+const BrandActivationCatalogSection = () => {
+  const [activeKey, setActiveKey] = useState(brandActivationProducts[0].key);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const activeProduct = brandActivationProducts.find((product) => product.key === activeKey) ?? brandActivationProducts[0];
+
+  return (
+    <section id="activar-marca" className={styles.brandActivationCatalog}>
+      <motion.div
+        className={styles.activationHero}
+        initial={{ opacity: 0, y: 24 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.18 }}
+        transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
+      >
+        <div className={styles.activationHeroCopy}>
+          <span><i /> ACTIVAR MI MARCA</span>
+          <h2>Experiencias que la gente vive, recuerda y comparte.</h2>
+          <p>Creamos activaciones que conectan con las personas a través de tecnología, pantallas, juegos e inteligencia artificial.</p>
+          <a href="#contacto" className={styles.activationPrimaryCta}>
+            Quiero activar mi marca <ArrowRight />
+          </a>
+        </div>
+
+        <div className={styles.activationHeroVideo}>
+          <ActivationMedia
+            item={{ key: 'showreel', video: activationVideo, poster: activationImage('showreel') }}
+            label="Video de experiencia"
+          />
+        </div>
+
+        <div className={styles.activationBenefits}>
+          {[
+            ['Más participación', 'Interacciones que involucran y animan a participar.', Users],
+            ['Más recordación', 'Experiencias que se sienten y se recuerdan.', Heart],
+            ['Datos útiles', 'Información real para tomar mejores decisiones.', BarChart3],
+          ].map(([title, text, BenefitIcon]) => (
+            <div key={title}>
+              <span><BenefitIcon /></span>
+              <strong>{title}</strong>
+              <p>{text}</p>
+            </div>
+          ))}
+        </div>
+      </motion.div>
+
+      <div className={styles.activationProductsLayout}>
+        <motion.div
+          className={styles.activationProductList}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.15 }}
+          variants={listVariants}
+        >
+          {brandActivationProducts.map((product) => {
+            const ProductIcon = product.Icon;
+            const isActive = product.key === activeKey;
+
+            return (
+              <motion.button
+                key={product.key}
+                type="button"
+                className={`${styles.activationProductButton} ${isActive ? styles.activationProductActive : ''}`}
+                variants={itemVariants}
+                onClick={() => setActiveKey(product.key)}
+                aria-pressed={isActive}
+              >
+                <span>{product.number}</span>
+                <i aria-hidden="true">
+                  <img src={product.thumbnail} alt="" loading="lazy" />
+                  <ProductIcon />
+                </i>
+                <span className={styles.activationProductText}>
+                  <strong>{product.name}</strong>
+                  <small>{product.description}</small>
+                </span>
+              </motion.button>
+            );
+          })}
+        </motion.div>
+
+        <div className={styles.activationProductDetail}>
+          <svg className={styles.activationOrganicLine} viewBox="0 0 520 160" preserveAspectRatio="none" aria-hidden="true">
+            <motion.path
+              d="M4 80 C112 18 164 142 260 80 S410 22 516 82"
+              initial={{ pathLength: 0, opacity: 0.2 }}
+              whileInView={{ pathLength: 1, opacity: 0.75 }}
+              viewport={{ once: true, amount: 0.5 }}
+              transition={{ duration: 2.4, ease: 'easeInOut' }}
+            />
+          </svg>
+
+          <AnimatePresence mode="wait">
+            <motion.article
+              key={activeProduct.key}
+              initial={{ opacity: 0, y: 16, filter: 'blur(8px)' }}
+              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+              exit={{ opacity: 0, y: -12, filter: 'blur(8px)' }}
+              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <div className={styles.activationDetailCopy}>
+                <span>{activeProduct.number} · {activeProduct.name}</span>
+                <h3>{activeProduct.title}</h3>
+                <p>{activeProduct.description}</p>
+                <ul>
+                  {activeProduct.benefits.map((benefit) => (
+                    <li key={benefit}><CircleCheck /> {benefit}</li>
+                  ))}
+                </ul>
+                <div className={styles.activationTags}>
+                  {activeProduct.tags.map((tag) => <span key={tag}>{tag}</span>)}
+                </div>
+              </div>
+
+              <ActivationMedia item={activeProduct} label={activeProduct.name} compact />
+
+              <div className={styles.activationResult}>
+                <Users />
+                <strong>{activeProduct.result}</strong>
+              </div>
+
+              <div className={styles.activationActions}>
+                <button type="button" onClick={() => setSelectedProduct(activeProduct)}>
+                  Ver más detalles
+                </button>
+                <a href="#contacto">
+                  Quiero esta experiencia <ArrowRight />
+                </a>
+              </div>
+            </motion.article>
+          </AnimatePresence>
+        </div>
+      </div>
+
+      <div className={styles.activationExtraBlock}>
+        <div className={styles.activationExtraHead}>
+          <span>Más experiencias que conectan</span>
+        </div>
+        <div className={styles.activationExtraCarousel}>
+          {extraExperiences.map((experience) => (
+            <article key={experience.name}>
+              <ActivationMedia item={experience} label={experience.name} compact />
+              <strong>{experience.name}</strong>
+              <p>{experience.description}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+
+      <div className={styles.activationFinalCta}>
+        <span><MessageSquare /></span>
+        <div>
+          <h3>Hablemos de tu próxima activación</h3>
+          <p>Cuéntanos tu idea y diseñemos una experiencia a la medida de tu marca.</p>
+        </div>
+        <a href="#contacto">
+          Agendar reunión <ArrowRight />
+        </a>
+      </div>
+
+      <ProductModal product={selectedProduct} onClose={() => setSelectedProduct(null)} />
+    </section>
+  );
+};
+
 const AutomationProductsSection = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
 
@@ -949,8 +1287,14 @@ const Services = ({ theme = 'dark' }) => {
                   Más información
                   <PanelRightOpen />
                 </a>
-              )}
-            </motion.aside>
+                )}
+                {activeService.key === 'activar' && (
+                  <a className={styles.moreInfoCta} href="#activar-marca">
+                    Más información
+                    <PanelRightOpen />
+                  </a>
+                )}
+              </motion.aside>
           </AnimatePresence>
         </div>
       </div>
@@ -970,6 +1314,7 @@ const Services = ({ theme = 'dark' }) => {
       </motion.div>
 
       <AutomationProductsSection />
+      <BrandActivationCatalogSection />
     </section>
   );
 };
