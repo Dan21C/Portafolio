@@ -375,6 +375,145 @@ const extraExperiences = [
   },
 ];
 
+const eventImage = (name) => `/Assets/Events/${name}.jpg`;
+const eventVideo = (name) => `/videos/events/${name}.mp4`;
+const eventShowreelVideo = '/Assets/Animation/Cinematic_premium_corporate_ev.mp4';
+
+const eventProductionProducts = [
+  {
+    key: 'brand-stand',
+    number: '01',
+    name: 'APX Brand Stand',
+    cardTitle: 'Stands corporativos',
+    cardDescription: 'Espacios que comunican tu marca y atraen.',
+    detailTitle: 'Stands corporativos que atraen, ordenan y hacen visible tu marca.',
+    detailDescription: 'Diseñamos y producimos espacios de marca pensados para que las personas se acerquen, entiendan tu propuesta y vivan una experiencia clara desde el primer contacto.',
+    includes: [
+      'Diseño del concepto visual del stand',
+      'Distribución del espacio y recorrido del usuario',
+      'Producción de mobiliario, gráfica y acabados',
+      'Integración de pantallas, tótems o dinámicas interactivas',
+      'Montaje, operación y desmontaje',
+      'Registro de visitantes o captura de leads si aplica',
+    ],
+    idealFor: 'Ferias, congresos, eventos corporativos, activaciones comerciales, puntos de experiencia, lanzamientos y espacios de atención de marca.',
+    result: 'Un espacio que no solo se ve bien: atrae personas, facilita conversaciones y deja oportunidades comerciales.',
+    cta: 'Quiero un stand para mi marca',
+    tags: ['Stands', 'Diseño de espacios', 'BTL', 'Pantallas', 'Leads'],
+    image: eventImage('brand-stand'),
+    video: eventVideo('brand-stand'),
+    Icon: Package,
+  },
+  {
+    key: 'launch-experience',
+    number: '02',
+    name: 'APX Launch Experience',
+    cardTitle: 'Lanzamientos de producto',
+    cardDescription: 'Revelamos lo nuevo con impacto y emoción.',
+    detailTitle: 'Lanzamientos que convierten un producto en una experiencia.',
+    detailDescription: 'Creamos eventos de lanzamiento con narrativa, puesta en escena, contenido visual e interacción para que tu producto se presente de una forma memorable.',
+    includes: [
+      'Concepto creativo del lanzamiento',
+      'Historia y narrativa del producto',
+      'Escenario, visuales y momento reveal',
+      'Apoyo audiovisual y contenido para pantallas',
+      'Experiencias interactivas para invitados',
+      'Registro de asistentes y medición de participación',
+      'Contenido post-evento para redes o reportes',
+    ],
+    idealFor: 'Nuevos productos, campañas de marca, tecnología, consumo masivo, retail, moda, alimentos, automotriz y experiencias premium.',
+    result: 'Tu producto no solo se muestra: se entiende, se vive y se recuerda.',
+    cta: 'Quiero lanzar mi producto',
+    tags: ['Lanzamiento', 'Storytelling', 'Escenografía', 'Show moment', 'Contenido'],
+    image: eventImage('launch-experience'),
+    video: eventVideo('launch-experience'),
+    Icon: Rocket,
+  },
+  {
+    key: 'conference-flow',
+    number: '03',
+    name: 'APX Conference Flow',
+    cardTitle: 'Conferencias',
+    cardDescription: 'Contenido que informa, inspira y posiciona.',
+    detailTitle: 'Conferencias fluidas, claras y profesionales.',
+    detailDescription: 'Diseñamos y operamos encuentros corporativos para que asistentes, speakers y marcas vivan una experiencia organizada, elegante y fácil de seguir.',
+    includes: [
+      'Diseño del flujo del evento',
+      'Agenda y momentos principales',
+      'Escenario, pantallas y apoyo audiovisual',
+      'Registro de asistentes',
+      'Señalética y piezas visuales',
+      'Dinámicas de participación',
+      'Soporte técnico y operación en vivo',
+    ],
+    idealFor: 'Conferencias, convenciones, seminarios, eventos empresariales, capacitaciones, encuentros de comunidad y eventos académicos.',
+    result: 'Un evento claro, ordenado y profesional que transmite confianza desde la entrada hasta el cierre.',
+    cta: 'Quiero organizar una conferencia',
+    tags: ['Conferencias', 'Agenda', 'Registro', 'Audiovisual', 'Operación en vivo'],
+    image: eventImage('conference-flow'),
+    video: eventVideo('conference-flow'),
+    Icon: Users,
+  },
+  {
+    key: 'event-operations',
+    number: '04',
+    name: 'APX Event Operations',
+    cardTitle: 'Operación y montaje',
+    cardDescription: 'Equipo experto para que todo fluya perfecto.',
+    detailTitle: 'Producción sin improvisaciones.',
+    detailDescription: 'Coordinamos los detalles técnicos, humanos y operativos para que el evento funcione bien antes, durante y después.',
+    includes: [
+      'Cronograma de producción',
+      'Coordinación de proveedores',
+      'Revisión técnica del montaje',
+      'Personal operativo',
+      'Pruebas previas',
+      'Supervisión durante el evento',
+      'Cierre, desmontaje y control final',
+    ],
+    idealFor: 'Eventos con varias áreas, stands, pantallas, experiencias interactivas, proveedores externos, activaciones simultáneas o giras.',
+    result: 'Menos estrés, más control y una ejecución ordenada que permite que tu equipo se enfoque en la marca y los invitados.',
+    cta: 'Quiero producir mi evento sin estrés',
+    tags: ['Producción', 'Montaje', 'Proveedores', 'Operación', 'Backstage'],
+    image: eventImage('event-operations'),
+    video: eventVideo('event-operations'),
+    Icon: Radio,
+  },
+  {
+    key: 'event-data',
+    number: '05',
+    name: 'APX Event Data',
+    cardTitle: 'Registro y resultados',
+    cardDescription: 'Capturamos datos útiles antes, durante y después.',
+    detailTitle: 'Eventos que dejan datos, no solo recuerdos.',
+    detailDescription: 'Integramos registro, formularios, QR, encuestas, dinámicas y reportes para que después del evento puedas saber qué pasó y qué oportunidades quedaron.',
+    includes: [
+      'Registro de asistentes',
+      'Formularios digitales',
+      'QR de acceso o participación',
+      'Captura de leads',
+      'Encuestas interactivas',
+      'Métricas de participación',
+      'Dashboard o reporte post-evento',
+    ],
+    idealFor: 'Eventos comerciales, lanzamientos, ferias, activaciones, conferencias, campañas con leads y marcas que necesitan medir resultados.',
+    result: 'Tu evento termina con información útil para tomar decisiones, hacer seguimiento y mejorar la próxima experiencia.',
+    cta: 'Quiero medir mi evento',
+    tags: ['Registro', 'Leads', 'Encuestas', 'Dashboards', 'Reportes'],
+    image: eventImage('event-data'),
+    video: eventVideo('event-data'),
+    Icon: BarChart3,
+  },
+];
+
+const eventProcessSteps = [
+  ['01', 'Concepto', 'Entendemos tu objetivo y audiencia.', Users],
+  ['02', 'Diseño', 'Diseñamos la experiencia y el plan del evento.', Paintbrush],
+  ['03', 'Producción', 'Coordinamos todo.', Gauge],
+  ['04', 'Operación', 'Ejecutamos cada detalle en vivo.', Play],
+  ['05', 'Medición', 'Entregamos resultados y aprendizajes.', BarChart3],
+];
+
 const listVariants = {
   hidden: {},
   visible: {
@@ -953,6 +1092,248 @@ const BrandActivationCatalogSection = () => {
   );
 };
 
+const EventMedia = ({ item, label, showVideoSlot = true }) => {
+  const [failedVideo, setFailedVideo] = useState(false);
+  const hasVideo = item?.video && !failedVideo;
+
+  return (
+    <div className={styles.eventMedia}>
+      {hasVideo ? (
+        <video
+          key={item.video}
+          src={item.video}
+          poster={item.image}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          onError={() => setFailedVideo(true)}
+        />
+      ) : (
+        <img src={item?.image} alt="" loading="lazy" />
+      )}
+      <span className={styles.eventMediaShade} />
+      {showVideoSlot && (
+        <span className={styles.eventPlaySlot} aria-hidden="true">
+          <Play />
+        </span>
+      )}
+      {showVideoSlot && <small>{label}</small>}
+    </div>
+  );
+};
+
+const EventProductDetailPanel = ({ product, products, onClose, onSelect }) => {
+  const currentIndex = products.findIndex((item) => item.key === product.key);
+  const previous = products[(currentIndex - 1 + products.length) % products.length];
+  const next = products[(currentIndex + 1) % products.length];
+
+  return (
+    <AnimatePresence mode="wait">
+      <motion.article
+        key={product.key}
+        id="event-product-detail"
+        className={styles.eventProductDetail}
+        initial={{ opacity: 0, y: 20, scale: 0.98 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: 20, scale: 0.98 }}
+        transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+      >
+        <button type="button" className={styles.eventDetailClose} onClick={onClose} aria-label="Cerrar detalle del evento">
+          <X />
+        </button>
+
+        <div className={styles.eventDetailMedia}>
+          <motion.img
+            key={product.image}
+            src={product.image}
+            alt=""
+            initial={{ opacity: 0, scale: 1.03 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          />
+          <div className={styles.eventThumbs}>
+            {products.map((item) => (
+              <button
+                key={item.key}
+                type="button"
+                className={item.key === product.key ? styles.eventThumbActive : ''}
+                onClick={() => onSelect(item)}
+                aria-label={`Ver ${item.cardTitle}`}
+              >
+                <img src={item.image} alt="" loading="lazy" />
+                {item.key === product.key && <span>{item.number}</span>}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className={styles.eventDetailContent}>
+          <span>{product.number} / {String(products.length).padStart(2, '0')}</span>
+          <h3>{product.detailTitle}</h3>
+          <p>{product.detailDescription}</p>
+
+          <div className={styles.eventDetailColumns}>
+            <div>
+              <strong><CalendarDays /> ¿Qué incluye?</strong>
+              <ul>
+                {product.includes.map((item) => (
+                  <li key={item}><CircleCheck /> {item}</li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <strong><Users /> Ideal para</strong>
+              <p>{product.idealFor}</p>
+              <strong><BarChart3 /> Resultado</strong>
+              <p>{product.result}</p>
+            </div>
+          </div>
+
+          <div className={styles.eventDetailTags}>
+            {product.tags.map((tag) => <span key={tag}>{tag}</span>)}
+          </div>
+
+          <div className={styles.eventDetailActions}>
+            <a href="#contacto" className={styles.eventGhostCta}>
+              <CalendarDays /> Agendar reunión
+            </a>
+            <a href="#contacto" className={styles.eventPrimaryCta}>
+              {product.cta} <ArrowRight />
+            </a>
+          </div>
+
+          <div className={styles.eventDetailNav}>
+            <button type="button" onClick={() => onSelect(previous)}>
+              Anterior
+            </button>
+            <button type="button" onClick={() => onSelect(next)}>
+              Siguiente <ArrowRight />
+            </button>
+          </div>
+        </div>
+      </motion.article>
+    </AnimatePresence>
+  );
+};
+
+const EventProductionSection = () => {
+  const [selectedProduct, setSelectedProduct] = useState(eventProductionProducts[0]);
+
+  const openProduct = (product) => {
+    setSelectedProduct(product);
+    window.requestAnimationFrame(() => {
+      document.getElementById('event-product-detail')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+  };
+
+  return (
+    <section id="producir-evento" className={styles.eventProductionSection}>
+      <motion.div
+        className={styles.eventProductionHero}
+        initial={{ opacity: 0, y: 24 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.18 }}
+        transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
+      >
+        <div className={styles.eventHeroCopy}>
+          <span><i /> SERVICIO 03</span>
+          <h2>Producir un <em>evento</em></h2>
+          <p>Planeamos, diseñamos y ejecutamos eventos 360° que se ven bien, funcionan perfecto y dejan resultados.</p>
+          <a href="#contacto" className={styles.eventPrimaryCta}>
+            Quiero producir mi evento <ArrowRight />
+          </a>
+          <div className={styles.eventProductionBenefits}>
+            {[
+              ['Experiencias memorables', 'Creamos momentos que conectan.', Users],
+              ['Ejecución impecable', 'Cada detalle bajo control.', CalendarDays],
+              ['Resultados que importan', 'Datos y aprendizajes que generan valor.', BarChart3],
+            ].map(([title, text, BenefitIcon]) => (
+              <div key={title}>
+                <BenefitIcon />
+                <strong>{title}</strong>
+                <small>{text}</small>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className={styles.eventHeroMedia}>
+          <EventMedia
+            item={{ image: eventImage('event-hero'), video: eventShowreelVideo }}
+            label="Ver showreel de producción"
+          />
+        </div>
+      </motion.div>
+
+      <motion.div
+        className={styles.eventProductionGrid}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.15 }}
+        variants={listVariants}
+      >
+        {eventProductionProducts.map((product) => {
+          const ProductIcon = product.Icon;
+          const isActive = selectedProduct?.key === product.key;
+
+          return (
+            <motion.button
+              key={product.key}
+              type="button"
+              className={`${styles.eventProductCard} ${isActive ? styles.eventProductCardActive : ''}`}
+              variants={itemVariants}
+              onClick={() => openProduct(product)}
+              aria-expanded={isActive}
+              aria-controls="event-product-detail"
+            >
+              <img src={product.image} alt="" loading="lazy" />
+              <span>{product.number}</span>
+              <ProductIcon />
+              <strong>{product.cardTitle}</strong>
+              <p>{product.cardDescription}</p>
+              <small>Más información <ArrowRight /></small>
+            </motion.button>
+          );
+        })}
+      </motion.div>
+
+      {selectedProduct && (
+        <EventProductDetailPanel
+          product={selectedProduct}
+          products={eventProductionProducts}
+          onClose={() => setSelectedProduct(null)}
+          onSelect={openProduct}
+        />
+      )}
+
+      <motion.div
+        className={styles.eventProcessStrip}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.18 }}
+        variants={listVariants}
+      >
+        <div>
+          <h3>Así trabajamos en cada evento</h3>
+          <p>Un proceso claro, humano y organizado para que todo funcione perfecto.</p>
+        </div>
+        <div className={styles.eventProcessSteps}>
+          {eventProcessSteps.map(([number, title, text, StepIcon]) => (
+            <motion.article key={title} variants={itemVariants}>
+              <span><StepIcon /></span>
+              <small>{number}</small>
+              <strong>{title}</strong>
+              <p>{text}</p>
+            </motion.article>
+          ))}
+        </div>
+      </motion.div>
+    </section>
+  );
+};
+
 const AutomationProductsSection = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
 
@@ -1294,6 +1675,12 @@ const Services = ({ theme = 'dark' }) => {
                     <PanelRightOpen />
                   </a>
                 )}
+                {activeService.key === 'producir' && (
+                  <a className={styles.moreInfoCta} href="#producir-evento">
+                    MÃ¡s informaciÃ³n
+                    <PanelRightOpen />
+                  </a>
+                )}
               </motion.aside>
           </AnimatePresence>
         </div>
@@ -1315,6 +1702,7 @@ const Services = ({ theme = 'dark' }) => {
 
       <AutomationProductsSection />
       <BrandActivationCatalogSection />
+      <EventProductionSection />
     </section>
   );
 };
