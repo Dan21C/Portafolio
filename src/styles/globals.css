@@ -1,4 +1,36 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,400&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+
+@font-face {
+  font-family: 'Raleway';
+  src: url('/Assets/Fonts/Raleway-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Raleway';
+  src: url('/Assets/Fonts/Raleway-Italic-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Nunito';
+  src: url('/Assets/Fonts/Nunito-VariableFont_wght.ttf') format('truetype');
+  font-weight: 200 1000;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Nunito';
+  src: url('/Assets/Fonts/Nunito-Italic-VariableFont_wght.ttf') format('truetype');
+  font-weight: 200 1000;
+  font-style: italic;
+  font-display: swap;
+}
 
 *, *::before, *::after {
   box-sizing: border-box;
@@ -20,8 +52,8 @@
   --text:      #F3F4F4;
   --muted:     rgba(236, 239, 240, 0.62);
   --white:     #FFFFFF;
-  --font-h:    'Syne', sans-serif;
-  --font-b:    'DM Sans', sans-serif;
+  --font-h:    'Raleway', sans-serif;
+  --font-b:    'Nunito', sans-serif;
   --radius:    10px;
   --radius-lg: 16px;
   --app-bg:    #070A0D;

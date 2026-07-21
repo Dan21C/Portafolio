@@ -8,10 +8,20 @@ import Services from './sections/Services';
 import Process from './sections/Process';
 import Stack from './sections/Stack';
 import AIAutomationPage from './pages/AIAutomationPage';
+import AutomatizarPage from './pages/AutomatizarPage';
+import ActivarMarcaPage from './pages/ActivarMarcaPage';
+import ProducirEventoPage from './pages/ProducirEventoPage';
+
+const standalonePages = {
+  '/servicios/ia-automatizacion': AIAutomationPage,
+  '/servicios/automatizar': AutomatizarPage,
+  '/servicios/activar-marca': ActivarMarcaPage,
+  '/servicios/producir-evento': ProducirEventoPage,
+};
 
 function App() {
   const [theme, setTheme] = useState(() => localStorage.getItem('apx-theme') || 'dark');
-  const isAIAutomationPage = window.location.pathname === '/servicios/ia-automatizacion';
+  const StandalonePage = standalonePages[window.location.pathname];
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
@@ -20,9 +30,9 @@ function App() {
 
   return (
     <div className="app-shell" data-theme={theme}>
-      {isAIAutomationPage && <Navbar theme={theme} onThemeChange={setTheme} />}
-      {isAIAutomationPage ? (
-        <AIAutomationPage theme={theme} onThemeChange={setTheme} />
+      {StandalonePage && <Navbar theme={theme} onThemeChange={setTheme} />}
+      {StandalonePage ? (
+        <StandalonePage theme={theme} onThemeChange={setTheme} />
       ) : (
         <main>
           <Hero theme={theme} onThemeChange={setTheme} />

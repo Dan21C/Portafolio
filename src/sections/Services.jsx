@@ -186,7 +186,7 @@ const automationProducts = [
     description: 'Un asistente con IA que entiende la información de tu empresa y responde preguntas en segundos.',
     benefits: ['Responde sobre documentos internos', 'Ayuda a redactar respuestas', 'Muestra fuentes confiables'],
     result: '-60% tiempo buscando información',
-    tags: ['LLM', 'RAG', 'Documentos', 'Fuentes'],
+    tags: ['Respuestas automáticas', 'Documentos internos', 'Fuentes confiables'],
     Icon: Bot,
     visual: 'chat',
     what: 'Centraliza conocimiento interno, consulta documentos y ayuda a responder preguntas frecuentes con fuentes claras.',
@@ -201,7 +201,7 @@ const automationProducts = [
     description: 'Encuentra oportunidades comerciales, organiza prospectos y prepara mensajes personalizados para contactar mejor.',
     benefits: ['Busca empresas por sector', 'Organiza datos públicos útiles', 'Sugiere mensajes personalizados'],
     result: '+3x velocidad en prospección',
-    tags: ['Web scraping', 'CRM', 'Lead scoring', 'IA'],
+    tags: ['Prospección', 'Datos públicos', 'Mensajes personalizados'],
     Icon: Target,
     visual: 'leads',
     what: 'Ayuda a encontrar oportunidades B2B, ordenar prospectos y preparar información para una prospección más responsable.',
@@ -216,7 +216,7 @@ const automationProducts = [
     description: 'Automatizamos reportes, alertas, carga de datos e integraciones para que tu operación sea más ágil.',
     benefits: ['Reportes automáticos', 'Alertas inteligentes', 'Integraciones entre herramientas'],
     result: '-40% tareas manuales',
-    tags: ['Workflows', 'APIs', 'Reportes', 'Alertas'],
+    tags: ['Flujos automáticos', 'Reportes', 'Alertas'],
     Icon: Zap,
     visual: 'timeline',
     what: 'Conecta formularios, bases, correos, reportes y herramientas para que las tareas repetitivas se ejecuten solas.',
@@ -231,7 +231,7 @@ const automationProducts = [
     description: 'Convierte datos dispersos en reportes claros que se generan solos y llegan a tu equipo cuando los necesita.',
     benefits: ['Genera reportes diarios o semanales', 'Resume resultados con IA', 'Envía alertas cuando algo cambia'],
     result: '-70% tiempo creando reportes',
-    tags: ['Dashboards', 'Alertas', 'Resúmenes IA', 'Automatización'],
+    tags: ['Reportes automáticos', 'Resúmenes', 'Alertas'],
     Icon: ChartNoAxesCombined,
     visual: 'report',
     what: 'Transforma datos sueltos en reportes periódicos, resúmenes ejecutivos y señales simples para decidir más rápido.',
@@ -246,7 +246,7 @@ const automationProducts = [
     description: 'Lee, clasifica, valida y organiza documentos automáticamente para que tu equipo no revise archivos uno por uno.',
     benefits: ['Extrae información de PDFs y formularios', 'Clasifica documentos por tipo', 'Valida campos importantes'],
     result: '-50% reprocesos administrativos',
-    tags: ['Documentos', 'OCR', 'Clasificación IA', 'Validación'],
+    tags: ['Documentos', 'Clasificación automática', 'Validación'],
     Icon: FileCheck2,
     visual: 'documents',
     what: 'Procesa PDFs, formularios y archivos internos para extraer datos, validar campos y ordenar documentos por tipo.',
@@ -268,7 +268,6 @@ const brandActivationProducts = [
     benefits: ['Conexión emocional auténtica', 'Experiencias visuales personalizadas', 'Datos que revelan lo que sienten'],
     result: 'Más conexión emocional y resultados medibles.',
     tags: ['Emociones', 'Personalización', 'Resultados'],
-    video: activationVideo,
     poster: activationImage('emotion-lab'),
     thumbnail: activationImage('emotion-lab'),
     Icon: Heart,
@@ -398,7 +397,7 @@ const eventProductionProducts = [
     ],
     idealFor: 'Ferias, congresos, eventos corporativos, activaciones comerciales, puntos de experiencia, lanzamientos y espacios de atención de marca.',
     result: 'Un espacio que no solo se ve bien: atrae personas, facilita conversaciones y deja oportunidades comerciales.',
-    cta: 'Quiero un stand para mi marca',
+    cta: 'Hablemos',
     tags: ['Stands', 'Diseño de espacios', 'BTL', 'Pantallas', 'Leads'],
     image: eventImage('brand-stand'),
     video: eventVideo('brand-stand'),
@@ -423,7 +422,7 @@ const eventProductionProducts = [
     ],
     idealFor: 'Nuevos productos, campañas de marca, tecnología, consumo masivo, retail, moda, alimentos, automotriz y experiencias premium.',
     result: 'Tu producto no solo se muestra: se entiende, se vive y se recuerda.',
-    cta: 'Quiero lanzar mi producto',
+    cta: 'Hablemos',
     tags: ['Lanzamiento', 'Storytelling', 'Escenografía', 'Show moment', 'Contenido'],
     image: eventImage('launch-experience'),
     video: eventVideo('launch-experience'),
@@ -448,7 +447,7 @@ const eventProductionProducts = [
     ],
     idealFor: 'Conferencias, convenciones, seminarios, eventos empresariales, capacitaciones, encuentros de comunidad y eventos académicos.',
     result: 'Un evento claro, ordenado y profesional que transmite confianza desde la entrada hasta el cierre.',
-    cta: 'Quiero organizar una conferencia',
+    cta: 'Hablemos',
     tags: ['Conferencias', 'Agenda', 'Registro', 'Audiovisual', 'Operación en vivo'],
     image: eventImage('conference-flow'),
     video: eventVideo('conference-flow'),
@@ -473,7 +472,7 @@ const eventProductionProducts = [
     ],
     idealFor: 'Eventos con varias áreas, stands, pantallas, experiencias interactivas, proveedores externos, activaciones simultáneas o giras.',
     result: 'Menos estrés, más control y una ejecución ordenada que permite que tu equipo se enfoque en la marca y los invitados.',
-    cta: 'Quiero producir mi evento sin estrés',
+    cta: 'Hablemos',
     tags: ['Producción', 'Montaje', 'Proveedores', 'Operación', 'Backstage'],
     image: eventImage('event-operations'),
     video: eventVideo('event-operations'),
@@ -498,7 +497,7 @@ const eventProductionProducts = [
     ],
     idealFor: 'Eventos comerciales, lanzamientos, ferias, activaciones, conferencias, campañas con leads y marcas que necesitan medir resultados.',
     result: 'Tu evento termina con información útil para tomar decisiones, hacer seguimiento y mejorar la próxima experiencia.',
-    cta: 'Quiero medir mi evento',
+    cta: 'Hablemos',
     tags: ['Registro', 'Leads', 'Encuestas', 'Dashboards', 'Reportes'],
     image: eventImage('event-data'),
     video: eventVideo('event-data'),
@@ -869,8 +868,8 @@ const ProductModal = ({ product, onClose }) => {
                 </div>
               </div>
             </div>
-            <a href="#contacto" className={styles.modalCta} onClick={onClose}>
-              Hablar sobre este producto <ArrowRight />
+            <a href="/#contacto" className={styles.modalCta} onClick={onClose}>
+              Hablemos <ArrowRight />
             </a>
           </motion.aside>
         </motion.div>
@@ -928,7 +927,7 @@ const ActivationMedia = ({ item, label, compact = false }) => {
   );
 };
 
-const BrandActivationCatalogSection = () => {
+export const BrandActivationCatalogSection = () => {
   const [activeKey, setActiveKey] = useState(brandActivationProducts[0].key);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const activeProduct = brandActivationProducts.find((product) => product.key === activeKey) ?? brandActivationProducts[0];
@@ -946,8 +945,8 @@ const BrandActivationCatalogSection = () => {
           <span><i /> ACTIVAR MI MARCA</span>
           <h2>Experiencias que la gente vive, recuerda y comparte.</h2>
           <p>Creamos activaciones que conectan con las personas a través de tecnología, pantallas, juegos e inteligencia artificial.</p>
-          <a href="#contacto" className={styles.activationPrimaryCta}>
-            Quiero activar mi marca <ArrowRight />
+          <a href="/#contacto" className={styles.activationPrimaryCta}>
+            Hablemos <ArrowRight />
           </a>
         </div>
 
@@ -1052,8 +1051,8 @@ const BrandActivationCatalogSection = () => {
                 <button type="button" onClick={() => setSelectedProduct(activeProduct)}>
                   Ver más detalles
                 </button>
-                <a href="#contacto">
-                  Quiero esta experiencia <ArrowRight />
+                <a href="/#contacto">
+                  Hablemos <ArrowRight />
                 </a>
               </div>
             </motion.article>
@@ -1082,8 +1081,8 @@ const BrandActivationCatalogSection = () => {
           <h3>Hablemos de tu próxima activación</h3>
           <p>Cuéntanos tu idea y diseñemos una experiencia a la medida de tu marca.</p>
         </div>
-        <a href="#contacto">
-          Agendar reunión <ArrowRight />
+        <a href="/#contacto">
+          Hablemos <ArrowRight />
         </a>
       </div>
 
@@ -1196,10 +1195,7 @@ const EventProductDetailPanel = ({ product, products, onClose, onSelect }) => {
           </div>
 
           <div className={styles.eventDetailActions}>
-            <a href="#contacto" className={styles.eventGhostCta}>
-              <CalendarDays /> Agendar reunión
-            </a>
-            <a href="#contacto" className={styles.eventPrimaryCta}>
+            <a href="/#contacto" className={styles.eventPrimaryCta}>
               {product.cta} <ArrowRight />
             </a>
           </div>
@@ -1218,7 +1214,7 @@ const EventProductDetailPanel = ({ product, products, onClose, onSelect }) => {
   );
 };
 
-const EventProductionSection = () => {
+export const EventProductionSection = () => {
   const [selectedProduct, setSelectedProduct] = useState(eventProductionProducts[0]);
 
   const openProduct = (product) => {
@@ -1241,8 +1237,8 @@ const EventProductionSection = () => {
           <span><i /> SERVICIO 03</span>
           <h2>Producir un <em>evento</em></h2>
           <p>Planeamos, diseñamos y ejecutamos eventos 360° que se ven bien, funcionan perfecto y dejan resultados.</p>
-          <a href="#contacto" className={styles.eventPrimaryCta}>
-            Quiero producir mi evento <ArrowRight />
+          <a href="/#contacto" className={styles.eventPrimaryCta}>
+            Hablemos <ArrowRight />
           </a>
           <div className={styles.eventProductionBenefits}>
             {[
@@ -1334,7 +1330,7 @@ const EventProductionSection = () => {
   );
 };
 
-const AutomationProductsSection = () => {
+export const AutomationProductsSection = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
 
   return (
@@ -1424,7 +1420,7 @@ const AutomationProductsSection = () => {
 
       <div className={styles.automationCta}>
         <span><Rocket /> Cuéntanos tu reto y te mostramos cómo podemos automatizar tu operación.</span>
-        <a href="#contacto">Quiero resolver este reto <ArrowRight /></a>
+        <a href="/#contacto">Hablemos <ArrowRight /></a>
       </div>
 
       <ProductModal product={selectedProduct} onClose={() => setSelectedProduct(null)} />
@@ -1660,24 +1656,24 @@ const Services = ({ theme = 'dark' }) => {
               </div>
 
               <a className={styles.cta} href="#contacto">
-                Quiero resolver este reto
+                Hablemos
                 <ArrowRight />
               </a>
               {activeService.key === 'automatizar' && (
-                <a className={styles.moreInfoCta} href="#automatizar-productos">
+                <a className={styles.moreInfoCta} href="/servicios/automatizar">
                   Más información
                   <PanelRightOpen />
                 </a>
                 )}
                 {activeService.key === 'activar' && (
-                  <a className={styles.moreInfoCta} href="#activar-marca">
+                  <a className={styles.moreInfoCta} href="/servicios/activar-marca">
                     Más información
                     <PanelRightOpen />
                   </a>
                 )}
                 {activeService.key === 'producir' && (
-                  <a className={styles.moreInfoCta} href="#producir-evento">
-                    MÃ¡s informaciÃ³n
+                  <a className={styles.moreInfoCta} href="/servicios/producir-evento">
+                    Más información
                     <PanelRightOpen />
                   </a>
                 )}
@@ -1700,9 +1696,6 @@ const Services = ({ theme = 'dark' }) => {
         ))}
       </motion.div>
 
-      <AutomationProductsSection />
-      <BrandActivationCatalogSection />
-      <EventProductionSection />
     </section>
   );
 };

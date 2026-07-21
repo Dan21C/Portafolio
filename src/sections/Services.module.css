@@ -1,8 +1,8 @@
 .section {
   --accent: #FF3B3B;
   --rgb: 255,59,59;
-  --display-font: 'Space Grotesk', var(--font-h), sans-serif;
-  --body-font: 'DM Sans', 'Inter', sans-serif;
+  --display-font: var(--font-h);
+  --body-font: var(--font-b);
   --section-text: #F7F8FA;
   --section-muted: rgba(231,235,242,.68);
   --section-soft: rgba(231,235,242,.78);

@@ -119,12 +119,12 @@ const Stack = () => {
       const scrolled  = Math.max(0, -rect.top);
       const rawProgress = Math.min(1, scrolled / totalScrollable);
 
-      // Hold at 0° for first 15%, flip between 15–85%, hold at 180° last 15%
-      const deg = rawProgress < 0.15
+      // Hold at 0° for first 40%, quick flip between 40–60%, hold at 180° last 40%
+      const deg = rawProgress < 0.4
         ? 0
-        : rawProgress > 0.85
+        : rawProgress > 0.6
           ? 180
-          : ((rawProgress - 0.15) / 0.70) * 180;
+          : ((rawProgress - 0.4) / 0.2) * 180;
       setRotation(deg);
     };
 
@@ -328,7 +328,7 @@ const Stack = () => {
                         }}
                         type="button"
                       >
-                        Escribir mensaje <Arrow />
+                        Hablemos <Arrow />
                       </button>
                       <a
                         href="https://wa.me/573000000000"
@@ -566,11 +566,6 @@ const Stack = () => {
             <span className={styles.ctaTrustItem}>
               <span className={styles.ctaTrustDot} style={{ background: '#E4585E' }} />
               Sin compromiso inicial
-            </span>
-            <span className={styles.ctaTrustSep} />
-            <span className={styles.ctaTrustItem}>
-              <span className={styles.ctaTrustDot} style={{ background: '#B6BEC8' }} />
-              +80 marcas atendidas
             </span>
           </div>
 

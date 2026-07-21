@@ -208,7 +208,7 @@ const Process = () => {
 
               <p className={styles.solution}>{c.solution}</p>
 
-              <Metric ch={c} active={i === activeIdx} />
+              <Metric ch={c} active={visible} />
 
               <div className={styles.tagWrap}>
                 {c.tags.map((t, ti) => (

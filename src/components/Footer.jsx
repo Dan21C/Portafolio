@@ -1,9 +1,8 @@
 import BrainLogo from '../components/BrainLogo';
 import styles from './Footer.module.css';
 
-const navLinks = ['Inicio', 'Servicios', 'Proceso', 'Casos', 'Nosotros', 'Blog'];
+const navLinks = ['Inicio', 'Servicios', 'Proceso', 'Nosotros', 'Blog', 'Preguntas frecuentes'];
 const serviceLinks = ['Experiencias', 'Gamificación', 'Análisis de datos', 'Inteligencia artificial', 'Desarrollo de software', 'Automatización'];
-const resourceLinks = ['Blog', 'Casos de éxito', 'Preguntas frecuentes', 'Contacto'];
 
 const socials = [
   { label: 'LinkedIn', icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg> },
@@ -42,12 +41,6 @@ const Footer = () => (
       <div className={styles.col}>
         <h5 className={styles.colTitle}>Servicios</h5>
         {serviceLinks.map(l => <a key={l} href="#servicios" className={styles.link}>{l}</a>)}
-      </div>
-
-      {/* Resources */}
-      <div className={styles.col}>
-        <h5 className={styles.colTitle}>Recursos</h5>
-        {resourceLinks.map(l => <a key={l} href="#" className={styles.link}>{l}</a>)}
       </div>
 
       {/* Contact */}
