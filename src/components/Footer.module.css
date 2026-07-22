@@ -2,7 +2,7 @@
   position: relative;
   overflow: hidden;
   background:
-    radial-gradient(circle at 18% 12%, rgba(255,70,77,.10), transparent 30%),
+    radial-gradient(circle at 18% 12%, rgba(var(--accent-rgb), .10), transparent 30%),
     linear-gradient(135deg, #070A0D 0%, #0A0D10 52%, #11161A 100%);
   border-top: 1px solid var(--border);
   padding: 4rem 5% 2rem;
@@ -65,7 +65,7 @@
   color: var(--muted);
   transition: background 0.2s, color 0.2s;
 }
-.social:hover { background: rgba(255,70,77,0.14); color: var(--purple-l); }
+.social:hover { background: rgba(var(--accent-rgb), 0.14); color: var(--purple-l); }
 
 .col {}
 .colTitle {
@@ -127,7 +127,7 @@
 
 :global([data-theme='light']) .footer {
   background:
-    radial-gradient(circle at 18% 12%, rgba(255,70,77,.075), transparent 30%),
+    radial-gradient(circle at 18% 12%, rgba(var(--accent-rgb), .075), transparent 30%),
     linear-gradient(135deg, #FFFFFF 0%, #F8F8F6 52%, #ECEFF1 100%);
 }
 

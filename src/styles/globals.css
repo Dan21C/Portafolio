@@ -39,16 +39,21 @@
 }
 
 :root {
+  /* Single source of truth for the brand accent color. Change these two
+     to try a different accent across the whole site. */
+  --accent:      #f2f2f2;
+  --accent-rgb:  242, 242, 242;
+
   --bg:        #070A0D;
   --bg2:       #101417;
   --bg3:       #171C20;
   --card:      rgba(17, 21, 24, 0.86);
-  --border:    rgba(255, 70, 77, 0.18);
+  --border:    rgba(var(--accent-rgb), 0.18);
   --border-w:  rgba(255, 255, 255, 0.07);
-  --purple:    #FF464D;
-  --purple-l:  #FF464D;
-  --purple-d:  #9B242B;
-  --glow:      rgba(255, 70, 77, 0.25);
+  --purple:    var(--accent);
+  --purple-l:  var(--accent);
+  --purple-d:  var(--accent);
+  --glow:      rgba(var(--accent-rgb), 0.25);
   --text:      #F3F4F4;
   --muted:     rgba(236, 239, 240, 0.62);
   --white:     #FFFFFF;
@@ -75,7 +80,7 @@
   --bg2:       #FFFFFF;
   --bg3:       #ECEFF1;
   --card:      rgba(255, 255, 255, 0.82);
-  --border:    rgba(255, 70, 77, 0.18);
+  --border:    rgba(var(--accent-rgb), 0.18);
   --border-w:  rgba(17, 20, 23, 0.12);
   --text:      #111417;
   --muted:     rgba(17, 20, 23, 0.64);
@@ -171,12 +176,12 @@ img { max-width: 100%; display: block; }
   align-items: center;
   gap: 8px;
   transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
-  box-shadow: 0 4px 24px rgba(255, 70, 77, 0.3);
+  box-shadow: 0 4px 24px rgba(var(--accent-rgb), 0.3);
 }
 .btn-primary:hover {
   background: var(--purple-l);
   transform: translateY(-2px);
-  box-shadow: 0 8px 32px rgba(255, 70, 77, 0.45);
+  box-shadow: 0 8px 32px rgba(var(--accent-rgb), 0.45);
 }
 
 .btn-secondary {

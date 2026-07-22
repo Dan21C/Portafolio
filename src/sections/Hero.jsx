@@ -171,11 +171,11 @@ const Hero = ({ theme = 'dark', onThemeChange = () => {} }) => {
           </p>
 
           <div className={styles.ctas}>
-            <a href="#contacto" className={styles.primaryBtn} onClick={(event) => scrollToTarget(event, '#contacto')}>
-              Hablemos <Arrow />
+            <a href="#servicios" className={styles.primaryBtn} onClick={(event) => scrollToTarget(event, '#servicios')}>
+              Ver catálogo <Arrow />
             </a>
-            <a href="#servicios" className={styles.secondaryBtn} onClick={(event) => scrollToTarget(event, '#servicios')}>
-              Ver soluciones <Arrow />
+            <a href="#contacto" className={styles.secondaryBtn} onClick={(event) => scrollToTarget(event, '#contacto')}>
+              Hablemos <Arrow />
             </a>
           </div>
         </div>

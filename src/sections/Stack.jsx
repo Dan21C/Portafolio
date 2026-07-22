@@ -34,22 +34,22 @@ const Arrow = () => (
 const SOLUTIONS = [
   {
     id: 'exp',
-    accent: '#FF464D', rgb: '255,70,77',
+    accent: 'var(--accent)', rgb: 'var(--accent-rgb)',
     Icon: IScreen,
     label: 'EXPERIENCIAS',
     headline: 'Experiencias que activan marcas.',
     desc: 'Tecnología inmersiva en cada punto de contacto. Convertimos presencia física en participación medible y recuerdo de marca que dura.',
     isMain: true,
     services: [
-      { dot: '#FF464D', dotRgb: '255,70,77',  name: 'Activaciones interactivas', detail: 'Pantallas táctiles · Totems · Kioscos' },
-      { dot: '#E4585E', dotRgb: '228,88,94',  name: 'Gamificación & Loyalty',    detail: 'Puntos · Retos · Rankings · Recompensas' },
-      { dot: '#C9353D', dotRgb: '201,53,61',  name: 'Micrositios & Registro',    detail: 'Landing de evento · Formularios · QR' },
+      { dot: 'var(--accent)', dotRgb: 'var(--accent-rgb)',  name: 'Activaciones interactivas', detail: 'Pantallas táctiles · Totems · Kioscos' },
+      { dot: 'var(--accent)', dotRgb: 'var(--accent-rgb)',  name: 'Gamificación & Loyalty',    detail: 'Puntos · Retos · Rankings · Recompensas' },
+      { dot: 'var(--accent)', dotRgb: 'var(--accent-rgb)',  name: 'Micrositios & Registro',    detail: 'Landing de evento · Formularios · QR' },
       { dot: '#B6BEC8', dotRgb: '182,190,200', name: 'Contenido & Motion',       detail: 'Video · Animación · Branding digital' },
     ],
   },
   {
     id: 'events',
-    accent: '#C9353D', rgb: '201,53,61',
+    accent: 'var(--accent)', rgb: 'var(--accent-rgb)',
     Icon: IStar,
     label: 'EVENTOS 360',
     headline: 'Del concepto al evento. Sin detalles perdidos.',
@@ -386,7 +386,7 @@ const Stack = () => {
                   /* ── Success ── */
                   <div className={styles.ctaSuccess}>
                     <div className={styles.ctaSuccessIcon}>
-                      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FF464D" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
                       </svg>
                     </div>
@@ -559,12 +559,12 @@ const Stack = () => {
 
           <div className={styles.ctaTrust}>
             <span className={styles.ctaTrustItem}>
-              <span className={styles.ctaTrustDot} style={{ background: '#FF464D' }} />
+              <span className={styles.ctaTrustDot} style={{ background: 'var(--accent)' }} />
               Respuesta en &lt; 24h
             </span>
             <span className={styles.ctaTrustSep} />
             <span className={styles.ctaTrustItem}>
-              <span className={styles.ctaTrustDot} style={{ background: '#E4585E' }} />
+              <span className={styles.ctaTrustDot} style={{ background: 'var(--accent)' }} />
               Sin compromiso inicial
             </span>
           </div>

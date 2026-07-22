@@ -6,7 +6,7 @@ import styles from './Process.module.css';
 const CHALLENGES = [
   {
     num: '01',
-    accent: '#FF464D', rgb: '255,70,77',
+    accent: 'var(--accent)', rgb: 'var(--accent-rgb)',
     quote: 'Tenemos datos pero nadie los entiende.',
     solution: 'Construimos dashboards ejecutivos en tiempo real que convierten números crudos en decisiones de negocio.',
     metric: 72, metricPrefix: '−', metricSuffix: '%',
@@ -15,7 +15,7 @@ const CHALLENGES = [
   },
   {
     num: '02',
-    accent: '#E4585E', rgb: '228,88,94',
+    accent: 'var(--accent)', rgb: 'var(--accent-rgb)',
     quote: 'Nuestros sistemas no se hablan entre sí.',
     solution: 'Integramos tu ecosistema completo: ERP, bases de datos, APIs y cloud en un flujo 100% automatizado.',
     metric: null, metricText: 'Cero',
@@ -24,7 +24,7 @@ const CHALLENGES = [
   },
   {
     num: '03',
-    accent: '#C9353D', rgb: '201,53,61',
+    accent: 'var(--accent)', rgb: 'var(--accent-rgb)',
     quote: 'Necesitamos software pero no sabemos por dónde empezar.',
     solution: 'Del briefing a producción en semanas. Software construido para tu proceso exacto, no una plantilla adaptada.',
     metric: null, metricText: '3–6 sem',
@@ -42,7 +42,7 @@ const CHALLENGES = [
   },
   {
     num: '05',
-    accent: '#FF6B70', rgb: '255,107,112',
+    accent: 'var(--accent)', rgb: 'var(--accent-rgb)',
     quote: 'La gente asiste, pero no interactúa con la marca.',
     solution: 'Pantallas táctiles, gamificación y activaciones interactivas que convierten espectadores en participantes comprometidos.',
     metric: 35, metricPrefix: '+', metricSuffix: '%',

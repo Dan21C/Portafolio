@@ -1,9 +1,10 @@
 import styles from './Ticker.module.css';
 
 const items = [
-  'Gamificación', 'Experiencias Interactivas', 'Inteligencia Artificial',
-  'Análisis de Datos', 'Automatización', 'Desarrollo de Software',
-  'Tótems Interactivos', 'Activaciones de Marca',
+  'Un solo equipo, sin intermediarios', 'Soluciones a la medida de tu marca',
+  'Resultados medibles desde el primer proyecto', 'Tecnología propia, no plantillas',
+  'Acompañamiento de principio a fin', 'Experiencia en marcas de toda Latinoamérica',
+  'Entregas rápidas, sin sacrificar calidad', 'Soporte real después del lanzamiento',
 ];
 
 const Ticker = () => (

@@ -1,6 +1,6 @@
 .ticker {
   background:
-    linear-gradient(90deg, rgba(255,70,77,.88), rgba(155,36,43,.94), rgba(255,70,77,.88));
+    linear-gradient(90deg, rgba(var(--accent-rgb), .88), rgba(var(--accent-rgb), .94), rgba(var(--accent-rgb), .88));
   padding: 0.55rem 0;
   overflow: hidden;
   border-top: 1px solid rgba(255,255,255,0.12);
@@ -21,8 +21,7 @@
   font-weight: 700;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: #fff;
-  text-shadow: 0 0 18px rgba(255,255,255,.16);
+  color: #0c0f12;
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -35,9 +34,9 @@
 
 :global([data-theme='light']) .ticker {
   background:
-    linear-gradient(90deg, #FF464D, #B92D34, #FF464D);
+    linear-gradient(90deg, var(--accent), var(--accent), var(--accent));
   border-color: rgba(17,20,23,.10);
-  box-shadow: 0 14px 38px rgba(255,70,77,.16);
+  box-shadow: 0 14px 38px rgba(var(--accent-rgb), .16);
 }
 
 @keyframes scroll {

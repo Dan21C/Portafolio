@@ -170,13 +170,6 @@ const servicesData = [
   },
 ];
 
-const metrics = [
-  { value: '+80', label: 'marcas confian en nosotros' },
-  { value: '+35%', label: 'engagement promedio' },
-  { value: '6', label: 'verticales principales' },
-  { value: '3', label: 'países con presencia activa' },
-];
-
 const automationProducts = [
   {
     key: 'assistant',
@@ -1571,7 +1564,6 @@ const Services = ({ theme = 'dark' }) => {
                 type="button"
                 data-service-key={service.key}
                 className={`${styles.serviceButton} ${isActive ? styles.activeService : ''}`}
-                style={{ '--accent': '#FF3B3B', '--rgb': '255,59,59' }}
                 variants={itemVariants}
                 onClick={() => selectService(service.key)}
                 onFocus={() => selectService(service.key)}
@@ -1681,20 +1673,6 @@ const Services = ({ theme = 'dark' }) => {
           </AnimatePresence>
         </div>
       </div>
-
-      <motion.div
-        className={styles.metricsBar}
-        initial={{ opacity: 0, y: 18 }}
-        animate={visible ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
-        transition={{ duration: 0.6, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
-      >
-        {metrics.map((metric) => (
-          <div key={metric.label}>
-            <strong>{metric.value}</strong>
-            <span>{metric.label}</span>
-          </div>
-        ))}
-      </motion.div>
 
     </section>
   );
