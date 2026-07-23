@@ -41,6 +41,17 @@
 
 /* ── Background ─────────────────────────────────────── */
 
+.bgVideo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: .38;
+  pointer-events: none;
+  z-index: 0;
+}
+
 .bgNebula {
   position: absolute;
   top: -180px; right: -220px;

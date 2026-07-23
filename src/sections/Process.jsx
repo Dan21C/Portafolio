@@ -155,6 +155,14 @@ const Process = () => {
         id="proceso"
         className={`${styles.section} ${visible ? styles.visible : ''}`}
       >
+        <video
+          className={styles.bgVideo}
+          src="/Assets/Animation/luminous-threads-horizon.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
+        />
         <div className={styles.bgNebula}  />
         <div className={styles.bgNebula2} />
         <div className={styles.bgScan}    />
