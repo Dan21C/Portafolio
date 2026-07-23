@@ -51,22 +51,21 @@ const servicesData = [
     number: '01',
     Icon: BrainCircuit,
     menuTitle: 'Automatizar tareas',
-    menuDescription: 'Que tu equipo deje de repetir lo mismo todos los días.',
+    menuDescription: 'Reduce tareas repetitivas del equipo.',
     category: 'AUTOMATIZAR TAREAS',
-    panelTitle: 'Automatización simple para trabajar mejor',
-    panelDescription: 'Identificamos las tareas repetitivas de tu operación y las convertimos en flujos automáticos, claros y medibles.',
-    windowTitle: 'Cómo trabaja tu equipo sin fricción',
-    mockupTitle: 'Tu equipo se enfoca en lo importante',
-    mockupCopy: 'Pasamos tareas manuales a flujos conectados para que cada área avance con menos reprocesos.',
+    panelTitle: 'Automatización práctica',
+    panelDescription: 'Identificamos y automatizamos tareas repetitivas para liberar tiempo y reducir errores.',
+    windowTitle: 'Flujos que funcionan',
+    mockupTitle: 'Menos trabajo manual',
+    mockupCopy: 'Conectamos sistemas y automatizamos pasos clave.',
     flow: [
-      { title: 'Antes', text: 'Procesos manuales', Icon: Clock },
-      { title: 'Durante', text: 'Flujos conectados', Icon: Workflow },
-      { title: 'Después', text: 'Menos errores y más velocidad', Icon: Gauge },
+      { title: 'Manual', text: 'Tareas repetitivas', Icon: Clock },
+      { title: 'Automático', text: 'Flujos conectados', Icon: Workflow },
     ],
-    resultTitle: 'Más tiempo para tu equipo',
-    resultDescription: 'Reducimos cargas manuales, reprocesos y tareas que consumen horas todos los días.',
-    steps: ['Revisamos tu proceso actual', 'Diseñamos el flujo ideal', 'Automatizamos y medimos'],
-    chips: ['Reportes automáticos', 'Respuestas inteligentes', 'Integraciones', 'Flujos internos'],
+    resultTitle: 'Más tiempo operativo',
+    resultDescription: 'Menos tareas manuales, más foco en lo que importa.',
+    steps: ['Diagnóstico', 'Automatización'],
+    chips: ['Integraciones', 'Reportes automáticos'],
     chipIcon: Bot,
   },
   {
@@ -1422,9 +1421,10 @@ export const AutomationProductsSection = () => {
 };
 
 const Services = ({ theme = 'dark' }) => {
+  const wrapperRef = useRef(null);
   const sectionRef = useRef(null);
   const showcaseRef = useRef(null);
-  const itemRefs = useRef({});
+  const serviceRailRef = useRef(null);
   const manualSelectLockRef = useRef(false);
   const manualSelectTimerRef = useRef(0);
   const [visible, setVisible] = useState(false);
@@ -1463,6 +1463,8 @@ const Services = ({ theme = 'dark' }) => {
     window.clearTimeout(manualSelectTimerRef.current);
   }, []);
 
+  /* Section stays pinned in place; scrolling through the wrapper just steps
+     through the service index, nothing in the section itself moves. */
   useEffect(() => {
     let frame = 0;
 
@@ -1470,30 +1472,22 @@ const Services = ({ theme = 'dark' }) => {
       frame = 0;
       if (manualSelectLockRef.current) return;
 
-      const items = servicesData
-        .map((service) => itemRefs.current[service.key])
-        .filter(Boolean);
+      const wrapper = wrapperRef.current;
+      if (!wrapper) return;
 
-      if (!items.length) return;
+      const rect = wrapper.getBoundingClientRect();
+      const totalScrollable = wrapper.offsetHeight - window.innerHeight;
+      if (totalScrollable <= 0) return;
 
-      const guideY = window.innerHeight * 0.58;
-      let closestKey = items[0].dataset.serviceKey;
-      let closestDistance = Number.POSITIVE_INFINITY;
+      const scrolled = Math.max(0, -rect.top);
+      const rawP = Math.min(1, scrolled / totalScrollable);
+      const index = Math.min(
+        servicesData.length - 1,
+        Math.floor(rawP * servicesData.length)
+      );
+      const closestKey = servicesData[index].key;
 
-      for (const item of items) {
-        const rect = item.getBoundingClientRect();
-        const centerY = rect.top + rect.height / 2;
-        const distance = Math.abs(centerY - guideY);
-
-        if (distance < closestDistance) {
-          closestDistance = distance;
-          closestKey = item.dataset.serviceKey;
-        }
-      }
-
-      if (closestKey) {
-        setActiveKey((current) => (current === closestKey ? current : closestKey));
-      }
+      setActiveKey((current) => (current === closestKey ? current : closestKey));
     };
 
     const requestSync = () => {
@@ -1529,17 +1523,21 @@ const Services = ({ theme = 'dark' }) => {
     box.style.setProperty('--my', '22%');
   };
 
+  const showInlineActions = ['automatizar', 'activar', 'producir'].includes(activeService.key);
+
   return (
+    <div ref={wrapperRef} className={styles.wrapper}>
     <section
       ref={sectionRef}
       id="servicios"
-      className={`${styles.section} ${styles[theme]} ${visible ? styles.visible : ''}`}
+      className={`${styles.section} ${styles.stickySection} ${styles[theme]} ${visible ? styles.visible : ''}`}
     >
       <div className={styles.bgGlow} />
       <div className={styles.bgGrid} />
 
       <div className={styles.experience}>
         <motion.div
+          ref={serviceRailRef}
           className={styles.serviceRail}
           variants={listVariants}
           initial="hidden"
@@ -1558,9 +1556,6 @@ const Services = ({ theme = 'dark' }) => {
             return (
               <motion.button
                 key={service.key}
-                ref={(node) => {
-                  itemRefs.current[service.key] = node;
-                }}
                 type="button"
                 data-service-key={service.key}
                 className={`${styles.serviceButton} ${isActive ? styles.activeService : ''}`}
@@ -1570,7 +1565,6 @@ const Services = ({ theme = 'dark' }) => {
                 aria-pressed={isActive}
                 aria-current={isActive ? 'true' : undefined}
               >
-                <span className={styles.serviceNumber}>{service.number}</span>
                 <span className={styles.serviceIcon}>
                   <ServiceIcon />
                 </span>
@@ -1578,7 +1572,6 @@ const Services = ({ theme = 'dark' }) => {
                   <strong>{service.menuTitle}</strong>
                   <small>{service.menuDescription}</small>
                 </span>
-                {isActive && <span className={styles.selectedBadge}>SELECCIONADO</span>}
                 <span className={styles.serviceArrow}>
                   <ArrowRight />
                 </span>
@@ -1647,15 +1640,16 @@ const Services = ({ theme = 'dark' }) => {
                 </div>
               </div>
 
-              <a className={styles.cta} href="#contacto">
-                Hablemos
-                <ArrowRight />
-              </a>
-              {activeService.key === 'automatizar' && (
-                <a className={styles.moreInfoCta} href="/servicios/automatizar">
-                  Más información
-                  <PanelRightOpen />
+              <div className={`${styles.ctaRow} ${showInlineActions ? styles.ctaRowInline : ''}`}>
+                <a className={styles.cta} href="#contacto">
+                  Hablemos
+                  <ArrowRight />
                 </a>
+                {activeService.key === 'automatizar' && (
+                  <a className={styles.moreInfoCta} href="/servicios/automatizar">
+                    Más información
+                    <PanelRightOpen />
+                  </a>
                 )}
                 {activeService.key === 'activar' && (
                   <a className={styles.moreInfoCta} href="/servicios/activar-marca">
@@ -1669,12 +1663,14 @@ const Services = ({ theme = 'dark' }) => {
                     <PanelRightOpen />
                   </a>
                 )}
+              </div>
               </motion.aside>
           </AnimatePresence>
         </div>
       </div>
 
     </section>
+    </div>
   );
 };
 
