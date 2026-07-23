@@ -2164,24 +2164,14 @@
 }
 
 .light .eventProductionSection {
-  --section-text: #F7F8FA;
-  --section-muted: rgba(231,235,242,.70);
-  --section-soft: rgba(231,235,242,.82);
-  --panel: rgba(10,15,18,.82);
-  --panel-strong: rgba(14,20,24,.92);
-  --panel-soft: rgba(255,255,255,.045);
-  --line: rgba(255,255,255,.12);
-  --grid: rgba(255,255,255,.052);
-  --shadow: rgba(0,0,0,.42);
-  --button-ink: #080D10;
   color: var(--section-text);
   background:
-    radial-gradient(ellipse 740px 420px at 82% 12%, rgba(var(--rgb), .16), transparent 64%),
-    radial-gradient(ellipse 620px 360px at 10% 80%, rgba(237, 213, 178, .08), transparent 68%),
+    radial-gradient(ellipse 740px 420px at 82% 12%, rgba(255, 59, 59, .11), transparent 64%),
+    radial-gradient(ellipse 620px 360px at 10% 80%, rgba(17, 21, 26, .055), transparent 68%),
     linear-gradient(var(--grid) 1px, transparent 1px),
     linear-gradient(90deg, var(--grid) 1px, transparent 1px),
-    rgba(5, 10, 12, .92);
-  box-shadow: 0 34px 110px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.06);
+    rgba(255, 255, 255, .78);
+  box-shadow: 0 30px 90px rgba(31,41,55,.12), inset 0 1px 0 rgba(255,255,255,.45);
 }
 
 .eventProductionSection::before {
@@ -2197,8 +2187,8 @@
 
 .light .eventProductionSection::before {
   background:
-    linear-gradient(115deg, rgba(255,255,255,.035), transparent 30%),
-    radial-gradient(circle at 42% 16%, rgba(var(--rgb), .16), transparent 22%);
+    linear-gradient(115deg, rgba(255,255,255,.55), transparent 32%),
+    radial-gradient(circle at 42% 16%, rgba(255, 59, 59, .10), transparent 22%);
 }
 
 .eventProductionHero {
@@ -2290,6 +2280,11 @@
   background: rgba(255,255,255,.035);
 }
 
+.light .eventGhostCta {
+  border-color: rgba(17,21,26,.14);
+  background: rgba(255,255,255,.58);
+}
+
 .eventProductionBenefits {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -2301,6 +2296,10 @@
   min-width: 0;
   padding-right: 14px;
   border-right: 1px solid rgba(255,255,255,.10);
+}
+
+.light .eventProductionBenefits div {
+  border-right-color: rgba(17,21,26,.12);
 }
 
 .eventProductionBenefits div:last-child {
@@ -2343,6 +2342,11 @@
   border-radius: 22px;
   background: #090d10;
   box-shadow: 0 28px 78px rgba(0,0,0,.32), 0 0 62px rgba(var(--rgb), .12);
+}
+
+.light .eventMedia {
+  border-color: rgba(255, 59, 59, .34);
+  box-shadow: 0 24px 58px rgba(31,41,55,.18), 0 0 48px rgba(255,59,59,.10);
 }
 
 .eventMedia img,
@@ -2422,6 +2426,12 @@
   transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease, background 220ms ease;
 }
 
+.light .eventProductCard {
+  border-color: rgba(17,21,26,.13);
+  background: rgba(255,255,255,.62);
+  box-shadow: 0 18px 48px rgba(31,41,55,.10), inset 0 1px 0 rgba(255,255,255,.58);
+}
+
 .eventProductCard:hover,
 .eventProductCard:focus-visible,
 .eventProductCardActive {
@@ -2432,6 +2442,16 @@
   box-shadow: 0 24px 72px rgba(var(--rgb), .13), inset 0 1px 0 rgba(255,255,255,.07);
   transform: translateY(-6px);
   outline: none;
+}
+
+.light .eventProductCard:hover,
+.light .eventProductCard:focus-visible,
+.light .eventProductCardActive {
+  border-color: rgba(255, 59, 59, .70);
+  background:
+    radial-gradient(circle at 50% 6%, rgba(255,59,59,.12), transparent 38%),
+    rgba(255,255,255,.82);
+  box-shadow: 0 24px 60px rgba(255,59,59,.14), 0 18px 52px rgba(31,41,55,.11);
 }
 
 .eventProductCard img {
@@ -2517,6 +2537,14 @@
   box-shadow: 0 30px 92px rgba(0,0,0,.30), inset 0 1px 0 rgba(255,255,255,.06);
 }
 
+.light .eventProductDetail {
+  border-color: rgba(17,21,26,.13);
+  background:
+    radial-gradient(circle at 78% 22%, rgba(255,59,59,.10), transparent 38%),
+    rgba(255,255,255,.70);
+  box-shadow: 0 26px 70px rgba(31,41,55,.12), inset 0 1px 0 rgba(255,255,255,.62);
+}
+
 .eventDetailClose {
   position: absolute;
   right: 18px;
@@ -2531,6 +2559,11 @@
   color: var(--section-text);
   background: rgba(255,255,255,.08);
   cursor: pointer;
+}
+
+.light .eventDetailClose {
+  border-color: rgba(17,21,26,.14);
+  background: rgba(255,255,255,.72);
 }
 
 .eventDetailClose svg {
@@ -2563,6 +2596,11 @@
   border-radius: 10px;
   background: transparent;
   cursor: pointer;
+}
+
+.light .eventThumbs button {
+  border-color: rgba(17,21,26,.14);
+  background: rgba(255,255,255,.40);
 }
 
 .eventThumbs img {
@@ -2638,6 +2676,10 @@
   border-top: 1px solid rgba(255,255,255,.09);
 }
 
+.light .eventDetailColumns {
+  border-top-color: rgba(17,21,26,.11);
+}
+
 .eventDetailColumns strong {
   display: flex;
   align-items: center;
@@ -2699,6 +2741,12 @@
   font-weight: 800;
 }
 
+.light .eventDetailTags span {
+  border-color: rgba(255,59,59,.24);
+  color: var(--section-soft);
+  background: rgba(255,59,59,.045);
+}
+
 .eventDetailActions {
   display: grid;
   grid-template-columns: minmax(180px, .64fr) minmax(220px, 1fr);
@@ -2734,6 +2782,11 @@
   cursor: pointer;
 }
 
+.light .eventDetailNav button {
+  border-color: rgba(17,21,26,.14);
+  background: rgba(255,255,255,.58);
+}
+
 .eventDetailNav svg {
   width: 15px;
   height: 15px;
@@ -2751,6 +2804,14 @@
   background:
     radial-gradient(circle at 86% 50%, rgba(237, 213, 178, .08), transparent 40%),
     rgba(255,255,255,.035);
+}
+
+.light .eventProcessStrip {
+  border-color: rgba(17,21,26,.13);
+  background:
+    radial-gradient(circle at 86% 50%, rgba(255, 59, 59, .08), transparent 40%),
+    rgba(255,255,255,.62);
+  box-shadow: 0 18px 48px rgba(31,41,55,.10);
 }
 
 .eventProcessStrip h3 {
@@ -2785,6 +2846,10 @@
   border-top: 1px dashed rgba(237, 213, 178, .45);
 }
 
+.light .eventProcessSteps::before {
+  border-top-color: rgba(255,59,59,.28);
+}
+
 .eventProcessSteps article {
   position: relative;
   display: grid;
@@ -2806,6 +2871,13 @@
   box-shadow: 0 14px 32px rgba(0,0,0,.22);
 }
 
+.light .eventProcessSteps article > span {
+  border-color: rgba(255,59,59,.28);
+  color: var(--accent);
+  background: rgba(255,255,255,.82);
+  box-shadow: 0 14px 30px rgba(31,41,55,.10);
+}
+
 .eventProcessSteps svg {
   width: 24px;
   height: 24px;
@@ -2816,6 +2888,10 @@
   color: rgba(237, 213, 178, .78);
   font-family: var(--font-b);
   font-size: .7rem;
+}
+
+.light .eventProcessSteps small {
+  color: rgba(255,59,59,.70);
 }
 
 .eventProcessSteps strong {
