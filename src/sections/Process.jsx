@@ -1,143 +1,126 @@
 import { useEffect, useRef, useState } from 'react';
 import styles from './Process.module.css';
 
-/* ─── Data ───────────────────────────────────────────────────── */
-
 const CHALLENGES = [
   {
     num: '01',
-    accent: 'var(--accent)', rgb: 'var(--accent-rgb)',
-    quote: 'Tenemos datos pero nadie los entiende.',
-    solution: 'Construimos dashboards ejecutivos en tiempo real que convierten números crudos en decisiones de negocio.',
-    metric: 72, metricPrefix: '−', metricSuffix: '%',
-    metricLabel: 'tiempo en reportes manuales',
-    tags: ['Power BI', 'Pipelines', 'Real-time'],
+    accent: '#C8D1DD',
+    rgb: '200,209,221',
+    kicker: 'DATOS & BI',
+    title: 'Tenemos datos, pero nadie los entiende.',
+    description: 'Reunimos tus números en un tablero que cualquiera del equipo lee de un vistazo y usa para decidir.',
+    metricText: '18 min',
+    metricLabel: 'para el reporte que antes tomaba media semana',
+    chips: ['Decisiones al instante', 'Todo en un tablero', 'Adiós Excel manual'],
+    icon: '◐',
   },
   {
     num: '02',
-    accent: 'var(--accent)', rgb: 'var(--accent-rgb)',
-    quote: 'Nuestros sistemas no se hablan entre sí.',
-    solution: 'Integramos tu ecosistema completo: ERP, bases de datos, APIs y cloud en un flujo 100% automatizado.',
-    metric: null, metricText: 'Cero',
-    metricLabel: 'intervenciones manuales en el proceso',
-    tags: ['APIs REST', 'WebSocket', 'Supabase'],
+    accent: '#B8C4D2',
+    rgb: '184,196,210',
+    kicker: 'INTEGRACIÓN',
+    title: 'Nuestros sistemas no se hablan entre sí.',
+    description: 'Conectamos ERP, base de datos, APIs y cloud para que el dato se capture una sola vez y viaje solo.',
+    metricText: '1 sola vez',
+    metricLabel: 'capturas el dato; el resto es automático',
+    chips: ['Cero doble captura', 'Todo sincronizado', 'Sin errores'],
+    icon: '⇄',
   },
   {
     num: '03',
-    accent: 'var(--accent)', rgb: 'var(--accent-rgb)',
-    quote: 'Necesitamos software pero no sabemos por dónde empezar.',
-    solution: 'Del briefing a producción en semanas. Software construido para tu proceso exacto, no una plantilla adaptada.',
-    metric: null, metricText: '3–6 sem',
-    metricLabel: 'de concepto a producción',
-    tags: ['React + Vite', 'C# .NET', 'IoT / ESP32'],
+    accent: '#D5DDE8',
+    rgb: '213,221,232',
+    kicker: 'DESARROLLO',
+    title: 'Necesitamos software pero no sabemos por dónde empezar.',
+    description: 'Del brief a la primera versión en producción en semanas. Hecho para tu proceso, no una plantilla adaptada.',
+    metricText: '5 semanas',
+    metricLabel: 'promedio del brief al primer lanzamiento',
+    chips: ['Hecho a tu medida', 'Listo en semanas', 'Crece contigo'],
+    icon: '◇',
   },
   {
     num: '04',
-    accent: '#B6BEC8', rgb: '182,190,200',
-    quote: 'Hacemos eventos pero no capturamos datos ni generamos leads.',
-    solution: 'Integramos tecnología en cada punto del evento: registro digital, activaciones medibles y análisis post-evento accionable.',
-    metric: null, metricText: '+3x',
-    metricLabel: 'conversión de asistentes a leads',
-    tags: ['Registro digital', 'Lead capture', 'Analytics'],
+    accent: '#B6BEC8',
+    rgb: '182,190,200',
+    kicker: 'EVENTOS',
+    title: 'Hacemos eventos pero no capturamos datos ni leads.',
+    description: 'Registro digital, activaciones medibles y un reporte post-evento que te dice a quién seguir y por qué.',
+    metricText: '2.7×',
+    metricLabel: 'más leads calificados por evento',
+    chips: ['Cada lead cuenta', 'Datos en vivo', 'Seguimiento claro'],
+    icon: '◎',
   },
   {
     num: '05',
-    accent: 'var(--accent)', rgb: 'var(--accent-rgb)',
-    quote: 'La gente asiste, pero no interactúa con la marca.',
-    solution: 'Pantallas táctiles, gamificación y activaciones interactivas que convierten espectadores en participantes comprometidos.',
-    metric: 35, metricPrefix: '+', metricSuffix: '%',
-    metricLabel: 'engagement en activaciones de marca',
-    tags: ['Gamificación', 'Pantallas táctiles', 'Activaciones'],
+    accent: '#C4CEDA',
+    rgb: '196,206,218',
+    kicker: 'ACTIVACIÓN',
+    title: 'La gente asiste, pero no interactúa con la marca.',
+    description: 'Pantallas táctiles y dinámicas de juego que convierten a quien pasa de largo en alguien que participa.',
+    metricText: '4 de 10',
+    metricLabel: 'asistentes se detienen a interactuar',
+    chips: ['Que jueguen', 'Marca memorable', 'Interacción real'],
+    icon: '◈',
   },
   {
     num: '06',
-    accent: '#8A939E', rgb: '138,147,158',
-    quote: 'Nuestro equipo pierde horas en tareas que debería automatizar.',
-    solution: 'Identificamos qué consume más tiempo y lo automatizamos con IA: reportes, clasificación, respuestas y flujos de trabajo.',
-    metric: 80, metricPrefix: '−', metricSuffix: '%',
-    metricLabel: 'tiempo en tareas repetitivas',
-    tags: ['RPA', 'IA & Agentes', 'Workflows'],
+    accent: '#8A939E',
+    rgb: '138,147,158',
+    kicker: 'AUTOMATIZACIÓN',
+    title: 'El equipo pierde horas en tareas que debería automatizar.',
+    description: 'Detectamos lo repetitivo y lo resolvemos con IA: reportes, clasificación, respuestas y flujos completos.',
+    metricText: '11 h',
+    metricLabel: 'devueltas al equipo cada semana',
+    chips: ['Menos tareas', 'IA que trabaja sola', 'Horas de vuelta'],
+    icon: '⚙',
   },
 ];
 
-/* ─── Count-up hook ──────────────────────────────────────────── */
-
-function useCountUp(target, active, duration = 1600) {
-  const [val, setVal] = useState(0);
-  useEffect(() => {
-    if (!active || target == null) return;
-    let raf;
-    let t0 = null;
-    const step = (ts) => {
-      if (!t0) t0 = ts;
-      const p    = Math.min((ts - t0) / duration, 1);
-      const ease = 1 - (1 - p) ** 3;
-      setVal(Math.round(target * ease));
-      if (p < 1) raf = requestAnimationFrame(step);
-    };
-    raf = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(raf);
-  }, [active, target, duration]);
-  return val;
-}
-
-/* ─── Metric ─────────────────────────────────────────────────── */
-
-const Metric = ({ ch, active }) => {
-  const count = useCountUp(ch.metric, active);
-  return (
-    <div className={styles.metricWrap} style={{ '--rgb': ch.rgb }}>
-      <span className={styles.metricNum}>
-        {ch.metricText
-          ? ch.metricText
-          : `${ch.metricPrefix}${count}${ch.metricSuffix}`}
-      </span>
-      <span className={styles.metricLabel}>{ch.metricLabel}</span>
-    </div>
-  );
-};
-
-/* ─── Component ──────────────────────────────────────────────── */
+const Metric = ({ ch }) => (
+  <div className={styles.metricWrap} style={{ '--rgb': ch.rgb }}>
+    <span className={styles.metricNum}>{ch.metricText}</span>
+    <span className={styles.metricLabel}>{ch.metricLabel}</span>
+  </div>
+);
 
 const Process = () => {
   const wrapperRef = useRef(null);
-  const rowRef     = useRef(null);
-  const secRef     = useRef(null);
+  const rowRef = useRef(null);
+  const secRef = useRef(null);
 
-  const [activeIdx,  setActiveIdx]  = useState(0);
+  const [activeIdx, setActiveIdx] = useState(0);
   const [translateX, setTranslateX] = useState(0);
-  const [visible,    setVisible]    = useState(false);
+  const [visible, setVisible] = useState(false);
 
-  /* Section enters viewport → reveal animations fire */
   useEffect(() => {
     const obs = new IntersectionObserver(
-      ([e]) => { if (e.isIntersecting) setVisible(true); },
+      ([entry]) => {
+        if (entry.isIntersecting) setVisible(true);
+      },
       { threshold: 0.05 }
     );
+
     if (secRef.current) obs.observe(secRef.current);
     return () => obs.disconnect();
   }, []);
 
-  /* Scroll-driven carousel */
   useEffect(() => {
     const handleScroll = () => {
       const wrapper = wrapperRef.current;
-      const row     = rowRef.current;
-      const sec     = secRef.current;
+      const row = rowRef.current;
+      const sec = secRef.current;
       if (!wrapper || !row || !sec) return;
 
-      const rect            = wrapper.getBoundingClientRect();
+      const rect = wrapper.getBoundingClientRect();
       const totalScrollable = wrapper.offsetHeight - window.innerHeight;
       if (totalScrollable <= 0) return;
 
       const scrolled = Math.max(0, -rect.top);
-      const rawP     = Math.min(1, scrolled / totalScrollable);
+      const rawP = Math.min(1, scrolled / totalScrollable);
 
-      /* Translate row left as scroll progresses */
       const overhang = Math.max(0, row.scrollWidth - sec.clientWidth);
       setTranslateX(-rawP * overhang);
 
-      /* Active card index */
       setActiveIdx(
         Math.min(CHALLENGES.length - 1, Math.floor(rawP * CHALLENGES.length))
       );
@@ -163,11 +146,10 @@ const Process = () => {
           muted
           playsInline
         />
-        <div className={styles.bgNebula}  />
+        <div className={styles.bgNebula} />
         <div className={styles.bgNebula2} />
-        <div className={styles.bgScan}    />
+        <div className={styles.bgScan} />
 
-        {/* Header */}
         <div className={styles.header}>
           <div className={styles.eyebrow}>
             <span className={styles.eyebrowDot} />
@@ -182,7 +164,6 @@ const Process = () => {
           </p>
         </div>
 
-        {/* Scroll-driven card row */}
         <div
           ref={rowRef}
           className={styles.row}
@@ -195,61 +176,46 @@ const Process = () => {
               style={{ '--accent': c.accent, '--rgb': c.rgb, '--delay': `${i * 60}ms` }}
             >
               <div className={styles.cardGlow} />
-              <div
-                className={styles.accentBar}
-                style={{ background: `linear-gradient(90deg, ${c.accent}CC, transparent)` }}
-              />
 
-              <div className={styles.cardNum} style={{ color: `rgba(${c.rgb},.18)` }}>
-                {c.num}
+              <div className={styles.ribbon} aria-hidden="true">
+                <span className={styles.cardNum}>{c.num}</span>
               </div>
 
-              <div className={styles.quoteWrap}>
-                <span className={styles.quoteDecor} style={{ color: `rgba(${c.rgb},.18)` }}>"</span>
-                <p className={styles.quoteText}>{c.quote}</p>
-              </div>
+              <div className={styles.cardBody}>
+                <span className={styles.kicker}>{c.kicker}</span>
+                <h3 className={styles.quoteText}>{c.title}</h3>
+                <p className={styles.solution}>{c.description}</p>
 
-              <div
-                className={styles.cardDivider}
-                style={{ background: `linear-gradient(90deg, rgba(${c.rgb},.35), transparent)` }}
-              />
+                <Metric ch={c} />
 
-              <p className={styles.solution}>{c.solution}</p>
-
-              <Metric ch={c} active={visible} />
-
-              <div className={styles.tagWrap}>
-                {c.tags.map((t, ti) => (
-                  <span
-                    key={t}
-                    className={styles.tag}
-                    style={{
-                      borderColor:   `rgba(${c.rgb},.22)`,
-                      background:    `rgba(${c.rgb},.07)`,
-                      '--tag-delay': `${i * 60 + ti * 70 + 400}ms`,
-                    }}
-                  >
-                    {t}
-                  </span>
-                ))}
+                <div className={styles.tagWrap}>
+                  {c.chips.map((t, ti) => (
+                    <span
+                      key={t}
+                      className={styles.tag}
+                      style={{
+                        '--tag-delay': `${i * 60 + ti * 70 + 400}ms`,
+                      }}
+                    >
+                      {t}
+                    </span>
+                  ))}
+                </div>
               </div>
             </div>
           ))}
-          {/* Spacer: last card ends centered, not flush against the edge */}
           <div className={styles.rowSpacer} aria-hidden="true" />
         </div>
 
-        {/* Progress dots */}
         <div className={styles.progressBar} aria-hidden="true">
           {CHALLENGES.map((c, i) => (
             <span
-              key={i}
+              key={c.num}
               className={`${styles.progressDot} ${i === activeIdx ? styles.progressDotActive : ''} ${i < activeIdx ? styles.progressDotDone : ''}`}
               style={{ '--rgb': c.rgb }}
             />
           ))}
         </div>
-
       </section>
     </div>
   );
