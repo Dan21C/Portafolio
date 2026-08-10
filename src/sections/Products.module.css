@@ -1,0 +1,543 @@
+/* ══════════════════════════════════════════════════════
+   SECTION — editorial, monochrome, premium
+══════════════════════════════════════════════════════ */
+
+.section {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 950px;
+  padding: 96px 4% 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text);
+  background: #050709;
+}
+
+:global([data-theme='light']) .section {
+  background: #F3F3F0;
+}
+
+@supports (height: 100svh) {
+  .section {
+    min-height: min(950px, 100svh);
+  }
+}
+
+/* ── Background layer ─────────────────────────────────── */
+
+.background {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.backgroundMedia {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.lines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.lines path {
+  fill: none;
+  stroke-linecap: round;
+  stroke-dasharray: 3 16;
+  animation-name: lineDrift;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes lineDrift {
+  to { stroke-dashoffset: -600; }
+}
+
+/* ── Side APX runes ────────────────────────────────────── */
+
+.rune {
+  position: absolute;
+  bottom: 44px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  opacity: 0.7;
+  color: rgba(var(--accent-rgb), 0.6);
+}
+
+.runeLeft { left: 20px; }
+.runeRight { right: 20px; }
+
+.rune i {
+  display: block;
+  width: 1px;
+  height: 64px;
+  background: rgba(var(--accent-rgb), 0.28);
+}
+
+.rune b {
+  font-family: var(--font-b);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  line-height: 1.6;
+  text-align: center;
+}
+
+/* ══════════════════════════════════════════════════════
+   INNER / CONTAINER
+══════════════════════════════════════════════════════ */
+
+.inner {
+  position: relative;
+  z-index: 1;
+  width: min(1440px, 100%);
+  margin: 0 auto;
+}
+
+/* ══════════════════════════════════════════════════════
+   EDITORIAL GRID (desktop >= 1280px)
+══════════════════════════════════════════════════════ */
+
+.grid {
+  display: grid;
+  grid-template-columns: 250px repeat(4, minmax(150px, 1fr)) 250px;
+  grid-template-rows: auto auto auto;
+  grid-template-areas:
+    "pulse trace  nexo   bloom  kiosk  signal"
+    "pulse orbit  nexo   bloom  drift  signal"
+    "pulse center center center center signal";
+  column-gap: 22px;
+  row-gap: 26px;
+  align-items: start;
+}
+
+.headerMobile { display: none; }
+.track { display: none; }
+
+/* ── Cards ─────────────────────────────────────────────── */
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 18px;
+  background: rgba(10, 12, 14, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transform: translateY(calc(10px + var(--py, 0px)));
+  opacity: 0;
+  transition:
+    opacity 550ms cubic-bezier(.16,1,.3,1),
+    transform 550ms cubic-bezier(.16,1,.3,1),
+    border-color 500ms cubic-bezier(.22,1,.36,1),
+    background 500ms cubic-bezier(.22,1,.36,1);
+  transition-delay: calc(var(--i, 0) * 55ms);
+}
+
+.visible .card {
+  opacity: 1;
+  transform: translateY(var(--py, 0px));
+}
+
+.visible .card:hover,
+.visible .card:focus-within {
+  border-color: rgba(255, 255, 255, 0.32);
+  background: rgba(20, 23, 27, 0.72);
+  transform: translateY(calc(var(--py, 0px) - 3px));
+  transition-delay: 0ms;
+}
+
+:global([data-theme='light']) .card {
+  border-color: rgba(0, 0, 0, 0.12);
+  background: rgba(255, 255, 255, 0.58);
+}
+
+:global([data-theme='light']) .visible .card:hover,
+:global([data-theme='light']) .visible .card:focus-within {
+  border-color: rgba(0, 0, 0, 0.28);
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.layoutHero { height: clamp(540px, 66vh, 720px); margin-top: 28px; }
+.layoutMedium { height: clamp(300px, 40vh, 390px); }
+.layoutSmall { height: clamp(180px, 24vh, 262px); }
+
+.cardMedia {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  mask-image: linear-gradient(to bottom, black 0%, black 90%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, black 0%, black 90%, transparent 100%);
+}
+
+.cardMedia img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Top-anchored 40% zoom: the source photography leaves a lot of empty
+     floor below the product, so we scale up from the top edge to crop
+     that dead space instead of the product itself. */
+  transform: scale(1.6);
+  transform-origin: 50% 0%;
+  transition: transform 550ms cubic-bezier(.22,1,.36,1);
+}
+
+.visible .card:hover .cardMedia img,
+.visible .card:focus-within .cardMedia img {
+  transform: scale(1.632);
+}
+
+/* Small cards are too tiny for the standard 40% zoom to read clearly —
+   push the crop in further. No fade here: these cards don't have the
+   height to spare, and the fade was eating into the image itself. */
+.layoutSmall .cardMedia {
+  mask-image: none;
+  -webkit-mask-image: none;
+}
+
+.layoutSmall .cardMedia img {
+  transform: scale(1.9);
+}
+
+.visible .card.layoutSmall:hover .cardMedia img,
+.visible .card.layoutSmall:focus-within .cardMedia img {
+  transform: scale(1.938);
+}
+
+.cardPlaceholder {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255,255,255,.05), transparent 55%),
+    linear-gradient(160deg, rgba(255,255,255,.035), rgba(255,255,255,.005));
+}
+
+.cardPlaceholder span {
+  font-family: var(--font-h);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  color: rgba(var(--accent-rgb), 0.28);
+}
+
+.cardText {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  padding: 28px 18px 16px;
+  background: linear-gradient(to top, rgba(5, 7, 9, 0.88) 0%, rgba(5, 7, 9, 0.62) 55%, transparent 100%);
+}
+
+:global([data-theme='light']) .cardText {
+  background: linear-gradient(to top, rgba(255, 255, 255, 0.88) 0%, rgba(255, 255, 255, 0.6) 55%, transparent 100%);
+}
+
+/* Small cards don't have the height to spare for a full-length description —
+   uncapped, it was wrapping to 3 lines and eating over half the card,
+   leaving the photo a sliver at the top. Cap it so the image stays dominant. */
+.layoutSmall .cardText {
+  padding: 20px 14px 14px;
+}
+
+.layoutSmall .cardDescription {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.cardEyebrow {
+  display: block;
+  font-family: var(--font-b);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  color: rgba(242, 242, 242, 0.35);
+  opacity: 0.72;
+  transition: opacity 500ms ease;
+}
+
+.cardName {
+  display: block;
+  margin-top: 3px;
+  font-family: var(--font-h);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text);
+  opacity: 0.72;
+  transition: opacity 500ms ease;
+}
+
+.cardDescription {
+  margin-top: 4px;
+  font-family: var(--font-b);
+  font-size: 11.5px;
+  line-height: 1.4;
+  color: rgba(242, 242, 242, 0.58);
+  opacity: 0.72;
+  transition: opacity 500ms ease;
+}
+
+.visible .card:hover .cardEyebrow,
+.visible .card:hover .cardName,
+.visible .card:hover .cardDescription,
+.visible .card:focus-within .cardEyebrow,
+.visible .card:focus-within .cardName,
+.visible .card:focus-within .cardDescription {
+  opacity: 1;
+}
+
+:global([data-theme='light']) .cardDescription { color: rgba(17, 19, 21, 0.58); }
+:global([data-theme='light']) .cardEyebrow { color: rgba(17, 19, 21, 0.35); }
+
+/* ══════════════════════════════════════════════════════
+   HEADER / CENTER CONTENT
+══════════════════════════════════════════════════════ */
+
+.centerSlot {
+  grid-area: center;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-top: 8px;
+  /* Visual-only nudge upward — a transform doesn't participate in grid
+     track sizing, so the cards' positions/heights stay untouched. */
+  transform: translateY(-80px);
+}
+
+.header {
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(15px);
+  transition: opacity 600ms cubic-bezier(.16,1,.3,1), transform 600ms cubic-bezier(.16,1,.3,1);
+  transition-delay: 120ms;
+}
+
+.visible .header { opacity: 1; transform: translateY(0); }
+
+.label {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  font-family: var(--font-b);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(242, 242, 242, 0.58);
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 550ms cubic-bezier(.16,1,.3,1), transform 550ms cubic-bezier(.16,1,.3,1);
+}
+
+.visible .label { opacity: 1; transform: translateY(0); }
+
+.label i {
+  display: block;
+  width: 26px;
+  height: 1px;
+  background: rgba(242, 242, 242, 0.28);
+}
+
+:global([data-theme='light']) .label { color: rgba(17, 19, 21, 0.58); }
+:global([data-theme='light']) .label i { background: rgba(17, 19, 21, 0.28); }
+
+.title {
+  margin-top: 18px;
+  font-family: var(--font-h);
+  font-size: clamp(2.2rem, 3.6vw, 3.5rem);
+  font-weight: 700;
+  line-height: 0.98;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+
+:global([data-theme='light']) .title { color: #111315; }
+
+.description {
+  max-width: 46ch;
+  margin-top: 16px;
+  font-family: var(--font-b);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: rgba(242, 242, 242, 0.58);
+}
+
+:global([data-theme='light']) .description { color: rgba(17, 19, 21, 0.6); }
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 26px;
+  padding: 13px 24px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--text);
+  font-family: var(--font-h);
+  font-size: 0.86rem;
+  font-weight: 700;
+  transition: background 300ms ease, color 300ms ease, border-color 300ms ease, gap 300ms ease;
+}
+
+.cta svg { width: 17px; height: 17px; }
+
+.cta:hover,
+.cta:focus-visible {
+  gap: 16px;
+  background: var(--accent);
+  color: #070A0D;
+  border-color: var(--accent);
+  outline: none;
+}
+
+:global([data-theme='light']) .cta {
+  border-color: rgba(0, 0, 0, 0.22);
+  background: rgba(0, 0, 0, 0.02);
+  color: #111315;
+}
+
+:global([data-theme='light']) .cta:hover,
+:global([data-theme='light']) .cta:focus-visible {
+  background: #111315;
+  color: #F3F3F0;
+  border-color: #111315;
+}
+
+/* ══════════════════════════════════════════════════════
+   MOBILE CAROUSEL TRACK
+══════════════════════════════════════════════════════ */
+
+.trackItem { scroll-snap-align: start; }
+.trackItem .card { position: relative; height: 100%; }
+
+/* ══════════════════════════════════════════════════════
+   REDUCED MOTION
+══════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .header,
+  .label {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  .lines path { animation: none; }
+  .cardMedia img { transition: none; }
+}
+
+/* ══════════════════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════════════════ */
+
+/* Tablet 900–1279px: reduce to a 4-column composition */
+@media (max-width: 1279px) {
+  .grid {
+    grid-template-columns: 210px 1fr 1fr 210px;
+    grid-template-rows: auto auto auto auto;
+    grid-template-areas:
+      "pulse trace  nexo   signal"
+      "pulse orbit  bloom  signal"
+      "pulse kiosk  drift  signal"
+      "pulse center center signal";
+    column-gap: 18px;
+    row-gap: 18px;
+  }
+
+  .layoutHero { height: clamp(520px, 74vh, 660px); }
+  /* Medium cards are aliased to the small height here: the tablet composition
+     stacks three cards per column, so mismatched heights across the two
+     columns would leave uneven gaps in the shorter column. */
+  .layoutMedium,
+  .layoutSmall { height: clamp(150px, 20vh, 200px); }
+
+  .title { font-size: clamp(2rem, 4vw, 2.8rem); }
+}
+
+/* Mobile < 900px: header first, then a horizontal carousel */
+@media (max-width: 899px) {
+  .section {
+    min-height: 0;
+    padding: 72px 0 56px;
+    display: block;
+  }
+
+  .rune { display: none; }
+
+  .grid { display: none; }
+
+  .headerMobile {
+    display: block;
+    padding: 0 20px;
+    margin-bottom: 34px;
+  }
+
+  .track {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(260px, 72vw);
+    gap: 16px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-inline: contain;
+    padding: 4px 20px 8px;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .track::-webkit-scrollbar { display: none; }
+
+  .trackItem {
+    max-width: 320px;
+    height: 62vh;
+    min-height: 360px;
+    max-height: 520px;
+  }
+
+  .trackItem:first-child { max-width: none; width: min(86vw, 340px); }
+
+  .card { opacity: 1; transform: none; transition: border-color 400ms ease, background 400ms ease; }
+  .visible .card { transform: none; }
+}
+
+/* Small mobile < 600px */
+@media (max-width: 599px) {
+  .headerMobile { padding: 0 20px; margin-bottom: 28px; }
+  .title { font-size: clamp(2.5rem, 11vw, 2.9rem); }
+
+  .track { padding: 4px 20px 8px; }
+
+  .trackItem { width: 76vw; max-width: 320px; }
+  .trackItem:first-child { width: min(84vw, 320px); }
+}

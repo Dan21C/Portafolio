@@ -3,80 +3,18 @@ import styles from './Stack.module.css';
 
 /* ─── Icons ──────────────────────────────────────────────────── */
 
-const ITag = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/>
-    <line x1="7" y1="7" x2="7.01" y2="7"/>
-  </svg>
-);
-
-const IScreen = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="2.5" y="4" width="19" height="14" rx="2"/>
-    <path d="M8 21h8M12 18v3M9 10l-2 2 2 2M15 10l2 2-2 2"/>
-  </svg>
-);
-
-const IStar = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-  </svg>
-);
-
 const Arrow = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
     <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
   </svg>
 );
 
-/* ─── Data ───────────────────────────────────────────────────── */
-
-const SOLUTIONS = [
-  {
-    id: 'exp',
-    accent: 'var(--accent)', rgb: 'var(--accent-rgb)',
-    Icon: IScreen,
-    label: 'EXPERIENCIAS',
-    headline: 'Experiencias que activan marcas.',
-    desc: 'Tecnología inmersiva en cada punto de contacto. Convertimos presencia física en participación medible y recuerdo de marca que dura.',
-    isMain: true,
-    services: [
-      { dot: 'var(--accent)', dotRgb: 'var(--accent-rgb)',  name: 'Activaciones interactivas', detail: 'Pantallas táctiles · Totems · Kioscos' },
-      { dot: 'var(--accent)', dotRgb: 'var(--accent-rgb)',  name: 'Gamificación & Loyalty',    detail: 'Puntos · Retos · Rankings · Recompensas' },
-      { dot: 'var(--accent)', dotRgb: 'var(--accent-rgb)',  name: 'Micrositios & Registro',    detail: 'Landing de evento · Formularios · QR' },
-      { dot: '#B6BEC8', dotRgb: '182,190,200', name: 'Contenido & Motion',       detail: 'Video · Animación · Branding digital' },
-    ],
-  },
-  {
-    id: 'events',
-    accent: 'var(--accent)', rgb: 'var(--accent-rgb)',
-    Icon: IStar,
-    label: 'EVENTOS 360',
-    headline: 'Del concepto al evento. Sin detalles perdidos.',
-    desc: 'Estrategia, producción y operación completa. Cada evento es una historia que posiciona marca y convierte audiencia en comunidad.',
-    metric: '360°', metricLabel: 'producción integral',
-    tags: ['Estrategia & Concept', 'Producción', 'Lanzamientos', 'Conferencias'],
-  },
-  {
-    id: 'merch',
-    accent: '#8A939E', rgb: '138,147,158',
-    Icon: ITag,
-    label: 'MERCH & STANDS',
-    headline: 'Marca en cada detalle.',
-    desc: 'Diseño e impresión de todo lo que viste al evento. Stands, merch exclusivo, señalética y material de marca de alto impacto.',
-    metric: '+50', metricLabel: 'marcas en eventos',
-    tags: ['Diseño de stands', 'Merch exclusivo', 'Señalética', 'Branded content'],
-  },
-];
-
 /* ─── Component ──────────────────────────────────────────────── */
 
 const Stack = () => {
-  const ref            = useRef(null);
   const ctaWrapperRef  = useRef(null);
   const ctaRef         = useRef(null);
 
-  const [visible,    setVisible]    = useState(false);
   const [ctaVisible, setCtaVisible] = useState(false);
   const [rotation,   setRotation]   = useState(0);   // 0–180 driven by scroll
   const [formSent,   setFormSent]   = useState(false);
@@ -86,16 +24,6 @@ const Stack = () => {
     name:'', lastName:'', email:'', phone:'', company:'', role:'', country:'',
     type:'', budget:'', urgency:'', source:'', msg:'',
   });
-
-  // Stack section reveal
-  useEffect(() => {
-    const o = new IntersectionObserver(
-      ([e]) => { if (e.isIntersecting) setVisible(true); },
-      { threshold: 0.05 }
-    );
-    o.observe(ref.current);
-    return () => o.disconnect();
-  }, []);
 
   // CTA section reveal (wrapper enters viewport)
   useEffect(() => {
@@ -154,121 +82,6 @@ const Stack = () => {
 
   return (
     <>
-      {/* ── SOLUCIONES ─────────────────────────────────────────── */}
-      <section ref={ref} id="soluciones" className={`${styles.section} ${visible ? styles.visible : ''}`}>
-
-        <div className={styles.bgNebula}  />
-        <div className={styles.bgNebula2} />
-        <div className={styles.bgScan}    />
-
-        <div className={styles.header}>
-          <div className={styles.eyebrow}>
-            <span className={styles.eyebrowDot} />
-            SOLUCIONES
-          </div>
-          <h2 className={styles.headline}>
-            Todo lo que<br />
-            tu negocio <span className={styles.gradWord}>necesita</span>.
-          </h2>
-          <p className={styles.sub}>
-            Software inteligente, experiencias digitales y producción de eventos.<br />
-            Una sola alianza, sin intermediarios.
-          </p>
-        </div>
-
-        <div className={styles.grid}>
-          {SOLUTIONS.map((sol, i) => (
-            <div
-              key={sol.id}
-              className={`${styles.card} ${sol.isMain ? styles.solCardMain : ''}`}
-              style={{ '--accent': sol.accent, '--rgb': sol.rgb, '--delay': `${i * 120}ms` }}
-            >
-              <div className={styles.cardGlow} />
-              <div
-                className={styles.accentBar}
-                style={{ background: `linear-gradient(90deg, ${sol.accent}CC, transparent)` }}
-              />
-
-              <div className={styles.cardHead}>
-                <div
-                  className={styles.iconBox}
-                  style={{
-                    color:        sol.accent,
-                    borderColor: `rgba(${sol.rgb},.24)`,
-                    background:  `rgba(${sol.rgb},.09)`,
-                  }}
-                >
-                  <sol.Icon />
-                </div>
-                <span
-                  className={styles.pill}
-                  style={{
-                    color:       sol.accent,
-                    borderColor: `rgba(${sol.rgb},.30)`,
-                    background:  `rgba(${sol.rgb},.09)`,
-                  }}
-                >
-                  {sol.label}
-                </span>
-              </div>
-
-              <div className={styles.catTitleWrap}>
-                <h4 className={styles.catTitle}>{sol.headline}</h4>
-              </div>
-              <p className={styles.catDesc}>{sol.desc}</p>
-
-              {sol.isMain ? (
-                <div className={styles.solServices}>
-                  {sol.services.map((svc, si) => (
-                    <div
-                      key={svc.name}
-                      className={styles.solServiceRow}
-                      style={{ '--s-delay': `${si * 80}ms` }}
-                    >
-                      <span
-                        className={styles.solServiceDot}
-                        style={{
-                          background:  svc.dot,
-                          boxShadow:  `0 0 8px rgba(${svc.dotRgb},.70)`,
-                        }}
-                      />
-                      <div>
-                        <div className={styles.solServiceName}>{svc.name}</div>
-                        <div className={styles.solServiceDetail}>{svc.detail}</div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <>
-                  <div className={styles.solMetric}>
-                    <span className={styles.solMetricNum} style={{ '--rgb': sol.rgb }}>
-                      {sol.metric}
-                    </span>
-                    <span className={styles.solMetricLabel}>{sol.metricLabel}</span>
-                  </div>
-                  <div className={styles.techWrap}>
-                    {sol.tags.map((t, ti) => (
-                      <span
-                        key={t}
-                        className={styles.techPill}
-                        style={{
-                          borderColor: `rgba(${sol.rgb},.20)`,
-                          background:  `rgba(${sol.rgb},.07)`,
-                          '--pill-i':  ti,
-                        }}
-                      >
-                        {t}
-                      </span>
-                    ))}
-                  </div>
-                </>
-              )}
-            </div>
-          ))}
-        </div>
-      </section>
-
       {/* ── CTA wrapper — provides scroll room for the flip ─── */}
       <div ref={ctaWrapperRef} className={styles.ctaWrapper}>
       <section
