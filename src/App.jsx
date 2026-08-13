@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Ticker from './components/Ticker';
 import Hero from './sections/Hero';
+import About from './sections/About';
 import Services from './sections/Services';
 import Process from './sections/Process';
 import Products from './sections/Products';
@@ -29,6 +30,25 @@ function App() {
     localStorage.setItem('apx-theme', theme);
   }, [theme]);
 
+  useEffect(() => {
+    if (StandalonePage) return undefined;
+
+    const sectionId = window.location.hash.slice(1);
+    if (!sectionId) return undefined;
+
+    const scrollToSection = () => {
+      document.getElementById(sectionId)?.scrollIntoView({ block: 'start' });
+    };
+
+    const frame = window.requestAnimationFrame(scrollToSection);
+    const timeout = window.setTimeout(scrollToSection, 500);
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.clearTimeout(timeout);
+    };
+  }, [StandalonePage]);
+
   return (
     <div className="app-shell" data-theme={theme}>
       {StandalonePage && <Navbar theme={theme} onThemeChange={setTheme} />}
@@ -38,6 +58,7 @@ function App() {
         <main>
           <Hero theme={theme} onThemeChange={setTheme} />
           <Ticker />
+          <About />
           <Services theme={theme} onThemeChange={setTheme} />
           <Process />
           <Products />
