@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//tmp/**)",
+      "Bash(node check2.js)",
+      "Bash(node diag2.js)",
+      "Bash(node diag3.js)",
+      "Bash(npm run *)"
+    ]
+  }
+}

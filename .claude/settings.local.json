@@ -5,7 +5,27 @@
       "Bash(git rebase *)",
       "Read(//c/Users/Pipec/.claude/skills/ui-ux-pro-max/**)",
       "Bash(python scripts/search.py \"B2B agency transformation results outcomes use cases dark premium\" --design-system)",
-      "Bash(python scripts/search.py \"problem solution ROI conversion trust B2B tech agency\" --domain landing -n 4)"
+      "Bash(python scripts/search.py \"problem solution ROI conversion trust B2B tech agency\" --domain landing -n 4)",
+      "Bash(npm install *)",
+      "Bash(npm run *)",
+      "Bash(chromium-cli --help)",
+      "Read(//c/Program Files/Google/Chrome/Application/**)",
+      "Read(//c/Program Files \\\\\\(x86\\\\\\)/Microsoft/Edge/Application/**)",
+      "Bash(node check.js)",
+      "Bash(node \"C:\\\\Users\\\\Pipec\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-Pipec-Downloads-apx-apx\\\\bbec4688-a5e1-49a1-9701-defafcc18ca6\\\\scratchpad\\\\check.js\")",
+      "PowerShell(Copy-Item \"C:\\\\Users\\\\Pipec\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-Pipec-Downloads-apx-apx\\\\bbec4688-a5e1-49a1-9701-defafcc18ca6\\\\scratchpad\\\\diag.js\" \"C:\\\\Users\\\\Pipec\\\\AppData\\\\Local\\\\Temp\\\\pw-check\\\\diag.js\" -Force)",
+      "Bash(node diag.js)",
+      "PowerShell(Copy-Item \"C:\\\\Users\\\\Pipec\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-Pipec-Downloads-apx-apx\\\\bbec4688-a5e1-49a1-9701-defafcc18ca6\\\\scratchpad\\\\check2.js\" \"C:\\\\Users\\\\Pipec\\\\AppData\\\\Local\\\\Temp\\\\pw-check\\\\check2.js\" -Force)",
+      "Bash(node check2.js)",
+      "PowerShell(Copy-Item \"C:\\\\Users\\\\Pipec\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-Pipec-Downloads-apx-apx\\\\bbec4688-a5e1-49a1-9701-defafcc18ca6\\\\scratchpad\\\\check3.js\" \"C:\\\\Users\\\\Pipec\\\\AppData\\\\Local\\\\Temp\\\\pw-check\\\\check3.js\" -Force)",
+      "Bash(node check3.js)",
+      "Bash(taskkill //PID 15828 //F)",
+      "Bash(mkdir -p /tmp/pw-check2)",
+      "Read(//tmp/**)",
+      "Bash(npm init *)",
+      "Bash(mkdir -p /tmp/pw-verify)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5174/)",
+      "Bash(netstat -ano)"
     ]
   }
 }
