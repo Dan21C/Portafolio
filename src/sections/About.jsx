@@ -1,22 +1,22 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
-  ArrowRight,
   BarChart3,
   Bot,
   BrainCircuit,
   Code2,
   Database,
+  Lightbulb,
   MonitorSmartphone,
   MousePointerClick,
   Sparkles,
   Target,
   Workflow,
-  X,
   Zap,
 } from 'lucide-react';
 import styles from './About.module.css';
 
 const asset = (filename) => `/Assets/About/${filename}.png`;
+const orbitLightCount = 16;
 
 const ecosystemServices = [
   {
@@ -36,9 +36,8 @@ const ecosystemServices = [
       { label: 'Participación', text: 'Juegos y retos medibles.', Icon: MousePointerClick },
       { label: 'Recuerdo', text: 'Momentos diseñados para compartir.', Icon: Target },
     ],
-    x: 50,
-    y: 9,
-    path: 'M500 382 C500 314 500 206 500 110',
+    angle: -90,
+    crop: ['412.84%', '437.67%', '78.14%', '11.29%'],
   },
   {
     id: 'automatizacion',
@@ -57,9 +56,8 @@ const ecosystemServices = [
       { label: 'Integración', text: 'Herramientas conectadas.', Icon: Database },
       { label: 'Velocidad', text: 'Operación sin fricción diaria.', Icon: Zap },
     ],
-    x: 22,
-    y: 35,
-    path: 'M500 382 C410 342 318 300 222 258',
+    angle: -150,
+    crop: ['388.84%', '437.67%', '34.78%', '6.2%'],
   },
   {
     id: 'hardware',
@@ -78,9 +76,8 @@ const ecosystemServices = [
       { label: 'Montaje', text: 'Instalación y operación en campo.', Icon: Sparkles },
       { label: 'Soporte', text: 'Tecnología cuidada en vivo.', Icon: Zap },
     ],
-    x: 23,
-    y: 66,
-    path: 'M500 382 C406 430 324 502 236 624',
+    angle: 150,
+    crop: ['398.1%', '427.73%', '4.15%', '41.05%'],
   },
   {
     id: 'ia',
@@ -99,9 +96,8 @@ const ecosystemServices = [
       { label: 'Generativa', text: 'Creamos contenido y soluciones.', Icon: BrainCircuit },
       { label: 'Asistentes', text: 'Respuestas y decisiones más ágiles.', Icon: Code2 },
     ],
-    x: 50,
-    y: 84,
-    path: 'M500 382 C500 462 500 562 500 660',
+    angle: 90,
+    crop: ['398.1%', '437.67%', '20.61%', '87.47%'],
   },
   {
     id: 'analitica',
@@ -120,9 +116,8 @@ const ecosystemServices = [
       { label: 'Medición', text: 'Indicadores antes y después.', Icon: Target },
       { label: 'Datos', text: 'Información ordenada y accionable.', Icon: Database },
     ],
-    x: 78,
-    y: 66,
-    path: 'M500 382 C594 430 688 502 780 624',
+    angle: 30,
+    crop: ['398.1%', '437.67%', '63.1%', '92.98%'],
   },
   {
     id: 'software',
@@ -141,70 +136,204 @@ const ecosystemServices = [
       { label: 'Operación', text: 'Procesos visibles y trazables.', Icon: Workflow },
       { label: 'Escala', text: 'Sistemas listos para crecer.', Icon: Zap },
     ],
-    x: 79,
-    y: 35,
-    path: 'M500 382 C590 342 694 300 802 258',
+    angle: -30,
+    crop: ['418%', '437.67%', '93.55%', '55.92%'],
   },
 ];
 
-const bulbPositions = [
-  { x: 50, y: 5 },
-  { x: 69, y: 10 },
-  { x: 84, y: 27 },
-  { x: 91, y: 50 },
-  { x: 84, y: 73 },
-  { x: 69, y: 90 },
-  { x: 50, y: 95 },
-  { x: 31, y: 90 },
-  { x: 16, y: 73 },
-  { x: 9, y: 50 },
-  { x: 16, y: 27 },
-  { x: 31, y: 10 },
-];
+const orbitPosition = (angle) => {
+  const radians = (angle * Math.PI) / 180;
+
+  return {
+    x: 50 + Math.cos(radians) * 34.5,
+    y: 50 + Math.sin(radians) * 30.5,
+  };
+};
 
 const About = () => {
-  const [connected, setConnected] = useState(false);
-  const [detailOpen, setDetailOpen] = useState(false);
-  const [activeId, setActiveId] = useState(null);
-  const [pulseKey, setPulseKey] = useState(0);
+  const ecosystemRef = useRef(null);
+  const pointerFrameRef = useRef(0);
+  const orbitFrameRef = useRef(0);
+  const orbitRotationRef = useRef(0);
+  const orbitNodesRef = useRef({});
+  const orbitLightsRef = useRef([]);
+  const connectionRefs = useRef({});
+  const hoveredIdRef = useRef(null);
+  const centerFocusedRef = useRef(false);
+  const dragRef = useRef({ active: false, pointerId: null, x: 0, velocity: 0 });
+  const [hoveredId, setHoveredId] = useState(null);
+  const [centerFocused, setCenterFocused] = useState(false);
 
-  const activeService =
-    ecosystemServices.find((service) => service.id === activeId) ?? ecosystemServices[0];
-
-  const pulseConnections = () => {
-    setConnected(true);
-    setPulseKey((key) => key + 1);
+  const focusService = (id) => {
+    centerFocusedRef.current = false;
+    setCenterFocused(false);
+    hoveredIdRef.current = id;
+    setHoveredId(id);
   };
 
-  const selectService = (id) => {
-    setActiveId(id);
-    setDetailOpen(true);
-    pulseConnections();
+  const clearServiceFocus = () => {
+    hoveredIdRef.current = null;
+    setHoveredId(null);
   };
 
-  const closeDetail = () => {
-    setDetailOpen(false);
-    setActiveId(null);
+  const focusCenter = () => {
+    hoveredIdRef.current = null;
+    setHoveredId(null);
+    centerFocusedRef.current = true;
+    setCenterFocused(true);
+  };
+
+  const clearCenterFocus = () => {
+    centerFocusedRef.current = false;
+    setCenterFocused(false);
+  };
+
+  const handlePointerMove = (event) => {
+    if (event.pointerType === 'touch' || !ecosystemRef.current) return;
+
+    if (dragRef.current.active) {
+      const movement = event.clientX - dragRef.current.x;
+      dragRef.current.x = event.clientX;
+      dragRef.current.velocity = movement * 0.055;
+      orbitRotationRef.current += movement * 0.16;
+      return;
+    }
+
+    const frame = ecosystemRef.current;
+    const bounds = frame.getBoundingClientRect();
+    const x = ((event.clientX - bounds.left) / bounds.width - 0.5) * 2;
+    const y = ((event.clientY - bounds.top) / bounds.height - 0.5) * 2;
+
+    window.cancelAnimationFrame(pointerFrameRef.current);
+    pointerFrameRef.current = window.requestAnimationFrame(() => {
+      frame.style.setProperty('--map-x', `${x * 10}px`);
+      frame.style.setProperty('--map-y', `${y * 7}px`);
+      frame.style.setProperty('--tilt-x', `${y * -0.65}deg`);
+      frame.style.setProperty('--tilt-y', `${x * 0.8}deg`);
+    });
+
+  };
+
+  const handlePointerDown = (event) => {
+    if (event.pointerType === 'touch' || event.target.closest('[data-ecosystem-node]')) return;
+
+    dragRef.current = {
+      active: true,
+      pointerId: event.pointerId,
+      x: event.clientX,
+      velocity: 0,
+    };
+    ecosystemRef.current?.setPointerCapture(event.pointerId);
+  };
+
+  const handlePointerUp = (event) => {
+    if (!dragRef.current.active) return;
+
+    dragRef.current.active = false;
+    if (ecosystemRef.current?.hasPointerCapture(event.pointerId)) {
+      ecosystemRef.current.releasePointerCapture(event.pointerId);
+    }
+  };
+
+  const handleWheel = (event) => {
+    orbitRotationRef.current += event.deltaY * 0.014;
+  };
+
+  const resetPointer = () => {
+    const frame = ecosystemRef.current;
+    if (!frame) return;
+
+    frame.style.setProperty('--map-x', '0px');
+    frame.style.setProperty('--map-y', '0px');
+    frame.style.setProperty('--tilt-x', '0deg');
+    frame.style.setProperty('--tilt-y', '0deg');
+    if (!dragRef.current.active) {
+      clearServiceFocus();
+      clearCenterFocus();
+    }
   };
 
   useEffect(() => {
-    if (!detailOpen) return undefined;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let previousTime = 0;
 
-    const handleKeyDown = (event) => {
-      if (event.key === 'Escape') {
-        setDetailOpen(false);
-        setActiveId(null);
+    const updateOrbit = (time = 0) => {
+      const delta = previousTime ? Math.min(time - previousTime, 34) : 0;
+      previousTime = time;
+
+      if (
+        !reduceMotion &&
+        !hoveredIdRef.current &&
+        !centerFocusedRef.current &&
+        !dragRef.current.active
+      ) {
+        orbitRotationRef.current += delta * 0.0032 + dragRef.current.velocity;
+        dragRef.current.velocity *= 0.91;
       }
+
+      ecosystemServices.forEach((service) => {
+        const position = orbitPosition(service.angle + orbitRotationRef.current);
+        const node = orbitNodesRef.current[service.id];
+        const depth = 0.92 + (position.y / 100) * 0.1;
+
+        if (node) {
+          node.style.setProperty('--node-x', `${position.x}%`);
+          node.style.setProperty('--node-y', `${position.y}%`);
+          node.style.setProperty('--node-scale', depth.toFixed(3));
+          node.style.zIndex = String(Math.round(8 + position.y));
+        }
+
+        const connector = connectionRefs.current[service.id];
+
+        if (connector) {
+          const nodeX = position.x * 10;
+          const nodeY = position.y * 7.5;
+          const dx = nodeX - 500;
+          const dy = nodeY - 375;
+          const distance = Math.max(Math.hypot(dx, dy), 1);
+          const unitX = dx / distance;
+          const unitY = dy / distance;
+          const ellipseEdge = 1 / Math.sqrt((unitX / 142) ** 2 + (unitY / 82) ** 2);
+          const startX = 500 + unitX * ellipseEdge;
+          const startY = 375 + unitY * ellipseEdge;
+          const endX = nodeX - unitX * 65;
+          const endY = nodeY - unitY * 38;
+          const bend = service.number % 2 === 0 ? 12 : -12;
+          const controlX = startX + (endX - startX) * 0.5 - unitY * bend;
+          const controlY = startY + (endY - startY) * 0.5 + unitX * bend;
+
+          connector.setAttribute(
+            'd',
+            `M ${startX.toFixed(2)} ${startY.toFixed(2)} Q ${controlX.toFixed(2)} ${controlY.toFixed(2)} ${endX.toFixed(2)} ${endY.toFixed(2)}`,
+          );
+        }
+      });
+
+      orbitLightsRef.current.forEach((light, index) => {
+        if (!light) return;
+
+        const position = orbitPosition(
+          index * (360 / orbitLightCount) + orbitRotationRef.current,
+        );
+        light.style.setProperty('--light-x', `${position.x}%`);
+        light.style.setProperty('--light-y', `${position.y}%`);
+      });
+
+      orbitFrameRef.current = window.requestAnimationFrame(updateOrbit);
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [detailOpen]);
+    updateOrbit();
+
+    return () => {
+      window.cancelAnimationFrame(pointerFrameRef.current);
+      window.cancelAnimationFrame(orbitFrameRef.current);
+    };
+  }, []);
 
   return (
     <section
       id="nosotros"
-      className={`${styles.section} ${connected ? styles.connected : ''} ${detailOpen ? styles.detailOpen : ''}`}
+      className={styles.section}
       aria-labelledby="ecosistema-apx-title"
     >
       <div className={styles.backdrop} aria-hidden="true" />
@@ -228,146 +357,152 @@ const About = () => {
         </div>
 
         <div className={styles.ecosystemWrap}>
-          <div className={styles.ecosystem} aria-label="Mapa interactivo de servicios APX">
-            <div className={styles.spiralField} aria-hidden="true" />
-            <div className={styles.orbitOuter} aria-hidden="true" />
-            <div className={styles.orbitMiddle} aria-hidden="true" />
-            <div className={styles.orbitInner} aria-hidden="true" />
+          <div
+            ref={ecosystemRef}
+            className={`${styles.ecosystem} ${hoveredId ? styles.hasFocus : ''} ${centerFocused ? styles.centerFocus : ''}`}
+            onPointerMove={handlePointerMove}
+            onPointerDown={handlePointerDown}
+            onPointerUp={handlePointerUp}
+            onPointerCancel={handlePointerUp}
+            onPointerLeave={resetPointer}
+            onWheel={handleWheel}
+            aria-label="Mapa interactivo de servicios APX"
+          >
+            <div className={styles.focusVeil} aria-hidden="true" />
 
             <svg
-              className={styles.cables}
-              viewBox="0 0 1000 760"
-              preserveAspectRatio="none"
+              className={styles.traceMap}
+              viewBox="0 0 1000 750"
+              preserveAspectRatio="xMidYMid meet"
               aria-hidden="true"
             >
-              <g key={pulseKey}>
-                {ecosystemServices.map((service, index) => (
-                  <path
-                    key={service.id}
-                    className={`${styles.cable} ${service.id === activeId ? styles.cableActive : ''}`}
-                    d={service.path}
-                    pathLength="1"
-                    style={{ '--delay': `${index * 95}ms` }}
-                  />
-                ))}
-              </g>
-            </svg>
-
-            <button
-              type="button"
-              className={styles.centerNode}
-              onClick={pulseConnections}
-              aria-pressed={connected}
-            >
-              <span>Personas al centro.</span>
-              <strong>Tecnología alrededor.</strong>
-            </button>
-
-            <div className={styles.bulbRing} aria-hidden="true">
-              {bulbPositions.map((bulb, index) => (
-                <span
-                  key={`${bulb.x}-${bulb.y}`}
-                  style={{ '--x': `${bulb.x}%`, '--y': `${bulb.y}%`, '--delay': `${index * 90}ms` }}
+              <defs>
+                <linearGradient id="about-orbit-gradient" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0" stopColor="#fff" stopOpacity="0.08" />
+                  <stop offset="0.5" stopColor="#fff" stopOpacity="0.72" />
+                  <stop offset="1" stopColor="#fff" stopOpacity="0.08" />
+                </linearGradient>
+                <radialGradient id="about-node-glow">
+                  <stop offset="0" stopColor="#fff" stopOpacity="1" />
+                  <stop offset="1" stopColor="#fff" stopOpacity="0" />
+                </radialGradient>
+              </defs>
+              <ellipse className={styles.traceOrbit} cx="500" cy="375" rx="345" ry="229" pathLength="1" />
+              <ellipse className={styles.traceOrbit} cx="500" cy="375" rx="245" ry="151" pathLength="1" />
+              <ellipse className={styles.traceOrbit} cx="500" cy="375" rx="142" ry="82" pathLength="1" />
+              {ecosystemServices.map((service, index) => (
+                <path
+                  key={service.id}
+                  ref={(connector) => {
+                    if (connector) connectionRefs.current[service.id] = connector;
+                    else delete connectionRefs.current[service.id];
+                  }}
+                  className={`${styles.serviceConnection} ${service.id === hoveredId ? styles.connectionActive : ''}`}
+                  pathLength="1"
+                  style={{ '--connection-delay': `${index * 70}ms` }}
                 />
               ))}
+            </svg>
+
+            <div className={styles.orbitLights} aria-hidden="true">
+              {Array.from({ length: orbitLightCount }, (_, index) => {
+                const position = orbitPosition(index * (360 / orbitLightCount));
+
+                return (
+                  <span
+                    key={index}
+                    ref={(light) => {
+                      orbitLightsRef.current[index] = light;
+                    }}
+                    style={{
+                      '--light-x': `${position.x}%`,
+                      '--light-y': `${position.y}%`,
+                      '--light-delay': `${index * -0.19}s`,
+                    }}
+                  >
+                    <Lightbulb />
+                  </span>
+                );
+              })}
             </div>
 
-            {ecosystemServices.map((service, index) => (
-              <button
-                key={service.id}
-                type="button"
-                className={`${styles.serviceNode} ${service.id === activeId ? styles.serviceActive : ''}`}
-                style={{ '--x': `${service.x}%`, '--y': `${service.y}%`, '--delay': `${index * 80}ms` }}
-                onClick={() => selectService(service.id)}
-                aria-pressed={service.id === activeId}
-              >
-                <span className={styles.serviceMedia}>
-                  <img src={service.preview} alt="" loading="lazy" decoding="async" />
-                </span>
-                <span className={styles.serviceText}>
+            <div
+              className={styles.centerNode}
+              data-ecosystem-node
+              tabIndex="0"
+              onPointerEnter={focusCenter}
+              onPointerLeave={clearCenterFocus}
+              onFocus={focusCenter}
+              onBlur={clearCenterFocus}
+              aria-label="Conectar todos los servicios del ecosistema"
+            >
+              <span>Todo comienza<br />con una conexión.</span>
+            </div>
+
+            {ecosystemServices.map((service) => {
+              const initialPosition = orbitPosition(service.angle);
+
+              return (
+                <article
+                  key={service.id}
+                  data-ecosystem-node
+                  ref={(node) => {
+                    if (node) orbitNodesRef.current[service.id] = node;
+                    else delete orbitNodesRef.current[service.id];
+                  }}
+                  tabIndex="0"
+                  className={`${styles.serviceNode} ${service.id === hoveredId ? styles.serviceActive : ''}`}
+                  style={{
+                    '--node-x': `${initialPosition.x}%`,
+                    '--node-y': `${initialPosition.y}%`,
+                    '--node-scale': 1,
+                    '--crop-size-x': service.crop[0],
+                    '--crop-size-y': service.crop[1],
+                    '--crop-position-x': service.crop[2],
+                    '--crop-position-y': service.crop[3],
+                  }}
+                  onPointerEnter={() => focusService(service.id)}
+                  onPointerLeave={clearServiceFocus}
+                  onFocus={() => focusService(service.id)}
+                  onBlur={clearServiceFocus}
+                  aria-label={`${service.title}: ${service.description}`}
+                >
+                  <span className={styles.nodeReference} aria-hidden="true" />
+                  <div className={styles.nodeMedia}>
+                    <img src={service.preview} alt="" loading="eager" decoding="async" />
+                  </div>
+                  <span className={styles.nodeCopy}>
+                    <em>{service.number}</em>
+                    <strong>{service.title}</strong>
+                    <small>{service.description}</small>
+                    <p>{service.lead}</p>
+                  </span>
+                  <span className={styles.nodeBrand} aria-hidden="true">APX</span>
+                </article>
+              );
+            })}
+          </div>
+
+          <div className={styles.mobileMap} aria-label="Servicios del ecosistema APX">
+            {ecosystemServices.map((service) => (
+              <article key={service.id}>
+                <img src={service.preview} alt="" loading="lazy" decoding="async" />
+                <span>
+                  <small>{service.number}</small>
                   <strong>{service.title}</strong>
+                  <em>{service.description}</em>
+                  <p>{service.lead}</p>
                 </span>
-              </button>
+              </article>
             ))}
           </div>
 
           <p className={styles.hint}>
-            Toca el centro para activar las conexiones. Luego elige un servicio.
+            Arrastra para girar. Explora un servicio o acerca el cursor al centro para conectar todo.
           </p>
         </div>
       </div>
 
-      {detailOpen && (
-        <div
-          className={styles.detailOverlay}
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="service-detail-title"
-        >
-          <div className={styles.detailScrim} onClick={closeDetail} aria-hidden="true" />
-          <article className={styles.detailPanel} aria-live="polite">
-            <div className={styles.detailImage}>
-              <img
-                key={activeService.image}
-                src={activeService.image}
-                alt={`Vista de ${activeService.title}`}
-                loading="lazy"
-                decoding="async"
-              />
-            </div>
-
-            <div className={styles.detailContent}>
-              <button
-                type="button"
-                className={styles.closeDetail}
-                onClick={closeDetail}
-                aria-label="Volver al ecosistema"
-                title="Volver al ecosistema"
-              >
-                <X aria-hidden="true" />
-              </button>
-
-              <div className={styles.detailTop}>
-                <span className={styles.detailIcon}>
-                  <activeService.Icon aria-hidden="true" />
-                </span>
-                <div>
-                  <span className={styles.detailKicker}>Ecosistema APX</span>
-                  <h3 id="service-detail-title">{activeService.title}</h3>
-                </div>
-                <strong className={styles.detailNumber}>{activeService.number}</strong>
-              </div>
-
-              <p className={styles.detailLead}>{activeService.lead}</p>
-              <p className={styles.detailText}>{activeService.detail}</p>
-
-              <div className={styles.detailDivider} />
-
-              <div className={styles.featureGrid}>
-                {activeService.features.map(({ label, text, Icon }) => (
-                  <div key={label} className={styles.featureItem}>
-                    <Icon aria-hidden="true" />
-                    <strong>{label}</strong>
-                    <span>{text}</span>
-                  </div>
-                ))}
-              </div>
-
-              <div className={styles.resultBlock}>
-                <Target aria-hidden="true" />
-                <div>
-                  <span>Resultado</span>
-                  <p>{activeService.result}</p>
-                </div>
-              </div>
-
-              <a className={styles.detailCta} href="#servicios" onClick={closeDetail}>
-                Ver servicio <ArrowRight aria-hidden="true" />
-              </a>
-            </div>
-          </article>
-        </div>
-      )}
     </section>
   );
 };
