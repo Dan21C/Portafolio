@@ -108,6 +108,12 @@ Las migraciones `InitialCatalogSchema` y `CatalogApiIndexes` fueron validadas co
 
 La validacion real detecto y corrigio el tracking de hijos durante `PUT`: el reemplazo ahora elimina las colecciones con operaciones set-based dentro de la transaccion y marca explicitamente los nuevos UUID como `Added`. Los fixtures `integration-*` y `api-integration-*` se limpian al terminar.
 
+## Fase 2C - Integracion del catalogo publico
+
+El sitio publico selecciona `ApiCatalogRepository` solo cuando `VITE_USE_API=true` y existe `VITE_API_URL`; de lo contrario conserva `MockCatalogRepository`. El adaptador usa fetch nativo, mapea DTOs a dominio y preserva ProblemDetails mediante un error tipado. Search, categoria, sort y paginacion se ejecutan en la API, con debounce y cancelacion de requests en React.
+
+Las paginas de categoria y detalle consultan sus endpoints dedicados y distinguen 404 de errores de red. El administrador, ProjectRequest, Storage y Auth permanecen sin conexion real. Los paths `/Assets/...` siguen siendo URLs locales validas hasta la fase de Storage.
+
 ### Estado local temporal
 
 `apx-project-selection` continúa siendo la persistencia del Project Builder. `clearProject()` limpia estado React, localStorage, drawer, contador y resumen tras una creación exitosa. La autenticación administrativa continúa usando temporalmente `apx-admin-auth`, aislada por `AdminProtectedRoute`.

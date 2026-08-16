@@ -1,6 +1,6 @@
 import type { PriceMode, ProjectSelection, ServiceCategory, Solution, SolutionFeature, SolutionMedia, SolutionSeo, SolutionStatus } from './models';
 export interface PagedResult<T> { items: T[]; page: number; pageSize: number; totalItems: number; totalPages: number; }
-export interface CatalogSolutionQuery { categorySlug?: string; search?: string; featured?: boolean; tags?: string[]; sort?: 'featured' | 'name' | 'order'; page?: number; pageSize?: number; }
+export interface CatalogSolutionQuery { categorySlug?: string; search?: string; featured?: boolean; tags?: string[]; useCase?: string; modality?: string; sort?: 'featured' | 'name' | 'order' | 'newest'; page?: number; pageSize?: number; }
 export interface AdminSolutionQuery { categoryId?: string; search?: string; status?: SolutionStatus; page?: number; pageSize?: number; }
 export interface MediaDto extends SolutionMedia {}
 export interface CategoryListDto { id: string; name: string; slug: string; shortDescription: string; image?: string; order: number; }
