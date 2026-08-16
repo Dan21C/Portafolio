@@ -33,6 +33,15 @@ internal static class CatalogEndpoints
         admin.MapPut("/categories/reorder", async (ReorderCategoriesRequest request, AdminCategoryService service, CancellationToken ct) => (await service.ReorderAsync(request, ct)).ToHttp()).Produces(204);
         admin.MapPut("/categories/{id:guid}", async (Guid id, UpdateCategoryRequest request, AdminCategoryService service, CancellationToken ct) => (await service.UpdateAsync(id, request, ct)).ToHttp()).Produces<AdminCategoryDto>();
         admin.MapDelete("/categories/{id:guid}", async (Guid id, AdminCategoryService service, CancellationToken ct) => (await service.DeleteAsync(id, ct)).ToHttp()).Produces(204).ProducesProblem(409);
+        admin.MapPost("/solutions/{solutionId:guid}/media", async (Guid solutionId, [FromForm] IFormFile file, [FromForm] string alt, [FromForm] bool? isCover, [FromForm] int? order, MediaService service, CancellationToken ct) =>
+        {
+            await using var content = file.OpenReadStream();
+            var request = new MediaUploadRequest(content, file.FileName, file.ContentType, file.Length, alt, isCover ?? false, order ?? 0);
+            return (await service.UploadAsync(solutionId, request, ct)).ToHttp(value => Results.Created($"/api/v1/admin/solutions/{solutionId}/media/{value.Id}", value));
+        }).DisableAntiforgery().Accepts<IFormFile>("multipart/form-data").Produces<MediaDto>(201).ProducesProblem(400).ProducesProblem(404);
+        admin.MapPut("/solutions/{solutionId:guid}/media/{mediaId:guid}/cover", async (Guid solutionId, Guid mediaId, MediaService service, CancellationToken ct) => (await service.SetCoverAsync(solutionId, mediaId, ct)).ToHttp()).Produces<MediaDto>().ProducesProblem(404);
+        admin.MapPut("/solutions/{solutionId:guid}/media/{mediaId:guid}", async (Guid solutionId, Guid mediaId, UpdateMediaRequest request, MediaService service, CancellationToken ct) => (await service.UpdateAsync(solutionId, mediaId, request, ct)).ToHttp()).Produces<MediaDto>().ProducesProblem(400).ProducesProblem(404);
+        admin.MapDelete("/solutions/{solutionId:guid}/media/{mediaId:guid}", async (Guid solutionId, Guid mediaId, MediaService service, CancellationToken ct) => (await service.DeleteAsync(solutionId, mediaId, ct)).ToHttp()).Produces(204).ProducesProblem(404);
         return endpoints;
     }
 

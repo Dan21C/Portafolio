@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace APX.Infrastructure.Catalog;
 
-public sealed class EfCatalogRepository(ApxDbContext db) : ICatalogRepository
+public sealed class EfCatalogRepository(ApxDbContext db) : ICatalogRepository, IMediaRepository
 {
     public async Task<IReadOnlyList<CategoryListDto>> GetPublicCategoriesAsync(CancellationToken ct) => await db.ServiceCategories.AsNoTracking().Where(x => x.IsActive).OrderBy(x => x.SortOrder).ThenBy(x => x.Id).Select(x => new CategoryListDto(x.Id, x.Name, x.Slug, x.ShortDescription, x.ImageUrl, x.SortOrder)).ToListAsync(ct);
     public Task<CategoryDetailDto?> GetPublicCategoryAsync(string slug, CancellationToken ct) => db.ServiceCategories.AsNoTracking().Where(x => x.IsActive && x.Slug.ToLower() == slug).Select(x => new CategoryDetailDto(x.Id, x.Name, x.Slug, x.ShortDescription, x.ImageUrl, x.SortOrder, x.Description, x.Icon)).SingleOrDefaultAsync(ct);
@@ -92,6 +92,45 @@ public sealed class EfCatalogRepository(ApxDbContext db) : ICatalogRepository
     public async Task<Result> DeleteCategoryAsync(Guid id, CancellationToken ct) { var item = await db.ServiceCategories.SingleOrDefaultAsync(x => x.Id == id, ct); if (item is null) return Result.Failure(Errors.NotFound("category_not_found", "Category was not found.")); if (await db.Solutions.IgnoreQueryFilters().AnyAsync(x => x.CategoryId == id, ct)) return Result.Failure(Errors.Conflict("category_has_solutions", "Category cannot be deleted while it has solutions.")); db.ServiceCategories.Remove(item); AddAudit(id, "CategoryDeleted", Snapshot(item), null); await db.SaveChangesAsync(ct); return Result.Success(); }
     public async Task<Result> ReorderCategoriesAsync(ReorderCategoriesRequest request, CancellationToken ct) { var ids = request.Items.Select(x => x.Id).ToArray(); if (ids.Distinct().Count() != ids.Length) return Result.Failure(Errors.Validation("Category IDs must be unique.", new Dictionary<string, string[]>())); var items = await db.ServiceCategories.Where(x => ids.Contains(x.Id)).ToListAsync(ct); if (items.Count != ids.Length) return Result.Failure(Errors.Validation("One or more category IDs are invalid.", new Dictionary<string, string[]>())); await using var tx = await db.Database.BeginTransactionAsync(ct); foreach (var item in items) { item.SortOrder = request.Items.Single(x => x.Id == item.Id).Order; item.UpdatedAt = DateTimeOffset.UtcNow; } AddAudit(Guid.Empty, "CategoryReordered", null, JsonSerializer.Serialize(request.Items)); await db.SaveChangesAsync(ct); await tx.CommitAsync(ct); return Result.Success(); }
 
+    public Task<bool> SolutionExistsAsync(Guid solutionId, CancellationToken ct) => db.Solutions.AnyAsync(x => x.Id == solutionId, ct);
+    public async Task<MediaDto?> GetMediaAsync(Guid solutionId, Guid mediaId, CancellationToken ct) => await db.SolutionMedia.AsNoTracking().Where(x => x.SolutionId == solutionId && x.Id == mediaId).Select(x => ToMedia(x)).SingleOrDefaultAsync(ct);
+
+    public async Task<Result<MediaDto>> CreateMediaAsync(CreateStoredMediaRequest request, CancellationToken ct)
+    {
+        await using var tx = await db.Database.BeginTransactionAsync(ct);
+        if (!await db.Solutions.AnyAsync(x => x.Id == request.SolutionId, ct)) return Result<MediaDto>.Failure(Errors.NotFound("solution_not_found", "Solution was not found."));
+        if (request.IsCover) await db.SolutionMedia.Where(x => x.SolutionId == request.SolutionId && x.IsCover).ExecuteUpdateAsync(update => update.SetProperty(x => x.IsCover, false), ct);
+        var entity = new SolutionMedia { Id = request.Id, SolutionId = request.SolutionId, StorageKey = request.StorageKey, PublicUrl = request.PublicUrl, Alt = request.Alt, MediaType = MediaType.Image, MimeType = request.MimeType, Bytes = request.Bytes, SortOrder = request.Order, IsCover = request.IsCover, CreatedAt = DateTimeOffset.UtcNow };
+        db.SolutionMedia.Add(entity); AddMediaAudit(entity, "MediaUploaded", null, Snapshot(entity)); await db.SaveChangesAsync(ct); await tx.CommitAsync(ct);
+        return Result<MediaDto>.Success(ToMedia(entity));
+    }
+
+    public async Task<Result<MediaDto>> UpdateMediaAsync(Guid solutionId, Guid mediaId, UpdateMediaRequest request, CancellationToken ct)
+    {
+        var entity = await db.SolutionMedia.SingleOrDefaultAsync(x => x.SolutionId == solutionId && x.Id == mediaId, ct);
+        if (entity is null) return Result<MediaDto>.Failure(Errors.NotFound("media_not_found", "Media was not found."));
+        var before = Snapshot(entity); entity.Alt = request.Alt; entity.SortOrder = request.Order; AddMediaAudit(entity, "MediaUpdated", before, Snapshot(entity)); await db.SaveChangesAsync(ct);
+        return Result<MediaDto>.Success(ToMedia(entity));
+    }
+
+    public async Task<Result<MediaDto>> SetCoverAsync(Guid solutionId, Guid mediaId, CancellationToken ct)
+    {
+        await using var tx = await db.Database.BeginTransactionAsync(ct);
+        var entity = await db.SolutionMedia.SingleOrDefaultAsync(x => x.SolutionId == solutionId && x.Id == mediaId, ct);
+        if (entity is null) return Result<MediaDto>.Failure(Errors.NotFound("media_not_found", "Media was not found."));
+        var previous = await db.SolutionMedia.Where(x => x.SolutionId == solutionId && x.IsCover && x.Id != mediaId).ToListAsync(ct);
+        foreach (var item in previous) item.IsCover = false;
+        var before = Snapshot(entity); entity.IsCover = true; AddMediaAudit(entity, "CoverChanged", before, Snapshot(entity)); await db.SaveChangesAsync(ct); await tx.CommitAsync(ct);
+        return Result<MediaDto>.Success(ToMedia(entity));
+    }
+
+    public async Task<Result> DeleteMediaAsync(Guid solutionId, Guid mediaId, CancellationToken ct)
+    {
+        var entity = await db.SolutionMedia.SingleOrDefaultAsync(x => x.SolutionId == solutionId && x.Id == mediaId, ct);
+        if (entity is null) return Result.Failure(Errors.NotFound("media_not_found", "Media was not found."));
+        var before = Snapshot(entity); db.SolutionMedia.Remove(entity); AddMediaAudit(entity, "MediaDeleted", before, null); await db.SaveChangesAsync(ct); return Result.Success();
+    }
+
     private IQueryable<Solution> DetailQuery() => db.Solutions.Include(x => x.Media).Include(x => x.Features).Include(x => x.SolutionTags).ThenInclude(x => x.Tag).Include(x => x.SolutionUseCases).ThenInclude(x => x.UseCase).Include(x => x.SolutionModalities).ThenInclude(x => x.Modality).Include(x => x.RelatedSolutions).Include(x => x.Seo).AsSplitQuery();
     private static IQueryable<Solution> ApplyPublicSort(IQueryable<Solution> q, string sort) => sort.ToLowerInvariant() switch { "featured" => q.OrderByDescending(x => x.Featured).ThenBy(x => x.SortOrder).ThenBy(x => x.Id), "name" => q.OrderBy(x => x.Name).ThenBy(x => x.Id), "newest" => q.OrderByDescending(x => x.PublishedAt).ThenBy(x => x.Id), _ => q.OrderBy(x => x.SortOrder).ThenBy(x => x.Id) };
     private static IQueryable<Solution> ApplyAdminSort(IQueryable<Solution> q, string sort) => sort.ToLowerInvariant() switch { "name" => q.OrderBy(x => x.Name).ThenBy(x => x.Id), "newest" => q.OrderByDescending(x => x.CreatedAt).ThenBy(x => x.Id), "featured" => q.OrderByDescending(x => x.Featured).ThenBy(x => x.SortOrder).ThenBy(x => x.Id), _ => q.OrderBy(x => x.SortOrder).ThenBy(x => x.Id) };
@@ -120,6 +159,7 @@ public sealed class EfCatalogRepository(ApxDbContext db) : ICatalogRepository
     private static void ReplaceChildren(Solution x, IReadOnlyList<FeatureInput>? features, IReadOnlyList<Guid>? tagIds, IReadOnlyList<Guid>? useCaseIds, IReadOnlyList<Guid>? modalityIds, IReadOnlyList<MediaInput>? media, SeoInput? seo, DateTimeOffset now) { foreach (var (f, i) in (features ?? []).Select((v, i) => (v, i))) x.Features.Add(new SolutionFeature { Id = Guid.NewGuid(), Title = f.Title.Trim(), Description = f.Description, SortOrder = i }); foreach (var id in (tagIds ?? []).Distinct()) x.SolutionTags.Add(new SolutionTag { TagId = id }); foreach (var id in (useCaseIds ?? []).Distinct()) x.SolutionUseCases.Add(new SolutionUseCase { UseCaseId = id }); foreach (var id in (modalityIds ?? []).Distinct()) x.SolutionModalities.Add(new SolutionModality { ModalityId = id }); foreach (var m in media ?? []) x.Media.Add(new SolutionMedia { Id = Guid.NewGuid(), PublicUrl = m.Url, Alt = m.Alt, MediaType = CatalogEnumMappings.ParseMediaType(m.Type), SortOrder = m.Order, IsCover = m.IsCover, StorageKey = m.StorageKey, MimeType = m.MimeType, Width = m.Width, Height = m.Height, Bytes = m.Bytes, CreatedAt = now }); if (seo is not null) x.Seo = new SolutionSeo { MetaTitle = seo.Title, MetaDescription = seo.Description, Keywords = seo.Keywords?.ToArray() ?? [] }; }
     private void MarkChildrenAdded(Solution x) { db.SolutionFeatures.AddRange(x.Features); db.SolutionMedia.AddRange(x.Media); db.Set<SolutionTag>().AddRange(x.SolutionTags); db.Set<SolutionUseCase>().AddRange(x.SolutionUseCases); db.Set<SolutionModality>().AddRange(x.SolutionModalities); if (x.Seo is not null) db.Set<SolutionSeo>().Add(x.Seo); }
     private void AddAudit(Guid id, string action, string? before, string? after) => db.AuditLog.Add(new AuditEntry { Id = Guid.NewGuid(), EntityType = action.StartsWith("Category") ? "ServiceCategory" : "Solution", EntityId = id, Action = action, BeforeJson = before, AfterJson = after, CreatedAt = DateTimeOffset.UtcNow });
+    private void AddMediaAudit(SolutionMedia media, string action, string? before, string? after) => db.AuditLog.Add(new AuditEntry { Id = Guid.NewGuid(), EntityType = "SolutionMedia", EntityId = media.Id, Action = action, BeforeJson = before, AfterJson = after, CreatedAt = DateTimeOffset.UtcNow });
     private static string Snapshot(object value) => JsonSerializer.Serialize(value, new JsonSerializerOptions { ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles });
     private async Task<string> NextCopySlugAsync(string original, CancellationToken ct) { var candidate = $"{original}-copy"; var number = 2; while (await SolutionSlugExistsAsync(candidate, null, ct)) candidate = $"{original}-copy-{number++}"; return candidate; }
 }

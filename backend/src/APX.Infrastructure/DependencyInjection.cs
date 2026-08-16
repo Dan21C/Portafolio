@@ -1,6 +1,7 @@
 using APX.Infrastructure.Persistence;
 using APX.Application.Catalog;
 using APX.Infrastructure.Catalog;
+using APX.Infrastructure.Storage;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,6 +18,20 @@ public static class DependencyInjection
             : connectionString;
         services.AddDbContext<ApxDbContext>(options => options.UseNpgsql(effectiveConnection));
         services.AddScoped<ICatalogRepository, EfCatalogRepository>();
+        services.AddScoped<IMediaRepository>(provider => provider.GetRequiredService<ICatalogRepository>() as IMediaRepository ?? throw new InvalidOperationException("Catalog repository must implement media persistence."));
+        var supabase = new SupabaseStorageOptions(
+            configuration["Supabase:Url"] ?? string.Empty,
+            configuration["Supabase:StorageBucket"] ?? string.Empty,
+            configuration["Supabase:ServiceRoleKey"] ?? string.Empty);
+        services.AddSingleton(supabase);
+        services.AddSingleton<IObjectStorage>(_ =>
+        {
+            var client = new HttpClient();
+            if (Uri.TryCreate(supabase.Url.TrimEnd('/') + "/", UriKind.Absolute, out var baseAddress)) client.BaseAddress = baseAddress;
+            client.DefaultRequestHeaders.UserAgent.ParseAdd("APX.Backend/1.0");
+            client.Timeout = TimeSpan.FromSeconds(60);
+            return new SupabaseObjectStorage(client, supabase);
+        });
         return services;
     }
 }

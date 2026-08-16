@@ -25,3 +25,19 @@ public interface ICatalogRepository
     Task<Result> DeleteCategoryAsync(Guid id, CancellationToken cancellationToken);
     Task<Result> ReorderCategoriesAsync(ReorderCategoriesRequest request, CancellationToken cancellationToken);
 }
+
+public interface IMediaRepository
+{
+    Task<bool> SolutionExistsAsync(Guid solutionId, CancellationToken cancellationToken);
+    Task<MediaDto?> GetMediaAsync(Guid solutionId, Guid mediaId, CancellationToken cancellationToken);
+    Task<Result<MediaDto>> CreateMediaAsync(CreateStoredMediaRequest request, CancellationToken cancellationToken);
+    Task<Result<MediaDto>> UpdateMediaAsync(Guid solutionId, Guid mediaId, UpdateMediaRequest request, CancellationToken cancellationToken);
+    Task<Result<MediaDto>> SetCoverAsync(Guid solutionId, Guid mediaId, CancellationToken cancellationToken);
+    Task<Result> DeleteMediaAsync(Guid solutionId, Guid mediaId, CancellationToken cancellationToken);
+}
+
+public interface IObjectStorage
+{
+    Task<ObjectStorageUpload> UploadAsync(string key, Stream content, string contentType, CancellationToken cancellationToken);
+    Task DeleteAsync(string key, CancellationToken cancellationToken);
+}

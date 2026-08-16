@@ -20,6 +20,8 @@ builder.Services.AddOpenApi();
 builder.Services.AddScoped<CatalogQueryService>();
 builder.Services.AddScoped<AdminSolutionService>();
 builder.Services.AddScoped<AdminCategoryService>();
+builder.Services.AddScoped<MediaService>();
+builder.Services.AddSingleton(new MediaValidationOptions(builder.Configuration.GetValue<long?>("Media:MaxUploadBytes") ?? 10 * 1024 * 1024));
 var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
 builder.Services.AddCors(options => options.AddPolicy("ApxClients", policy =>
 {

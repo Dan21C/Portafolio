@@ -22,6 +22,11 @@ public sealed record CreateCategoryRequest(string Name, string Slug, string Shor
 public sealed record UpdateCategoryRequest(string RowVersion, string Name, string Slug, string ShortDescription, string? Description, string? Image, string? Icon, int Order, bool IsActive);
 public sealed record ReorderCategoryItem(Guid Id, int Order);
 public sealed record ReorderCategoriesRequest(IReadOnlyList<ReorderCategoryItem> Items);
+public sealed record MediaUploadRequest(Stream Content, string FileName, string ContentType, long Length, string Alt, bool IsCover = false, int Order = 0);
+public sealed record CreateStoredMediaRequest(Guid Id, Guid SolutionId, string StorageKey, string PublicUrl, string Alt, string MimeType, long Bytes, int Order, bool IsCover);
+public sealed record UpdateMediaRequest(string Alt, int Order);
+public sealed record ObjectStorageUpload(string Key, string PublicUrl);
+public sealed record MediaValidationOptions(long MaxBytes = 10 * 1024 * 1024);
 
 public sealed record PublicSolutionQuery(string? Category, string? Search, bool? Featured, string? Tags, string? UseCase, string? Modality, string Sort = "order", int Page = 1, int PageSize = 12);
 public sealed record AdminSolutionQuery(string? Search, Guid? Category, string? Status, bool? Featured, string Sort = "order", int Page = 1, int PageSize = 12);

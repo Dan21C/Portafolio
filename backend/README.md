@@ -75,3 +75,12 @@ Los detalles admin devuelven `rowVersion` como string decimal basado en PostgreS
 Cada mutacion admin registra una entrada de auditoria sin `AdminUserId` hasta que exista autenticacion real. La suite predeterminada es unitaria/de aplicacion; las pruebas PostgreSQL se habilitan de forma opt-in con una conexion autorizada.
 
 Las pruebas PostgreSQL de `PostgresIntegrationTests` son opt-in y se omiten si no existe `APX_TEST_CONNECTION_STRING`. Debe apuntar exclusivamente a una base aislada o expresamente autorizada. Cada ejecución utiliza slugs `integration-*` y elimina sus soluciones y entradas de auditoría temporales al finalizar.
+# APX Backend
+
+## Catalog media storage
+
+Catalog images are uploaded by the development-only admin API to the public-read Supabase Storage bucket configured by `Supabase__StorageBucket`. The service-role secret is backend-only and must never use a `VITE_` prefix or be committed.
+
+Deletion uses a storage-first policy: the object is removed before its database row. This avoids untracked/orphaned objects when Storage fails. A rare database failure after a successful object deletion is returned as an error and requires operational repair of the stale row.
+
+The upload limit is configured with `Media__MaxUploadBytes` (10 MiB by default). Real Storage integration tests are opt-in because they mutate and clean remote objects.
