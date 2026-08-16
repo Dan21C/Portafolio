@@ -1,6 +1,6 @@
 # APX Backend - Fase 2A
 
-Base de persistencia para APX construida como monolito modular con ASP.NET Core 10, Entity Framework Core y PostgreSQL. En esta fase no se exponen endpoints de catalogo, no se integra Supabase Storage y no se implementa autenticacion. El frontend continua usando sus repositorios mock.
+Backend APX construido como monolito modular con ASP.NET Core 10, Entity Framework Core y PostgreSQL. La Fase 2B expone el catalogo publico y las operaciones administrativas de catalogo. No integra Supabase Storage ni autenticacion y el frontend continua usando sus repositorios mock.
 
 ## Estructura
 
@@ -49,3 +49,27 @@ dotnet ef database update --project src/APX.Infrastructure --startup-project src
 - Solo puede existir un medio marcado como cover por solucion.
 - El seed usa UUID deterministas y conserva las 6 categorias y 36 soluciones congeladas en `catalog-core`.
 - Los roles iniciales son `Admin`, `Editor` y `Viewer`. No se crean usuarios ni credenciales.
+
+## API de catalogo
+
+Los endpoints publicos viven bajo `/api/v1/catalog`: categorias, listado y detalle de soluciones, y featured. El listado pagina con `page=1`, `pageSize=12` y maximo 100. Soporta `category`, `search`, `featured`, `tags`, `useCase`, `modality` y `sort` (`order`, `featured`, `name`, `newest`). Varios tags separados por coma usan semantica **ANY**. Featured devuelve como maximo 8 elementos.
+
+La API publica solo devuelve soluciones publicadas, no eliminadas y pertenecientes a categorias activas. Los errores usan `application/problem+json` con `code`, `traceId` y `errors` cuando corresponde.
+
+OpenAPI se publica en Development en `/openapi/v1.json`.
+
+## API administrativa temporal
+
+> **ADMIN API WITHOUT AUTH MUST NEVER BE ENABLED IN PRODUCTION.**
+
+La API admin no se registra salvo que el entorno sea `Development` y se habilite expresamente:
+
+```powershell
+$env:Features__EnableUnsafeDevelopmentAdminApi="true"
+```
+
+Sus endpoints bajo `/api/v1/admin` permiten CRUD de soluciones y categorias, reorder, duplicar, publicar y despublicar. Al despublicar se cambia a `draft` y `publishedAt` vuelve a `null`, manteniendo la semantica actual del dominio.
+
+Los detalles admin devuelven `rowVersion` como string decimal basado en PostgreSQL `xmin`. El cliente debe devolver exactamente ese valor en cada `PUT`; una version obsoleta produce `409 concurrency_conflict`. El borrado de soluciones es logico. El borrado de categorias con soluciones devuelve `409 category_has_solutions`.
+
+Cada mutacion admin registra una entrada de auditoria sin `AdminUserId` hasta que exista autenticacion real. Las pruebas actuales son unitarias/de aplicacion; no validan `xmin`, `ILIKE` ni transacciones contra PostgreSQL real porque el repositorio no tiene una base de tests configurada.

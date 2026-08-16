@@ -94,6 +94,14 @@ El seed idempotente conserva los UUID del frontend, 6 categorias, 36 soluciones 
 
 La configuracion y los comandos operativos se documentan en `backend/README.md`. Los slugs se almacenan en minusculas y deben normalizarse en la futura capa Application/API. PostgreSQL sera la fuente de verdad una vez que los repositorios mock se sustituyan por adaptadores HTTP.
 
+## Fase 2B - Catalog API
+
+La API implementa el flujo Endpoint -> Application service -> repository de infraestructura -> EF Core. Los endpoints nunca acceden directamente al `ApxDbContext`. Los contratos HTTP usan DTOs camelCase y errores ProblemDetails; las entidades EF no se serializan.
+
+El catalogo publico filtra exclusivamente contenido publicado, no eliminado y con categoria activa. La administracion permanece sin autenticacion solo como capacidad local: requiere simultaneamente entorno Development y `Features:EnableUnsafeDevelopmentAdminApi=true`. En Production las rutas admin no se registran incluso si alguien configura el flag por error.
+
+El frontend sigue utilizando `MockCatalogRepository` y `MockAdminCatalogRepository`. La sustitucion por adaptadores HTTP, Storage y autenticacion quedan fuera de esta fase.
+
 ### Estado local temporal
 
 `apx-project-selection` continúa siendo la persistencia del Project Builder. `clearProject()` limpia estado React, localStorage, drawer, contador y resumen tras una creación exitosa. La autenticación administrativa continúa usando temporalmente `apx-admin-auth`, aislada por `AdminProtectedRoute`.

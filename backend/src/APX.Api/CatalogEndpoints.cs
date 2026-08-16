@@ -1,0 +1,40 @@
+using APX.Application.Catalog;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
+
+namespace APX.Api;
+
+internal static class CatalogEndpoints
+{
+    public static IEndpointRouteBuilder MapCatalogApi(this IEndpointRouteBuilder endpoints)
+    {
+        var catalog = endpoints.MapGroup("/api/v1/catalog").WithTags("Public Catalog");
+        catalog.MapGet("/categories", async (CatalogQueryService service, CancellationToken ct) => Results.Ok(await service.GetCategoriesAsync(ct))).Produces<IReadOnlyList<CategoryListDto>>();
+        catalog.MapGet("/categories/{slug}", async (string slug, CatalogQueryService service, CancellationToken ct) => (await service.GetCategoryAsync(slug, ct)).ToHttp()).Produces<CategoryDetailDto>().ProducesProblem(404);
+        catalog.MapGet("/solutions", async ([AsParameters] PublicSolutionQuery query, CatalogQueryService service, CancellationToken ct) => (await service.GetSolutionsAsync(query, ct)).ToHttp()).Produces<PagedResult<SolutionCardDto>>().ProducesProblem(400);
+        catalog.MapGet("/solutions/{slug}", async (string slug, CatalogQueryService service, CancellationToken ct) => (await service.GetSolutionAsync(slug, ct)).ToHttp()).Produces<SolutionDetailDto>().ProducesProblem(404);
+        catalog.MapGet("/featured", async (CatalogQueryService service, CancellationToken ct) => Results.Ok(await service.GetFeaturedAsync(ct))).Produces<IReadOnlyList<SolutionCardDto>>();
+        return endpoints;
+    }
+
+    public static IEndpointRouteBuilder MapUnsafeDevelopmentAdminApi(this IEndpointRouteBuilder endpoints)
+    {
+        var admin = endpoints.MapGroup("/api/v1/admin").WithTags("Admin Catalog (Development only)");
+        admin.MapGet("/solutions", async ([AsParameters] AdminSolutionQuery query, AdminSolutionService service, CancellationToken ct) => (await service.GetAsync(query, ct)).ToHttp()).Produces<PagedResult<AdminSolutionListDto>>();
+        admin.MapGet("/solutions/{id:guid}", async (Guid id, AdminSolutionService service, CancellationToken ct) => (await service.GetByIdAsync(id, ct)).ToHttp()).Produces<AdminSolutionDetailDto>().ProducesProblem(404);
+        admin.MapPost("/solutions", async (CreateSolutionRequest request, AdminSolutionService service, CancellationToken ct) => (await service.CreateAsync(request, ct)).ToHttp(value => Results.Created($"/api/v1/admin/solutions/{value.Id}", value))).Produces<AdminSolutionDetailDto>(201).ProducesProblem(400).ProducesProblem(409);
+        admin.MapPut("/solutions/{id:guid}", async (Guid id, UpdateSolutionRequest request, AdminSolutionService service, CancellationToken ct) => (await service.UpdateAsync(id, request, ct)).ToHttp()).Produces<AdminSolutionDetailDto>().ProducesProblem(409);
+        admin.MapDelete("/solutions/{id:guid}", async (Guid id, AdminSolutionService service, CancellationToken ct) => (await service.DeleteAsync(id, ct)).ToHttp()).Produces(204).ProducesProblem(404);
+        admin.MapPost("/solutions/{id:guid}/duplicate", async (Guid id, DuplicateSolutionRequest request, AdminSolutionService service, CancellationToken ct) => (await service.DuplicateAsync(id, request, ct)).ToHttp(value => Results.Created($"/api/v1/admin/solutions/{value.Id}", value))).Produces<AdminSolutionDetailDto>(201).ProducesProblem(409);
+        admin.MapPost("/solutions/{id:guid}/publish", async (Guid id, AdminSolutionService service, CancellationToken ct) => (await service.PublishAsync(id, true, ct)).ToHttp()).Produces<AdminSolutionDetailDto>();
+        admin.MapPost("/solutions/{id:guid}/unpublish", async (Guid id, AdminSolutionService service, CancellationToken ct) => (await service.PublishAsync(id, false, ct)).ToHttp()).Produces<AdminSolutionDetailDto>();
+        admin.MapGet("/categories", async (AdminCategoryService service, CancellationToken ct) => Results.Ok(await service.GetAsync(ct))).Produces<IReadOnlyList<AdminCategoryDto>>();
+        admin.MapPost("/categories", async (CreateCategoryRequest request, AdminCategoryService service, CancellationToken ct) => (await service.CreateAsync(request, ct)).ToHttp(value => Results.Created($"/api/v1/admin/categories/{value.Id}", value))).Produces<AdminCategoryDto>(201);
+        admin.MapPut("/categories/reorder", async (ReorderCategoriesRequest request, AdminCategoryService service, CancellationToken ct) => (await service.ReorderAsync(request, ct)).ToHttp()).Produces(204);
+        admin.MapPut("/categories/{id:guid}", async (Guid id, UpdateCategoryRequest request, AdminCategoryService service, CancellationToken ct) => (await service.UpdateAsync(id, request, ct)).ToHttp()).Produces<AdminCategoryDto>();
+        admin.MapDelete("/categories/{id:guid}", async (Guid id, AdminCategoryService service, CancellationToken ct) => (await service.DeleteAsync(id, ct)).ToHttp()).Produces(204).ProducesProblem(409);
+        return endpoints;
+    }
+
+    private static RouteHandlerBuilder ProducesProblem(this RouteHandlerBuilder builder, int status) => builder.Produces<ProblemDetails>(status, "application/problem+json");
+}
