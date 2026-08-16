@@ -72,4 +72,6 @@ Sus endpoints bajo `/api/v1/admin` permiten CRUD de soluciones y categorias, reo
 
 Los detalles admin devuelven `rowVersion` como string decimal basado en PostgreSQL `xmin`. El cliente debe devolver exactamente ese valor en cada `PUT`; una version obsoleta produce `409 concurrency_conflict`. El borrado de soluciones es logico. El borrado de categorias con soluciones devuelve `409 category_has_solutions`.
 
-Cada mutacion admin registra una entrada de auditoria sin `AdminUserId` hasta que exista autenticacion real. Las pruebas actuales son unitarias/de aplicacion; no validan `xmin`, `ILIKE` ni transacciones contra PostgreSQL real porque el repositorio no tiene una base de tests configurada.
+Cada mutacion admin registra una entrada de auditoria sin `AdminUserId` hasta que exista autenticacion real. La suite predeterminada es unitaria/de aplicacion; las pruebas PostgreSQL se habilitan de forma opt-in con una conexion autorizada.
+
+Las pruebas PostgreSQL de `PostgresIntegrationTests` son opt-in y se omiten si no existe `APX_TEST_CONNECTION_STRING`. Debe apuntar exclusivamente a una base aislada o expresamente autorizada. Cada ejecución utiliza slugs `integration-*` y elimina sus soluciones y entradas de auditoría temporales al finalizar.

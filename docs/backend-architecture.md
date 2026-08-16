@@ -102,6 +102,12 @@ El catalogo publico filtra exclusivamente contenido publicado, no eliminado y co
 
 El frontend sigue utilizando `MockCatalogRepository` y `MockAdminCatalogRepository`. La sustitucion por adaptadores HTTP, Storage y autenticacion quedan fuera de esta fase.
 
+## Fase 2B.5 - PostgreSQL real
+
+Las migraciones `InitialCatalogSchema` y `CatalogApiIndexes` fueron validadas contra PostgreSQL alojado en Supabase mediante Npgsql, sin SDK de Supabase. La suite `PostgresIntegrationTests` cubre esquema, seed, `ILIKE`, indices, transacciones, restricciones unique, soft delete, auditoria y concurrencia `xmin`; se omite de forma segura cuando no existe `APX_TEST_CONNECTION_STRING`.
+
+La validacion real detecto y corrigio el tracking de hijos durante `PUT`: el reemplazo ahora elimina las colecciones con operaciones set-based dentro de la transaccion y marca explicitamente los nuevos UUID como `Added`. Los fixtures `integration-*` y `api-integration-*` se limpian al terminar.
+
 ### Estado local temporal
 
 `apx-project-selection` continúa siendo la persistencia del Project Builder. `clearProject()` limpia estado React, localStorage, drawer, contador y resumen tras una creación exitosa. La autenticación administrativa continúa usando temporalmente `apx-admin-auth`, aislada por `AdminProtectedRoute`.
