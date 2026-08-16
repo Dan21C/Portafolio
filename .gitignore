@@ -152,4 +152,7 @@ vite.config.ts.timestamp-*
 *.ntvs*
 *.njsproj
 *.sln
+!backend/APX.sln
+backend/**/bin/
+backend/**/obj/
 *.sw?

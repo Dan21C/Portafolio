@@ -1,0 +1,4 @@
+@APX_Api_HostAddress = http://localhost:5090
+
+GET {{APX_Api_HostAddress}}/health
+Accept: application/json

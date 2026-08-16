@@ -1,6 +1,6 @@
 # Arquitectura backend prevista
 
-Este repositorio no implementa backend en la fase actual. La UI pública y el administrador consumen contratos compartidos desde `catalog-core` y usan repositorios mock reemplazables.
+La Fase 2A implementa la base de dominio y persistencia del backend. La UI pública y el administrador aún consumen contratos compartidos desde `catalog-core` y conservan sus repositorios mock reemplazables; la conexión HTTP queda reservada para una fase posterior.
 
 ## Plataforma objetivo
 
@@ -85,6 +85,14 @@ Esta sección congela la frontera que deberá respetar la primera implementació
 ### Endpoints esperados
 
 Los paths documentados arriba se versionarán como `/api/v1/...` al implementar backend. Las consultas de soluciones deberán aceptar búsqueda, categoría, estado, featured, orden y paginación representados por `CatalogSolutionQuery` y `AdminSolutionQuery`.
+
+## Fase 2A implementada
+
+La solucion `backend/APX.sln` separa `APX.Domain`, `APX.Application`, `APX.Infrastructure` y `APX.Api`. Entity Framework Core modela catalogo, solicitudes de proyecto, administracion y auditoria sobre PostgreSQL. La migracion inicial crea indices, restricciones, relaciones, borrado logico y concurrencia optimista mediante `xmin`.
+
+El seed idempotente conserva los UUID del frontend, 6 categorias, 36 soluciones y los roles `Admin`, `Editor` y `Viewer`. No contiene usuarios ni secretos. La API solo publica `GET /health`; no hay endpoints de catalogo, autenticacion ni integracion con Storage en esta fase.
+
+La configuracion y los comandos operativos se documentan en `backend/README.md`. Los slugs se almacenan en minusculas y deben normalizarse en la futura capa Application/API. PostgreSQL sera la fuente de verdad una vez que los repositorios mock se sustituyan por adaptadores HTTP.
 
 ### Estado local temporal
 
