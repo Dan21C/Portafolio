@@ -1,6 +1,6 @@
-# APX Backend - Fase 2A
+# APX Backend
 
-Backend APX construido como monolito modular con ASP.NET Core 10, Entity Framework Core y PostgreSQL. La Fase 2B expone el catalogo publico y las operaciones administrativas de catalogo. No integra Supabase Storage ni autenticacion y el frontend continua usando sus repositorios mock.
+Backend APX construido como monolito modular con ASP.NET Core 10, Entity Framework Core, PostgreSQL y Supabase Storage. La API administrativa usa OTP por email y sesiones opacas HttpOnly; React Admin conserva sus repositorios mock hasta la Fase 2F.
 
 ## Estructura
 
@@ -58,15 +58,21 @@ La API publica solo devuelve soluciones publicadas, no eliminadas y pertenecient
 
 OpenAPI se publica en Development en `/openapi/v1.json`.
 
-## API administrativa temporal
+## Autenticacion administrativa
 
-> **ADMIN API WITHOUT AUTH MUST NEVER BE ENABLED IN PRODUCTION.**
+`/api/v1/admin/**` siempre exige una sesion real. El bypass temporal fue retirado. Configure `Auth__OtpPepper` con un secreto aleatorio de al menos 32 caracteres. Los OTP duran 5 minutos, admiten 5 intentos, tienen cooldown de 60 segundos y se almacenan como HMAC-SHA256 con el ID del challenge y el pepper. Las sesiones usan tokens aleatorios de 32 bytes; PostgreSQL guarda solamente SHA-256 del token.
 
-La API admin no se registra salvo que el entorno sea `Development` y se habilite expresamente:
+En Development, el emisor no entrega correo real. Para una prueba interactiva puede habilitar explicitamente `Auth__EnableDevelopmentOtpDisclosure=true`; solo entonces el OTP aparece en consola y nunca en Production. El proveedor comercial queda pendiente.
+
+Bootstrap explicito e idempotente del primer administrador:
 
 ```powershell
-$env:Features__EnableUnsafeDevelopmentAdminApi="true"
+dotnet run --project src/APX.Api -- bootstrap-admin --email admin@empresa.com --name "Administrador APX"
 ```
+
+La cookie `apx_admin_session` es HttpOnly, SameSite=Lax, Secure fuera de Development y expira a las 8 horas. CORS usa origenes configurados y credenciales. Las mutaciones autenticadas exigen `Origin` o `Referer` perteneciente a `Cors:AllowedOrigins` como defensa CSRF. El rate limiter HTTP es local por instancia; cooldown, intentos y sesiones se controlan en PostgreSQL.
+
+Policies: `AdminRead`, `ContentWrite`, `ContentPublish`, `ContentDelete`, `CategoryManage` y `MediaWrite`. Admin tiene todos los permisos; Editor escribe/publica/gestiona media; Viewer solo lee. DELETE destructivo queda reservado a Admin.
 
 Sus endpoints bajo `/api/v1/admin` permiten CRUD de soluciones y categorias, reorder, duplicar, publicar y despublicar. Al despublicar se cambia a `draft` y `publishedAt` vuelve a `null`, manteniendo la semantica actual del dominio.
 
@@ -75,11 +81,9 @@ Los detalles admin devuelven `rowVersion` como string decimal basado en PostgreS
 Cada mutacion admin registra una entrada de auditoria sin `AdminUserId` hasta que exista autenticacion real. La suite predeterminada es unitaria/de aplicacion; las pruebas PostgreSQL se habilitan de forma opt-in con una conexion autorizada.
 
 Las pruebas PostgreSQL de `PostgresIntegrationTests` son opt-in y se omiten si no existe `APX_TEST_CONNECTION_STRING`. Debe apuntar exclusivamente a una base aislada o expresamente autorizada. Cada ejecución utiliza slugs `integration-*` y elimina sus soluciones y entradas de auditoría temporales al finalizar.
-# APX Backend
-
 ## Catalog media storage
 
-Catalog images are uploaded by the development-only admin API to the public-read Supabase Storage bucket configured by `Supabase__StorageBucket`. The service-role secret is backend-only and must never use a `VITE_` prefix or be committed.
+Catalog images are uploaded by the authenticated admin API to the public-read Supabase Storage bucket configured by `Supabase__StorageBucket`. The service-role secret is backend-only and must never use a `VITE_` prefix or be committed.
 
 Deletion uses a storage-first policy: the object is removed before its database row. This avoids untracked/orphaned objects when Storage fails. A rare database failure after a successful object deletion is returned as an error and requires operational repair of the stale row.
 

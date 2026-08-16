@@ -114,6 +114,12 @@ El sitio publico selecciona `ApiCatalogRepository` solo cuando `VITE_USE_API=tru
 
 Las paginas de categoria y detalle consultan sus endpoints dedicados y distinguen 404 de errores de red. El administrador, ProjectRequest, Storage y Auth permanecen sin conexion real. Los paths `/Assets/...` siguen siendo URLs locales validas hasta la fase de Storage.
 
+## Fase 2E - autenticacion administrativa
+
+El backend implementa OTP por email con HMAC-SHA256 y pepper del servidor, challenges de un solo uso, cooldown e intentos persistidos. Una verificacion correcta crea una sesion opaca nueva; la cookie HttpOnly contiene el token aleatorio y PostgreSQL almacena solo su hash. Todos los endpoints `/api/v1/admin/**` usan el esquema `AdminSession` y policies de permisos para Admin, Editor y Viewer.
+
+Las mutaciones con cookie validan `Origin` o `Referer` contra los origenes CORS configurados. El rate limiter HTTP es por instancia y se complementa con estado PostgreSQL. React Admin permanece en mocks hasta Fase 2F; no usa aun estas cookies ni endpoints.
+
 ### Estado local temporal
 
 `apx-project-selection` continúa siendo la persistencia del Project Builder. `clearProject()` limpia estado React, localStorage, drawer, contador y resumen tras una creación exitosa. La autenticación administrativa continúa usando temporalmente `apx-admin-auth`, aislada por `AdminProtectedRoute`.

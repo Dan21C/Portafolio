@@ -1,8 +1,11 @@
 using System.Data;
 using APX.Application.Catalog;
+using APX.Application.Authentication;
 using APX.Application.Common;
 using APX.Domain.Catalog;
 using APX.Infrastructure.Catalog;
+using APX.Infrastructure.Authentication;
+using APX.Domain.Admin;
 using APX.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
@@ -39,7 +42,7 @@ public sealed class PostgresIntegrationTests
         Assert.Equal(6, categoryResult.TotalItems);
         Assert.All(categoryResult.Items, item => Assert.Equal(category.Id, item.CategoryId));
 
-        var expectedTables = new[] { "service_categories", "solutions", "solution_media", "solution_features", "tags", "solution_tags", "use_cases", "solution_use_cases", "modalities", "solution_modalities", "solution_relations", "solution_seo", "project_requests", "project_request_items", "admin_users", "roles", "admin_user_roles", "audit_log" };
+        var expectedTables = new[] { "service_categories", "solutions", "solution_media", "solution_features", "tags", "solution_tags", "use_cases", "solution_use_cases", "modalities", "solution_modalities", "solution_relations", "solution_seo", "project_requests", "project_request_items", "admin_users", "roles", "admin_user_roles", "audit_log", "otp_challenges", "admin_sessions" };
         var actualTables = await ReadStringsAsync(db, "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'");
         Assert.All(expectedTables, table => Assert.Contains(table, actualTables));
         var indexes = await ReadStringsAsync(db, "SELECT indexname FROM pg_indexes WHERE schemaname = 'public'");
@@ -137,10 +140,28 @@ public sealed class PostgresIntegrationTests
         Assert.False(await db.Solutions.IgnoreQueryFilters().AnyAsync(x => ids.Contains(x.Id)));
     }
 
+    [IntegrationFact]
+    [Trait("Category", "Integration")]
+    public async Task Authentication_PersistsHashesRolesConsumptionAndRevocation()
+    {
+        var email = $"integration-auth-{Guid.NewGuid():N}@example.test"; Guid userId = Guid.Empty;
+        try
+        {
+            await using (var db = CreateContext()) { var bootstrap = await new EfAuthRepository(db).BootstrapAdminAsync(email, "Integration Admin", default); Assert.True(bootstrap.Succeeded); userId = bootstrap.Value; }
+            var sender = new CapturingEmailSender(); OtpChallengeDto requested;
+            await using (var db = CreateContext()) { var service = new AuthService(new EfAuthRepository(db), sender, new(OtpPepper: "integration-only-pepper-with-at-least-32-characters")); var result = await service.RequestOtpAsync(new("email", email), new("127.0.0.1", "integration"), default); Assert.True(result.Succeeded); requested = result.Value!; }
+            string token;
+            await using (var db = CreateContext()) { var service = new AuthService(new EfAuthRepository(db), sender, new(OtpPepper: "integration-only-pepper-with-at-least-32-characters")); var verified = await service.VerifyOtpAsync(new(requested.ChallengeId, sender.Code!), new("127.0.0.1", "integration"), default); Assert.True(verified.Succeeded); token = verified.Value!.Token; Assert.Contains("Admin", verified.Value.Session.Roles); }
+            await using (var db = CreateContext()) { var challenge = await db.OtpChallenges.SingleAsync(x => x.Id == requested.ChallengeId); var session = await db.AdminSessions.SingleAsync(x => x.AdminUserId == userId); Assert.NotNull(challenge.ConsumedAt); Assert.NotEqual(sender.Code, challenge.CodeHash); Assert.Equal(AuthService.HashToken(token), session.TokenHash); var service = new AuthService(new EfAuthRepository(db), sender, new(OtpPepper: "integration-only-pepper-with-at-least-32-characters")); await service.LogoutAsync(token, new("127.0.0.1", "integration"), default); Assert.NotNull((await db.AdminSessions.SingleAsync(x => x.Id == session.Id)).RevokedAt); }
+        }
+        finally { if (userId != Guid.Empty) { await using var db = CreateContext(); await db.AuditLog.Where(x => x.AdminUserId == userId).ExecuteDeleteAsync(); await db.AdminUsers.Where(x => x.Id == userId).ExecuteDeleteAsync(); } }
+    }
+
     private static ApxDbContext CreateContext() => new(new DbContextOptionsBuilder<ApxDbContext>().UseNpgsql(Environment.GetEnvironmentVariable("APX_TEST_CONNECTION_STRING")!).Options);
     private static CreateSolutionRequest Request(Guid categoryId, string slug) => new("Integration test", slug, categoryId, null, "Temporary integration solution", "Temporary integration description", [new("Feature", null)], [], [], [], null, "quote", null, null, "COP", false, "draft", new("Integration SEO", null, ["integration"]), [], 9999);
     private static UpdateSolutionRequest Update(AdminSolutionDetailDto source, string rowVersion, string eyebrow) => new(rowVersion, source.Name, source.Slug, source.CategoryId, eyebrow, source.ShortDescription, source.Description, source.Features.Select(x => new FeatureInput(x.Title, x.Description)).ToList(), [], [], [], source.ImplementationTime, source.PriceMode, source.PriceFrom, source.PriceTo, source.Currency, source.Featured, source.Status, source.Seo is null ? null : new(source.Seo.Title, source.Seo.Description, source.Seo.Keywords), [], source.Order);
     private static async Task<HashSet<string>> ReadStringsAsync(ApxDbContext db, string sql) { var values = new HashSet<string>(StringComparer.Ordinal); var connection = db.Database.GetDbConnection(); if (connection.State != ConnectionState.Open) await connection.OpenAsync(); await using var command = connection.CreateCommand(); command.CommandText = sql; await using var reader = await command.ExecuteReaderAsync(); while (await reader.ReadAsync()) values.Add(reader.GetString(0)); return values; }
     private static async Task<string> ReadXminAsync(ApxDbContext db, Guid id) { var connection = db.Database.GetDbConnection(); if (connection.State != ConnectionState.Open) await connection.OpenAsync(); await using var command = connection.CreateCommand(); command.CommandText = "SELECT xmin::text FROM solutions WHERE id = @id"; var parameter = command.CreateParameter(); parameter.ParameterName = "id"; parameter.Value = id; command.Parameters.Add(parameter); return (string)(await command.ExecuteScalarAsync())!; }
     private static async Task CleanupAsync(IReadOnlyCollection<Guid> ids) { if (ids.Count == 0) return; await using var db = CreateContext(); await db.AuditLog.Where(x => ids.Contains(x.EntityId)).ExecuteDeleteAsync(); await db.Solutions.IgnoreQueryFilters().Where(x => ids.Contains(x.Id)).ExecuteDeleteAsync(); }
+    private sealed class CapturingEmailSender : IEmailSender { public string? Code { get; private set; } public Task SendOtpAsync(string email, string code, DateTimeOffset expiresAt, CancellationToken ct) { Code = code; return Task.CompletedTask; } }
 }

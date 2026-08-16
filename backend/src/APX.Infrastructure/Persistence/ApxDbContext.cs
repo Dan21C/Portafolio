@@ -18,6 +18,8 @@ public sealed class ApxDbContext(DbContextOptions<ApxDbContext> options) : DbCon
     public DbSet<AdminUser> AdminUsers => Set<AdminUser>();
     public DbSet<Role> Roles => Set<Role>();
     public DbSet<AuditEntry> AuditLog => Set<AuditEntry>();
+    public DbSet<OtpChallenge> OtpChallenges => Set<OtpChallenge>();
+    public DbSet<AdminSession> AdminSessions => Set<AdminSession>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
