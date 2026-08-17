@@ -5,7 +5,6 @@ import Footer from './components/Footer';
 import Ticker from './components/Ticker';
 import Hero from './sections/Hero';
 import About from './sections/About';
-import Services from './sections/Services';
 import Process from './sections/Process';
 import Products from './sections/Products';
 import Stack from './sections/Stack';
@@ -59,7 +58,6 @@ function App() {
           <Hero theme={theme} onThemeChange={setTheme} />
           <Ticker />
           <About />
-          <Services theme={theme} onThemeChange={setTheme} />
           <Process />
           <Products />
           <Stack />
