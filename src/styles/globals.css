@@ -73,6 +73,8 @@
   --nav-cta-border: rgba(255, 255, 255, 0.14);
   --nav-mobile-bg: rgba(5, 7, 20, 0.96);
   --theme-toggle-bg: rgba(255, 255, 255, 0.045);
+  --showcase-stage-bg: #050709;
+  --showcase-stage-image: url('/Assets/Products/products-bg-final.png');
 }
 
 :root[data-theme='light'] {
@@ -97,6 +99,8 @@
   --nav-cta-border: rgba(7, 17, 30, 0.14);
   --nav-mobile-bg: rgba(255, 255, 255, 0.96);
   --theme-toggle-bg: rgba(7, 17, 30, 0.045);
+  --showcase-stage-bg: #F3F3F0;
+  --showcase-stage-image: linear-gradient(145deg, #F8F8F6 0%, #ECEEEC 100%);
 }
 
 html { scroll-behavior: smooth; }

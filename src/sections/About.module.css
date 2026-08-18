@@ -5,7 +5,10 @@
   padding: clamp(2rem, 3.4vw, 3.1rem) 4% clamp(2rem, 3.8vw, 3.4rem);
   color: #fff;
   isolation: isolate;
-  background: #030303;
+  background-color: var(--showcase-stage-bg);
+  background-image: var(--showcase-stage-image);
+  background-position: center;
+  background-size: cover;
 }
 
 .backdrop,
@@ -17,17 +20,27 @@
 
 .backdrop {
   z-index: -3;
-  background:
-    linear-gradient(90deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.1)),
-    url('/Assets/About/fondo-melo.png') center / cover no-repeat;
+  background: url('/Assets/About/fondo-melo.png') center / cover no-repeat;
+  opacity: 0.12;
+  mix-blend-mode: screen;
 }
 
 .vignette {
   z-index: -2;
   background:
-    radial-gradient(circle at 62% 42%, rgba(255, 255, 255, 0.08), transparent 18%),
-    radial-gradient(circle at 90% 54%, rgba(255, 255, 255, 0.05), transparent 24%),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.12) 0%, transparent 42%, rgba(0, 0, 0, 0.18) 100%);
+    radial-gradient(circle at 62% 42%, rgba(255, 255, 255, 0.055), transparent 20%),
+    radial-gradient(circle at 90% 54%, rgba(255, 255, 255, 0.035), transparent 26%),
+    linear-gradient(90deg, rgba(5, 7, 9, 0.16) 0%, transparent 42%, rgba(5, 7, 9, 0.14) 100%);
+}
+
+:global([data-theme='light']) .section {
+  color: #111417;
+}
+
+:global([data-theme='light']) .backdrop {
+  opacity: 0.08;
+  filter: invert(1) grayscale(1);
+  mix-blend-mode: multiply;
 }
 
 .shell {
