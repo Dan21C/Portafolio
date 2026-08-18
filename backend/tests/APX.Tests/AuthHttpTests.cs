@@ -5,6 +5,7 @@ using APX.Application.Catalog;
 using APX.Application.Common;
 using APX.Domain.Admin;
 using APX.Application.AdminUsers;
+using APX.Application.Dashboard;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -48,6 +49,12 @@ public sealed class AuthHttpTests
         Assert.Equal(expected, (await client.GetAsync("/api/v1/admin/users?page=1&pageSize=20")).StatusCode);
     }
 
+    [Theory] [InlineData("Admin")] [InlineData("Editor")] [InlineData("Viewer")]
+    public async Task Dashboard_is_readable_by_every_authenticated_role(string role)
+    {
+        await using var factory=new AuthApiFactory(role);using var client=factory.CreateClient(new(){HandleCookies=true});Assert.Equal(HttpStatusCode.Unauthorized,(await client.GetAsync("/api/v1/admin/dashboard")).StatusCode);var requested=await(await client.PostAsJsonAsync("/api/v1/auth/otp/request",new{channel="email",destination=factory.Auth.User.Email})).Content.ReadFromJsonAsync<OtpChallengeDto>();await client.PostAsJsonAsync("/api/v1/auth/otp/verify",new{challengeId=requested!.ChallengeId,code=factory.Email.Code});Assert.Equal(HttpStatusCode.OK,(await client.GetAsync("/api/v1/admin/dashboard")).StatusCode);Assert.Equal(HttpStatusCode.BadRequest,(await client.GetAsync("/api/v1/admin/dashboard?dateFrom=2026-08-18T00:00:00Z&dateTo=2026-08-17T00:00:00Z")).StatusCode);
+    }
+
     private sealed class AuthApiFactory : WebApplicationFactory<Program>
     {
         public FakeAuthRepository Auth { get; } = new(); public CapturingEmailSender Email { get; } = new();
@@ -55,7 +62,7 @@ public sealed class AuthHttpTests
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
             builder.UseEnvironment("Development"); builder.ConfigureAppConfiguration((_, config) => config.AddInMemoryCollection(new Dictionary<string, string?> { ["Auth:OtpPepper"] = "http-test-pepper-with-at-least-32-characters", ["Cors:AllowedOrigins:0"] = "http://localhost:5174", ["Database:InitializeOnStartup"] = "false" }));
-            builder.ConfigureTestServices(services => { services.RemoveAll<IAuthRepository>(); services.RemoveAll<IEmailSender>(); services.RemoveAll<ICatalogRepository>(); services.RemoveAll<IAdminUserManagementRepository>(); services.RemoveAll<AuthOptions>(); services.AddSingleton(new AuthOptions(OtpPepper: "http-test-pepper-with-at-least-32-characters")); services.AddSingleton<IAuthRepository>(Auth); services.AddSingleton<IEmailSender>(Email); services.AddSingleton<ICatalogRepository, EmptyCatalogRepository>(); services.AddSingleton<IAdminUserManagementRepository, EmptyAdminUserRepository>(); });
+            builder.ConfigureTestServices(services => { services.RemoveAll<IAuthRepository>(); services.RemoveAll<IEmailSender>(); services.RemoveAll<ICatalogRepository>(); services.RemoveAll<IAdminUserManagementRepository>(); services.RemoveAll<IDashboardRepository>(); services.RemoveAll<AuthOptions>(); services.AddSingleton(new AuthOptions(OtpPepper: "http-test-pepper-with-at-least-32-characters")); services.AddSingleton<IAuthRepository>(Auth); services.AddSingleton<IEmailSender>(Email); services.AddSingleton<ICatalogRepository, EmptyCatalogRepository>(); services.AddSingleton<IAdminUserManagementRepository, EmptyAdminUserRepository>(); services.AddSingleton<IDashboardRepository, EmptyDashboardRepository>(); });
         }
     }
 
@@ -93,4 +100,5 @@ public sealed class AuthHttpTests
         public Task<Result<AdminUserDetailDto>> UpdateAsync(Guid id, UpdateAdminUserDto request, Guid actorId, CancellationToken ct) => throw new NotSupportedException();
         public Task<Result<AdminUserDetailDto>> SetActiveAsync(Guid id, bool active, string rowVersion, Guid actorId, CancellationToken ct) => throw new NotSupportedException();
     }
+    private sealed class EmptyDashboardRepository:IDashboardRepository{public Task<DashboardDto> GetAsync(DateTimeOffset from,DateTimeOffset to,DateTimeOffset now,int attentionHours,CancellationToken ct)=>Task.FromResult(new DashboardDto(new(from,to,attentionHours),new(0,0,0,0,0,0,0,0),[],new(0,0,0),new(null,null),new(0,null),[],new(0,0,null,null),[],[],[],[],new(0,[])));}
 }

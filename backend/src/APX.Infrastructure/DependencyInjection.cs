@@ -10,6 +10,8 @@ using APX.Application.Emailing;
 using APX.Infrastructure.Emailing;
 using APX.Application.AdminUsers;
 using APX.Infrastructure.AdminUsers;
+using APX.Application.Dashboard;
+using APX.Infrastructure.Dashboard;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -32,6 +34,7 @@ public static class DependencyInjection
         services.AddScoped<IEmailDeliveryRepository, EfEmailDeliveryRepository>();
         services.AddScoped<IAdminUserManagementRepository, EfAdminUserManagementRepository>();
         services.AddScoped<IAdminInvitationSender, AdminInvitationSender>();
+        services.AddScoped<IDashboardRepository, EfDashboardRepository>();
         var supabase = new SupabaseStorageOptions(
             configuration["Supabase:Url"] ?? string.Empty,
             configuration["Supabase:StorageBucket"] ?? string.Empty,

@@ -44,3 +44,20 @@ export interface AdminUserDetailDto { id: string; displayName: string; email: st
 export interface CreateAdminUserDto { displayName: string; email: string; role: AdminOperationalRole; }
 export interface CreateAdminUserResultDto { user: AdminUserDetailDto; invitationSent: boolean; }
 export interface UpdateAdminUserDto { displayName: string; role: AdminOperationalRole; rowVersion: string; }
+export interface DashboardQuery { dateFrom?: string; dateTo?: string; }
+export interface DashboardRequestItem { id: string; requestNumber: string; name: string; company?: string; city: string; status: ProjectRequestStatus; createdAt: string; }
+export interface DashboardDto {
+  range: { dateFrom: string; dateTo: string; attentionHours: number };
+  summary: { totalRequests: number; newRequests: number; inReviewRequests: number; contactedRequests: number; qualifiedRequests: number; wonRequests: number; lostRequests: number; archivedRequests: number };
+  pipeline: { status: ProjectRequestStatus; count: number; percentageOfTotal: number }[];
+  conversion: { qualifiedRate: number; wonRate: number; lostRate: number };
+  responseSpeed: { averageTimeToFirstContactMinutes?: number; medianTimeToFirstContactMinutes?: number };
+  backlog: { uncontactedCount: number; oldestUncontactedAgeMinutes?: number };
+  trend: { date: string; count: number }[];
+  comparison: { previousTotalRequests: number; previousWonRequests: number; totalRequestsChangePercent?: number; wonRequestsChangePercent?: number };
+  topSolutions: { solutionName: string; solutionSlug: string; categoryName: string; requestCount: number }[];
+  topCategories: { categoryName: string; requestCount: number }[];
+  topCities: { city: string; requestCount: number }[];
+  recentRequests: DashboardRequestItem[];
+  needsAttention: { count: number; items: DashboardRequestItem[] };
+}

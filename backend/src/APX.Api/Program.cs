@@ -15,6 +15,7 @@ using APX.Application.Requests;
 using APX.Application.Emailing;
 using APX.Infrastructure.Emailing;
 using APX.Application.AdminUsers;
+using APX.Application.Dashboard;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Logging.ClearProviders();
@@ -35,6 +36,9 @@ builder.Services.AddScoped<MediaService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<ProjectRequestService>();
 builder.Services.AddScoped<AdminUserManagementService>();
+builder.Services.AddScoped<DashboardService>();
+builder.Services.AddSingleton(TimeProvider.System);
+builder.Services.AddSingleton(new DashboardOptions(builder.Configuration.GetValue("Dashboard:LeadAttentionHours",24),builder.Configuration.GetValue("Dashboard:MaxRangeDays",366)));
 var authOptions = new AuthOptions(
     builder.Configuration.GetValue("Auth:OtpLifetimeMinutes", 5), builder.Configuration.GetValue("Auth:OtpMaxAttempts", 5),
     builder.Configuration.GetValue("Auth:OtpCooldownSeconds", 60), builder.Configuration.GetValue("Auth:SessionLifetimeHours", 8),
@@ -96,6 +100,7 @@ app.MapAuthApi(authOptions);
 app.MapAdminApi();
 app.MapProjectRequestApi();
 app.MapAdminUserApi();
+app.MapDashboardApi();
 if (app.Environment.IsDevelopment()) app.MapOpenApi();
 
 var connectionString = builder.Configuration.GetConnectionString("ApxDatabase");

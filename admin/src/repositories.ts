@@ -1,7 +1,7 @@
 import { categories as seedCategories, solutions as seedSolutions, slugify, CATEGORY_IDS } from '../../catalog-core/seed';
 import { getSolutionCover } from '../../catalog-core/mappers';
-import type { AdminCatalogRepository, AdminProjectRequestRepository, AdminUserRepository, AuthRepository, MediaRepository } from '../../catalog-core/repositories';
-import type { AdminProjectRequestDetailDto, AdminProjectRequestListDto, AdminProjectRequestQuery, AdminSolutionListItem, AdminSolutionQuery, AdminUserDetailDto, AdminUserListDto, AdminUserQuery, CreateAdminUserDto, CreateAdminUserResultDto, CreateCategoryInput, CreateMediaUploadRequest, CreateSolutionInput, MediaUploadResultDto, OtpChallengeDto, PagedResult, ReorderCategoryItem, RequestOtpDto, UpdateAdminUserDto, UpdateCategoryInput, UpdateMediaMetadataRequest, UpdateSolutionInput, VerifyOtpDto } from '../../catalog-core/contracts';
+import type { AdminCatalogRepository, AdminProjectRequestRepository, AdminUserRepository, AuthRepository, DashboardRepository, MediaRepository } from '../../catalog-core/repositories';
+import type { AdminProjectRequestDetailDto, AdminProjectRequestListDto, AdminProjectRequestQuery, AdminSolutionListItem, AdminSolutionQuery, AdminUserDetailDto, AdminUserListDto, AdminUserQuery, CreateAdminUserDto, CreateAdminUserResultDto, CreateCategoryInput, CreateMediaUploadRequest, CreateSolutionInput, DashboardDto, DashboardQuery, MediaUploadResultDto, OtpChallengeDto, PagedResult, ReorderCategoryItem, RequestOtpDto, UpdateAdminUserDto, UpdateCategoryInput, UpdateMediaMetadataRequest, UpdateSolutionInput, VerifyOtpDto } from '../../catalog-core/contracts';
 import type { AuthSession, ProjectRequestStatus, ServiceCategory, Solution, SolutionMedia } from '../../catalog-core/models';
 import { AdminApiError, adminApiConfigured, apiRequest } from './api/apiClient';
 
@@ -87,8 +87,10 @@ export class ApiAdminUserRepository implements AdminUserRepository {
   reactivateUser(id: string, rowVersion: string): Promise<AdminUserDetailDto> { return apiRequest(`/api/v1/admin/users/${id}/reactivate`, { method: 'POST', body: JSON.stringify({ rowVersion }) }); }
   resendInvitation(id: string): Promise<CreateAdminUserResultDto> { return apiRequest(`/api/v1/admin/users/${id}/resend-invitation`, { method: 'POST' }); }
 }
+export class ApiDashboardRepository implements DashboardRepository { getDashboard(query: DashboardQuery = {}): Promise<DashboardDto> { const p=new URLSearchParams();if(query.dateFrom)p.set('dateFrom',query.dateFrom);if(query.dateTo)p.set('dateTo',query.dateTo);return apiRequest(`/api/v1/admin/dashboard?${p}`); } }
 export const authRepository: AuthRepository = adminApiConfigured ? new ApiAuthRepository() : new MockAuthRepository();
 export const adminRepository: AdminCatalogRepository = adminApiConfigured ? new ApiAdminCatalogRepository() : new MockAdminCatalogRepository();
 export const mediaRepository: MediaRepository = adminApiConfigured ? new ApiMediaRepository() : new MockMediaRepository();
 export const projectRequestAdminRepository: AdminProjectRequestRepository = new ApiAdminProjectRequestRepository();
 export const adminUserRepository: AdminUserRepository = new ApiAdminUserRepository();
+export const dashboardRepository: DashboardRepository = new ApiDashboardRepository();

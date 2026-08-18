@@ -1,0 +1,2 @@
+export const dashboardDateQuery=(range:string,now=new Date())=>({dateFrom:(range==='year'?new Date(Date.UTC(now.getUTCFullYear(),0,1)):new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),now.getUTCDate()-Number(range)+1))).toISOString(),dateTo:now.toISOString()});
+export const dashboardViewState=(loading:boolean,error:string,data:{summary?:{totalRequests?:number}}|null)=>loading?'loading':error?'error':data?.summary?.totalRequests===0?'empty':'data';

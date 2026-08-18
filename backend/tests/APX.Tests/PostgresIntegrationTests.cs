@@ -12,6 +12,9 @@ using APX.Infrastructure.Requests;
 using APX.Domain.Emailing;
 using APX.Application.AdminUsers;
 using APX.Infrastructure.AdminUsers;
+using APX.Application.Dashboard;
+using APX.Infrastructure.Dashboard;
+using APX.Domain.Requests;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 
@@ -206,6 +209,19 @@ public sealed class PostgresIntegrationTests
             await using(var db=CreateContext()){var repo=new EfAdminUserManagementRepository(db);var detail=await repo.GetByIdAsync(targetId,default);Assert.NotNull(detail);stale=detail.RowVersion;var changed=await repo.UpdateAsync(targetId,new("Managed Viewer","Viewer",detail.RowVersion),actorId,default);Assert.True(changed.Succeeded);Assert.Equal("Viewer",changed.Value!.Roles.Single());Assert.Equal(0,changed.Value.ActiveSessionsCount);var conflict=await repo.UpdateAsync(targetId,new("Stale","Editor",stale),actorId,default);Assert.False(conflict.Succeeded);Assert.Equal(ErrorType.Concurrency,conflict.Error!.Type);var disabled=await repo.SetActiveAsync(targetId,false,changed.Value.RowVersion,actorId,default);Assert.True(disabled.Succeeded);Assert.Equal("Disabled",disabled.Value!.Status);var active=await repo.SetActiveAsync(targetId,true,disabled.Value.RowVersion,actorId,default);Assert.True(active.Succeeded);Assert.Equal("Active",active.Value!.Status);Assert.Equal(0,active.Value.ActiveSessionsCount);}
         }
         finally{await using var db=CreateContext();var ids=new[]{actorId,targetId}.Where(x=>x!=Guid.Empty).ToArray();if(ids.Length>0){await db.AuditLog.Where(x=>ids.Contains(x.EntityId)||x.AdminUserId!=null&&ids.Contains(x.AdminUserId.Value)).ExecuteDeleteAsync();await db.AdminUsers.Where(x=>ids.Contains(x.Id)).ExecuteDeleteAsync();}}
+    }
+
+    [IntegrationFact]
+    [Trait("Category", "Integration")]
+    public async Task DashboardReporting_AggregatesPipelineRankingsSpeedTrendComparisonAndAttention()
+    {
+        var prefix=$"D2J{Guid.NewGuid():N}"[..12];var now=new DateTimeOffset(2099,8,18,17,0,0,TimeSpan.Zero);var ids=new List<Guid>();
+        try
+        {
+            DashboardDto baseline;await using(var db=CreateContext()){baseline=await new EfDashboardRepository(db).GetAsync(now.AddDays(-7),now.AddSeconds(1),now,24,default);var solutions=await db.Solutions.AsNoTracking().OrderBy(x=>x.Id).Select(x=>new{x.Id,x.Name,x.Slug,Category=x.Category.Name}).Take(2).ToArrayAsync();Assert.Equal(2,solutions.Length);var fixtures=new[]{(ProjectRequestStatus.New,-2d,(double?)null,"Bogotá",0),(ProjectRequestStatus.InReview,-2d/24,null,"BOGOTÁ",0),(ProjectRequestStatus.Contacted,-5d/24,60d,"Medellín",1),(ProjectRequestStatus.Qualified,-4d,120d,"Cali",1),(ProjectRequestStatus.Won,-3d,30d,"Bogotá",0),(ProjectRequestStatus.Lost,-2d,90d,"Medellín",1),(ProjectRequestStatus.Archived,-1d,null,"Cali",1)};for(var index=0;index<fixtures.Length;index++){var f=fixtures[index];var created=now.AddDays(f.Item2);var request=new ProjectRequest{Id=Guid.NewGuid(),RequestNumber=$"{prefix}{index}",Name=$"Dashboard {index}",Email=$"dashboard-{index}@example.test",Phone="3000000000",City=f.Item4,Status=f.Item1,PrivacyAcceptedAt=created,PrivacyPolicyVersion="test",CreatedAt=created,UpdatedAt=created,LastContactedAt=f.Item3 is null?null:created.AddMinutes(f.Item3.Value)};request.Items.Add(new ProjectRequestItem{Id=Guid.NewGuid(),SolutionId=solutions[f.Item5].Id,SolutionName=f.Item5==0?"Snapshot Alpha":"Snapshot Beta",SolutionSlug=f.Item5==0?"snapshot-alpha":"snapshot-beta",CategoryName=f.Item5==0?"Category A":"Category B"});ids.Add(request.Id);db.ProjectRequests.Add(request);}var previous=new ProjectRequest{Id=Guid.NewGuid(),RequestNumber=$"{prefix}P",Name="Previous",Email="previous@example.test",Phone="300",City="Pereira",Status=ProjectRequestStatus.Won,PrivacyAcceptedAt=now.AddDays(-10),PrivacyPolicyVersion="test",CreatedAt=now.AddDays(-10),UpdatedAt=now.AddDays(-10)};ids.Add(previous.Id);db.ProjectRequests.Add(previous);await db.SaveChangesAsync();}
+            await using(var db=CreateContext()){var result=await new EfDashboardRepository(db).GetAsync(now.AddDays(-7),now.AddSeconds(1),now,24,default);Assert.Equal(7,result.Summary.TotalRequests);Assert.Equal(1,result.Summary.NewRequests);Assert.Equal(1,result.Summary.WonRequests);Assert.Equal(6,result.Pipeline.Sum(x=>x.Count));Assert.Equal(50,result.Conversion.QualifiedRate,6);Assert.Equal(50,result.Conversion.WonRate,6);Assert.Equal(75,result.ResponseSpeed.AverageTimeToFirstContactMinutes!.Value,6);Assert.Equal(75,result.ResponseSpeed.MedianTimeToFirstContactMinutes!.Value,6);Assert.Equal(baseline.Backlog.UncontactedCount+2,result.Backlog.UncontactedCount);Assert.Equal(baseline.NeedsAttention.Count+1,result.NeedsAttention.Count);Assert.Equal("Snapshot Beta",result.TopSolutions[0].SolutionName);Assert.Equal(4,result.TopSolutions[0].RequestCount);Assert.Equal("Category B",result.TopCategories[0].CategoryName);Assert.Equal(4,result.TopCategories[0].RequestCount);Assert.Equal("Bogotá",result.TopCities[0].City,StringComparer.OrdinalIgnoreCase);Assert.Equal(3,result.TopCities[0].RequestCount);Assert.Equal(7,result.Trend.Sum(x=>x.Count));Assert.Equal(1,result.Comparison.PreviousTotalRequests);Assert.Equal(600,result.Comparison.TotalRequestsChangePercent);Assert.Equal(7,result.RecentRequests.Count);}
+        }
+        finally{await using var db=CreateContext();await db.AuditLog.Where(x=>ids.Contains(x.EntityId)).ExecuteDeleteAsync();await db.ProjectRequests.Where(x=>ids.Contains(x.Id)).ExecuteDeleteAsync();Assert.False(await db.ProjectRequests.AnyAsync(x=>ids.Contains(x.Id)));}
     }
 
     [IntegrationFact]
