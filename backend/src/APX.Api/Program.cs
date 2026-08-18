@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization.Policy;
 using Microsoft.AspNetCore.Authorization;
 using System.Threading.RateLimiting;
 using APX.Infrastructure.Authentication;
+using APX.Application.Requests;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Logging.ClearProviders();
@@ -29,12 +30,14 @@ builder.Services.AddScoped<AdminSolutionService>();
 builder.Services.AddScoped<AdminCategoryService>();
 builder.Services.AddScoped<MediaService>();
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<ProjectRequestService>();
 var authOptions = new AuthOptions(
     builder.Configuration.GetValue("Auth:OtpLifetimeMinutes", 5), builder.Configuration.GetValue("Auth:OtpMaxAttempts", 5),
     builder.Configuration.GetValue("Auth:OtpCooldownSeconds", 60), builder.Configuration.GetValue("Auth:SessionLifetimeHours", 8),
     builder.Configuration.GetValue("Auth:MaxSessionsPerUser", 5), builder.Configuration["Auth:CookieName"] ?? "apx_admin_session",
     builder.Configuration["Auth:OtpPepper"] ?? string.Empty, builder.Configuration.GetValue("Auth:EnableDevelopmentOtpDisclosure", false));
 builder.Services.AddSingleton(authOptions);
+builder.Services.AddSingleton(new ProjectRequestOptions(builder.Configuration.GetValue("ProjectRequests:MaxItems", 20), builder.Configuration["ProjectRequests:PrivacyPolicyVersion"] ?? "2026-08", builder.Configuration["ProjectRequests:PrivacyPolicyUrl"]));
 builder.Services.AddSingleton(new EmailSenderRuntimeOptions(builder.Environment.IsDevelopment()));
 builder.Services.AddScoped<IEmailSender, DevelopmentEmailSender>();
 builder.Services.AddAuthentication(AdminAuth.Scheme).AddScheme<AdminSessionSchemeOptions, AdminSessionAuthenticationHandler>(AdminAuth.Scheme, _ => { });
@@ -46,6 +49,8 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy(AdminAuth.Delete, policy => policy.RequireClaim("permission", AdminPermissions.Delete));
     options.AddPolicy(AdminAuth.CategoryManage, policy => policy.RequireClaim("permission", AdminPermissions.CategoryManage));
     options.AddPolicy(AdminAuth.MediaWrite, policy => policy.RequireClaim("permission", AdminPermissions.MediaWrite));
+    options.AddPolicy(AdminAuth.ProjectRequestRead, policy => policy.RequireClaim("permission", AdminPermissions.ProjectRequestRead));
+    options.AddPolicy(AdminAuth.ProjectRequestWrite, policy => policy.RequireClaim("permission", AdminPermissions.ProjectRequestWrite));
 });
 builder.Services.AddSingleton<IAuthorizationMiddlewareResultHandler, ProblemAuthorizationResultHandler>();
 builder.Services.AddRateLimiter(options =>
@@ -54,6 +59,7 @@ builder.Services.AddRateLimiter(options =>
     options.OnRejected = async (context, ct) => { context.HttpContext.Response.Headers.RetryAfter = "60"; await context.HttpContext.Response.WriteAsJsonAsync(new { type = "https://apx.local/problems/rate-limit", title = "Too many requests", status = 429, detail = "Try again later.", code = "rate_limited" }, ct); };
     options.AddPolicy("otp-request", http => RateLimitPartition.GetFixedWindowLimiter(http.Connection.RemoteIpAddress?.ToString() ?? "unknown", _ => new FixedWindowRateLimiterOptions { PermitLimit = builder.Configuration.GetValue("Auth:RequestRateLimit", 5), Window = TimeSpan.FromMinutes(builder.Configuration.GetValue("Auth:RequestRateWindowMinutes", 15)), QueueLimit = 0, AutoReplenishment = true }));
     options.AddPolicy("otp-verify", http => RateLimitPartition.GetFixedWindowLimiter(http.Connection.RemoteIpAddress?.ToString() ?? "unknown", _ => new FixedWindowRateLimiterOptions { PermitLimit = builder.Configuration.GetValue("Auth:VerifyRateLimit", 30), Window = TimeSpan.FromMinutes(15), QueueLimit = 0, AutoReplenishment = true }));
+    options.AddPolicy("project-requests", http => RateLimitPartition.GetFixedWindowLimiter(http.Connection.RemoteIpAddress?.ToString() ?? "unknown", _ => new FixedWindowRateLimiterOptions { PermitLimit = builder.Configuration.GetValue("ProjectRequests:RateLimit", 5), Window = TimeSpan.FromMinutes(builder.Configuration.GetValue("ProjectRequests:RateWindowMinutes", 15)), QueueLimit = 0, AutoReplenishment = true }));
 });
 builder.Services.AddSingleton(new MediaValidationOptions(builder.Configuration.GetValue<long?>("Media:MaxUploadBytes") ?? 10 * 1024 * 1024));
 var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
@@ -76,6 +82,7 @@ app.MapGet("/health", () => Results.Ok(new { status = "ok" })).WithName("Health"
 app.MapCatalogApi();
 app.MapAuthApi(authOptions);
 app.MapAdminApi();
+app.MapProjectRequestApi();
 if (app.Environment.IsDevelopment()) app.MapOpenApi();
 
 var connectionString = builder.Configuration.GetConnectionString("ApxDatabase");

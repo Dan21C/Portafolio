@@ -1,0 +1,12 @@
+using APX.Application.Catalog;
+namespace APX.Application.Requests;
+public sealed record CreateProjectRequestItemDto(Guid SolutionId);
+public sealed record CreateProjectRequestDto(string Name, string? Company, string Email, string Phone, string City, DateOnly? ApproximateDate, int? Attendees, string? Message, bool AcceptedPrivacy, string PrivacyPolicyVersion, IReadOnlyList<CreateProjectRequestItemDto>? Items, string? Website = null);
+public sealed record ProjectRequestCreatedDto(Guid Id, string RequestNumber, DateTimeOffset CreatedAt, string Status);
+public sealed record ProjectRequestItemDto(Guid SolutionId, string SolutionName, string SolutionSlug, string CategoryName, string? SolutionDescription);
+public sealed record ProjectRequestHistoryDto(Guid Id, string? PreviousStatus, string NewStatus, Guid? ChangedByAdminUserId, DateTimeOffset CreatedAt);
+public sealed record AdminProjectRequestListDto(Guid Id, string RequestNumber, string Name, string? Company, string Email, string Phone, string City, string Status, DateTimeOffset CreatedAt);
+public sealed record AdminProjectRequestDetailDto(Guid Id, string RequestNumber, string Name, string? Company, string Email, string Phone, string City, DateOnly? ApproximateDate, int? Attendees, string? Message, string Status, DateTimeOffset PrivacyAcceptedAt, string PrivacyPolicyVersion, string? PrivacyPolicyUrl, DateTimeOffset CreatedAt, DateTimeOffset UpdatedAt, DateTimeOffset? LastContactedAt, DateTimeOffset? QualifiedAt, DateTimeOffset? WonAt, DateTimeOffset? LostAt, DateTimeOffset? ArchivedAt, IReadOnlyList<ProjectRequestItemDto> Items, IReadOnlyList<ProjectRequestHistoryDto> StatusHistory, string RowVersion);
+public sealed record AdminProjectRequestQuery(string? Status, string? Search, DateOnly? DateFrom, DateOnly? DateTo, string? City, string Sort = "newest", int Page = 1, int PageSize = 20);
+public sealed record UpdateProjectRequestStatusDto(string Status, string RowVersion);
+public sealed record ProjectRequestOptions(int MaxItems = 20, string PrivacyPolicyVersion = "2026-08", string? PrivacyPolicyUrl = null);

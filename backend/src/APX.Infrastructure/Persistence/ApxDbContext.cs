@@ -15,6 +15,8 @@ public sealed class ApxDbContext(DbContextOptions<ApxDbContext> options) : DbCon
     public DbSet<UseCase> UseCases => Set<UseCase>();
     public DbSet<Modality> Modalities => Set<Modality>();
     public DbSet<ProjectRequest> ProjectRequests => Set<ProjectRequest>();
+    public DbSet<ProjectRequestItem> ProjectRequestItems => Set<ProjectRequestItem>();
+    public DbSet<ProjectRequestStatusHistory> ProjectRequestStatusHistory => Set<ProjectRequestStatusHistory>();
     public DbSet<AdminUser> AdminUsers => Set<AdminUser>();
     public DbSet<Role> Roles => Set<Role>();
     public DbSet<AuditEntry> AuditLog => Set<AuditEntry>();
@@ -24,6 +26,7 @@ public sealed class ApxDbContext(DbContextOptions<ApxDbContext> options) : DbCon
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApxDbContext).Assembly);
+        modelBuilder.HasSequence<long>("project_request_number_seq").StartsAt(1).IncrementsBy(1);
         modelBuilder.Entity<Solution>().HasQueryFilter(solution => solution.DeletedAt == null);
     }
 }

@@ -4,6 +4,8 @@ using APX.Infrastructure.Catalog;
 using APX.Infrastructure.Storage;
 using APX.Application.Authentication;
 using APX.Infrastructure.Authentication;
+using APX.Application.Requests;
+using APX.Infrastructure.Requests;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,6 +24,7 @@ public static class DependencyInjection
         services.AddScoped<ICatalogRepository, EfCatalogRepository>();
         services.AddScoped<IMediaRepository>(provider => provider.GetRequiredService<ICatalogRepository>() as IMediaRepository ?? throw new InvalidOperationException("Catalog repository must implement media persistence."));
         services.AddScoped<IAuthRepository, EfAuthRepository>();
+        services.AddScoped<IProjectRequestRepository, EfProjectRequestRepository>();
         var supabase = new SupabaseStorageOptions(
             configuration["Supabase:Url"] ?? string.Empty,
             configuration["Supabase:StorageBucket"] ?? string.Empty,

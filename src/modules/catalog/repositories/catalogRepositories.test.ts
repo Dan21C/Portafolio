@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { ApiCatalogRepository } from './catalogRepositories';
+import { ApiCatalogRepository, ApiProjectRequestRepository } from './catalogRepositories';
 import { CatalogApiError } from './apiClient';
 
 const json = (value: unknown, status = 200) => new Response(JSON.stringify(value), { status, headers: { 'Content-Type': 'application/json' } });
@@ -36,6 +36,13 @@ describe('ApiCatalogRepository', () => {
     const promise = new ApiCatalogRepository('https://api.test', fetchMock).getSolutions({ page: -1 });
     await expect(promise).rejects.toMatchObject({ kind: 'validation', status: 400, code: 'validation_error', traceId: 'trace-1', detail: 'Invalid page' } satisfies Partial<CatalogApiError>);
   });
+});
+
+describe('ApiProjectRequestRepository', () => {
+  const request = { name: 'Ada', email: 'ada@example.com', phone: '300', city: 'Bogotá', acceptedPrivacy: true, privacyPolicyVersion: '2026-08', items: [{ solutionId: '10000000-0000-4000-8000-000000000001' }] };
+  it('posts the anonymous request and returns its number', async () => { const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(json({ id: '30000000-0000-4000-8000-000000000001', requestNumber: 'APX-000123', createdAt: new Date().toISOString(), status: 'New' }, 201)); const result = await new ApiProjectRequestRepository('https://api.test', fetchMock).create(request); expect(result.requestNumber).toBe('APX-000123'); expect(fetchMock.mock.calls[0]?.[1]).toMatchObject({ method: 'POST' }); });
+  it.each([[400, 'validation'], [429, 'unexpected']])('preserves HTTP %s errors', async (status, kind) => { const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(json({ code: status === 429 ? 'rate_limited' : 'validation_error', detail: 'Rejected', errors: { items: ['Unavailable'] } }, status)); await expect(new ApiProjectRequestRepository('https://api.test', fetchMock).create(request)).rejects.toMatchObject({ status, kind }); });
+  it('maps network failure safely', async () => { const fetchMock = vi.fn<typeof fetch>().mockRejectedValue(new TypeError('offline')); await expect(new ApiProjectRequestRepository('https://api.test', fetchMock).create(request)).rejects.toMatchObject({ kind: 'network_error' }); });
 });
 
 describe.skipIf(!import.meta.env.VITE_REAL_API_URL)('ApiCatalogRepository real smoke', () => {

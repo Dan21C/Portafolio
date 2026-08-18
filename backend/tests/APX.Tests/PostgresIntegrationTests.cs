@@ -7,6 +7,8 @@ using APX.Infrastructure.Catalog;
 using APX.Infrastructure.Authentication;
 using APX.Domain.Admin;
 using APX.Infrastructure.Persistence;
+using APX.Application.Requests;
+using APX.Infrastructure.Requests;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 
@@ -155,6 +157,38 @@ public sealed class PostgresIntegrationTests
             await using (var db = CreateContext()) { var challenge = await db.OtpChallenges.SingleAsync(x => x.Id == requested.ChallengeId); var session = await db.AdminSessions.SingleAsync(x => x.AdminUserId == userId); Assert.NotNull(challenge.ConsumedAt); Assert.NotEqual(sender.Code, challenge.CodeHash); Assert.Equal(AuthService.HashToken(token), session.TokenHash); var service = new AuthService(new EfAuthRepository(db), sender, new(OtpPepper: "integration-only-pepper-with-at-least-32-characters")); await service.LogoutAsync(token, new("127.0.0.1", "integration"), default); Assert.NotNull((await db.AdminSessions.SingleAsync(x => x.Id == session.Id)).RevokedAt); }
         }
         finally { if (userId != Guid.Empty) { await using var db = CreateContext(); await db.AuditLog.Where(x => x.AdminUserId == userId).ExecuteDeleteAsync(); await db.AdminUsers.Where(x => x.Id == userId).ExecuteDeleteAsync(); } }
+    }
+
+    [IntegrationFact]
+    [Trait("Category", "Integration")]
+    public async Task ProjectRequestWorkflow_PersistsSnapshotsHistorySequenceAndXmin()
+    {
+        Guid requestId = Guid.Empty; Guid adminId = Guid.Empty;
+        try
+        {
+            await using var db = CreateContext(); var solutionIds = await db.Solutions.AsNoTracking().Where(x => x.Status == SolutionStatus.Published).OrderBy(x => x.Id).Select(x => x.Id).Take(2).ToArrayAsync(); Assert.Equal(2, solutionIds.Length);
+            var auth = await new EfAuthRepository(db).BootstrapAdminAsync($"integration-request-{Guid.NewGuid():N}@example.test", "Request Integration", default); Assert.True(auth.Succeeded); adminId = auth.Value;
+            var repository = new EfProjectRequestRepository(db); var created = await repository.CreateAsync(new("Integration Request", "APX", "REQUEST@EXAMPLE.TEST", "+57 300 000 0000", "Bogotá", null, 200, "Fixture", true, "2026-08", solutionIds.Select(x => new CreateProjectRequestItemDto(x)).ToArray()), new(20, "2026-08"), default); Assert.True(created.Succeeded); requestId = created.Value!.Id; Assert.Matches("^APX-[0-9]{6}$", created.Value.RequestNumber);
+            var detail = await repository.GetByIdAsync(requestId, default); Assert.NotNull(detail); Assert.Equal(2, detail.Items.Count); Assert.All(detail.Items, x => { Assert.NotEmpty(x.SolutionName); Assert.NotEmpty(x.SolutionSlug); Assert.NotEmpty(x.CategoryName); }); Assert.Single(detail.StatusHistory); Assert.Equal("New", detail.Status);
+            var changed = await repository.UpdateStatusAsync(requestId, new("InReview", detail.RowVersion), adminId, default); Assert.True(changed.Succeeded); Assert.Equal("InReview", changed.Value!.Status); Assert.Equal(2, changed.Value.StatusHistory.Count); Assert.NotEqual(detail.RowVersion, changed.Value.RowVersion);
+            var contacted = await repository.UpdateStatusAsync(requestId, new("Contacted", changed.Value.RowVersion), adminId, default); Assert.True(contacted.Succeeded); Assert.NotNull(contacted.Value!.LastContactedAt);
+            var stale = await repository.UpdateStatusAsync(requestId, new("Won", detail.RowVersion), adminId, default); Assert.False(stale.Succeeded); Assert.Equal(ErrorType.Concurrency, stale.Error!.Type);
+        }
+        finally
+        {
+            await using var cleanup = CreateContext(); if (requestId != Guid.Empty) { await cleanup.AuditLog.Where(x => x.EntityId == requestId).ExecuteDeleteAsync(); await cleanup.ProjectRequests.Where(x => x.Id == requestId).ExecuteDeleteAsync(); } if (adminId != Guid.Empty) { await cleanup.AuditLog.Where(x => x.AdminUserId == adminId).ExecuteDeleteAsync(); await cleanup.AdminUsers.Where(x => x.Id == adminId).ExecuteDeleteAsync(); }
+        }
+    }
+
+    [IntegrationFact]
+    [Trait("Category", "Integration")]
+    public async Task ProjectRequestSmokeFixtures_CanBeCleanedSafely()
+    {
+        await using var db = CreateContext(); var requestIds = await db.ProjectRequests.Where(x => x.Email == "phase2g-smoke@example.test" || x.Email == "phase2g-unavailable@example.test").Select(x => x.Id).ToArrayAsync();
+        if (requestIds.Length > 0) { await db.AuditLog.Where(x => requestIds.Contains(x.EntityId)).ExecuteDeleteAsync(); await db.ProjectRequests.Where(x => requestIds.Contains(x.Id)).ExecuteDeleteAsync(); }
+        var solutionIds = await db.Solutions.IgnoreQueryFilters().Where(x => x.Slug.StartsWith("api-integration-phase2g-")).Select(x => x.Id).ToArrayAsync();
+        if (solutionIds.Length > 0) { await db.AuditLog.Where(x => solutionIds.Contains(x.EntityId)).ExecuteDeleteAsync(); await db.Solutions.IgnoreQueryFilters().Where(x => solutionIds.Contains(x.Id)).ExecuteDeleteAsync(); }
+        Assert.False(await db.ProjectRequests.AnyAsync(x => x.Email == "phase2g-smoke@example.test" || x.Email == "phase2g-unavailable@example.test")); Assert.False(await db.Solutions.IgnoreQueryFilters().AnyAsync(x => x.Slug.StartsWith("api-integration-phase2g-")));
     }
 
     private static ApxDbContext CreateContext() => new(new DbContextOptionsBuilder<ApxDbContext>().UseNpgsql(Environment.GetEnvironmentVariable("APX_TEST_CONNECTION_STRING")!).Options);

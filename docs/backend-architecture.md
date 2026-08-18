@@ -126,6 +126,14 @@ El Admin selecciona conjuntamente `ApiAuthRepository`, `ApiAdminCatalogRepositor
 
 La sesion se recupera con `/api/v1/auth/me`; no existe autenticacion en localStorage. Listados, editor, categorias, publicacion y media consumen la API real. Los previews `blob:` solo existen antes del upload y nunca se envian como metadatos persistentes. Solicitudes, proyectos, usuarios y metricas permanecen fuera de esta fase.
 
+## Fase 2G - solicitudes de propuesta
+
+`POST /api/v1/project-requests` recibe solicitudes anonimas, aplica validacion y rate limit independiente (5 por 15 minutos por IP), verifica soluciones publicadas y persiste en una transaccion la solicitud, snapshots comerciales, estado inicial e historial. PostgreSQL genera `APX-000001` mediante `project_request_number_seq`; el UUID sigue siendo la PK.
+
+El consentimiento registra fecha, version y URL configuradas mediante `ProjectRequests__PrivacyPolicyVersion` y `ProjectRequests__PrivacyPolicyUrl`. El honeypot `website` complementa el limite de frecuencia. No existen cuentas, sesiones ni endpoints publicos de consulta para clientes.
+
+Admin usa `GET /api/v1/admin/project-requests`, `GET /api/v1/admin/project-requests/{id}` y `PUT /api/v1/admin/project-requests/{id}/status`. Viewer puede leer; Admin y Editor pueden cambiar estado mediante `project-request.write`. Cada transicion actualiza `xmin`, timestamps comerciales, historial y auditoria sin duplicar datos personales completos. El Project Builder conserva `apx-project-selection` ante cualquier error y solo ejecuta `clearProject()` tras `201 Created`.
+
 ### Estado local temporal
 
 `apx-project-selection` continúa siendo la persistencia del Project Builder. `clearProject()` limpia estado React, localStorage, drawer, contador y resumen tras una creación exitosa. La autenticación administrativa continúa usando temporalmente `apx-admin-auth`, aislada por `AdminProtectedRoute`.

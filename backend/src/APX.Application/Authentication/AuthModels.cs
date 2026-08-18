@@ -10,14 +10,14 @@ public sealed record CreatedAdminSession(string Token, AuthSessionDto Session);
 
 public static class AdminPermissions
 {
-    public const string Read = "admin.read"; public const string ContentWrite = "content.write"; public const string Publish = "content.publish"; public const string Delete = "content.delete"; public const string CategoryManage = "category.manage"; public const string MediaWrite = "media.write"; public const string UserManage = "users.manage";
+    public const string Read = "admin.read"; public const string ContentWrite = "content.write"; public const string Publish = "content.publish"; public const string Delete = "content.delete"; public const string CategoryManage = "category.manage"; public const string MediaWrite = "media.write"; public const string UserManage = "users.manage"; public const string ProjectRequestRead = "project-request.read"; public const string ProjectRequestWrite = "project-request.write";
     public static IReadOnlyList<string> ForRoles(IEnumerable<string> roles)
     {
-        var set = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { Read };
+        var set = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { Read, ProjectRequestRead };
         foreach (var role in roles)
         {
-            if (role.Equals("Admin", StringComparison.OrdinalIgnoreCase)) set.UnionWith([ContentWrite, Publish, Delete, CategoryManage, MediaWrite, UserManage]);
-            else if (role.Equals("Editor", StringComparison.OrdinalIgnoreCase)) set.UnionWith([ContentWrite, Publish, MediaWrite]);
+            if (role.Equals("Admin", StringComparison.OrdinalIgnoreCase)) set.UnionWith([ContentWrite, Publish, Delete, CategoryManage, MediaWrite, UserManage, ProjectRequestWrite]);
+            else if (role.Equals("Editor", StringComparison.OrdinalIgnoreCase)) set.UnionWith([ContentWrite, Publish, MediaWrite, ProjectRequestWrite]);
         }
         return set.Order(StringComparer.Ordinal).ToArray();
     }

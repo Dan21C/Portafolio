@@ -18,4 +18,13 @@ export class ApiClient {
     const kind: ApiErrorKind = response.status === 404 ? 'not_found' : response.status === 400 ? 'validation' : response.status === 409 ? 'conflict' : response.status >= 500 ? 'api_error' : 'unexpected';
     throw new CatalogApiError(kind, problem.detail ?? problem.title ?? `API request failed with status ${response.status}.`, response.status, problem.code, problem.traceId, problem.detail, problem.errors);
   }
+  async post<T>(path: string, body: unknown): Promise<T> {
+    let response: Response;
+    try { response = await this.fetchImpl(`${this.baseUrl.replace(/\/$/, '')}${path}`, { method: 'POST', headers: { Accept: 'application/json', 'Content-Type': 'application/json' }, body: JSON.stringify(body) }); }
+    catch { throw new CatalogApiError('network_error', 'No fue posible conectar con la API.'); }
+    if (response.ok) return response.json() as Promise<T>;
+    let problem: ProblemDetailsPayload = {}; try { problem = await response.json() as ProblemDetailsPayload; } catch { /* safe fallback */ }
+    const kind: ApiErrorKind = response.status === 400 ? 'validation' : response.status === 409 ? 'conflict' : response.status >= 500 ? 'api_error' : 'unexpected';
+    throw new CatalogApiError(kind, problem.detail ?? problem.title ?? `API request failed with status ${response.status}.`, response.status, problem.code, problem.traceId, problem.detail, problem.errors);
+  }
 }

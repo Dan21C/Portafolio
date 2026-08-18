@@ -1,8 +1,8 @@
 import { categories as seedCategories, solutions as seedSolutions, slugify, CATEGORY_IDS } from '../../catalog-core/seed';
 import { getSolutionCover } from '../../catalog-core/mappers';
-import type { AdminCatalogRepository, AuthRepository, MediaRepository } from '../../catalog-core/repositories';
-import type { AdminSolutionListItem, AdminSolutionQuery, CreateCategoryInput, CreateMediaUploadRequest, CreateSolutionInput, MediaUploadResultDto, OtpChallengeDto, PagedResult, ReorderCategoryItem, RequestOtpDto, UpdateCategoryInput, UpdateMediaMetadataRequest, UpdateSolutionInput, VerifyOtpDto } from '../../catalog-core/contracts';
-import type { AuthSession, ServiceCategory, Solution, SolutionMedia } from '../../catalog-core/models';
+import type { AdminCatalogRepository, AdminProjectRequestRepository, AuthRepository, MediaRepository } from '../../catalog-core/repositories';
+import type { AdminProjectRequestDetailDto, AdminProjectRequestListDto, AdminProjectRequestQuery, AdminSolutionListItem, AdminSolutionQuery, CreateCategoryInput, CreateMediaUploadRequest, CreateSolutionInput, MediaUploadResultDto, OtpChallengeDto, PagedResult, ReorderCategoryItem, RequestOtpDto, UpdateCategoryInput, UpdateMediaMetadataRequest, UpdateSolutionInput, VerifyOtpDto } from '../../catalog-core/contracts';
+import type { AuthSession, ProjectRequestStatus, ServiceCategory, Solution, SolutionMedia } from '../../catalog-core/models';
 import { AdminApiError, adminApiConfigured, apiRequest } from './api/apiClient';
 
 const SOLUTIONS = 'apx-admin-solutions'; const CATEGORIES = 'apx-admin-categories';
@@ -73,6 +73,12 @@ export class ApiMediaRepository implements MediaRepository {
   setCover(solutionId: string, mediaId: string): Promise<SolutionMedia> { return apiRequest(`/api/v1/admin/solutions/${solutionId}/media/${mediaId}/cover`, { method: 'PUT' }); }
   delete(solutionId: string, mediaId: string): Promise<void> { return apiRequest(`/api/v1/admin/solutions/${solutionId}/media/${mediaId}`, { method: 'DELETE' }); }
 }
+export class ApiAdminProjectRequestRepository implements AdminProjectRequestRepository {
+  getRequests(query: AdminProjectRequestQuery = {}): Promise<PagedResult<AdminProjectRequestListDto>> { const p = new URLSearchParams(); if (query.search) p.set('search', query.search); if (query.status) p.set('status', query.status); if (query.dateFrom) p.set('dateFrom', query.dateFrom); if (query.dateTo) p.set('dateTo', query.dateTo); if (query.city) p.set('city', query.city); p.set('sort', query.sort ?? 'newest'); p.set('page', String(query.page ?? 1)); p.set('pageSize', String(query.pageSize ?? 20)); return apiRequest(`/api/v1/admin/project-requests?${p}`); }
+  getRequest(id: string): Promise<AdminProjectRequestDetailDto> { return apiRequest(`/api/v1/admin/project-requests/${id}`); }
+  updateStatus(id: string, status: ProjectRequestStatus, rowVersion: string): Promise<AdminProjectRequestDetailDto> { return apiRequest(`/api/v1/admin/project-requests/${id}/status`, { method: 'PUT', body: JSON.stringify({ status, rowVersion }) }); }
+}
 export const authRepository: AuthRepository = adminApiConfigured ? new ApiAuthRepository() : new MockAuthRepository();
 export const adminRepository: AdminCatalogRepository = adminApiConfigured ? new ApiAdminCatalogRepository() : new MockAdminCatalogRepository();
 export const mediaRepository: MediaRepository = adminApiConfigured ? new ApiMediaRepository() : new MockMediaRepository();
+export const projectRequestAdminRepository: AdminProjectRequestRepository = new ApiAdminProjectRequestRepository();
