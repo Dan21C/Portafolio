@@ -10,3 +10,4 @@ public sealed record AdminProjectRequestDetailDto(Guid Id, string RequestNumber,
 public sealed record AdminProjectRequestQuery(string? Status, string? Search, DateOnly? DateFrom, DateOnly? DateTo, string? City, string Sort = "newest", int Page = 1, int PageSize = 20);
 public sealed record UpdateProjectRequestStatusDto(string Status, string RowVersion);
 public sealed record ProjectRequestOptions(int MaxItems = 20, string PrivacyPolicyVersion = "2026-08", string? PrivacyPolicyUrl = null);
+public sealed record ProjectRequestNotificationDto(Guid Id, string RequestNumber, string Name, string? Company, string Email, string Phone, string City, DateOnly? ApproximateDate, int? Attendees, string? Message, DateTimeOffset CreatedAt, IReadOnlyList<string> SolutionNames);

@@ -19,7 +19,10 @@ public sealed class AuthService(IAuthRepository repository, IEmailSender emailSe
         if (latest is not null && latest.CreatedAt.AddSeconds(options.OtpCooldownSeconds) > now) return Result<OtpChallengeDto>.Success(new(latest.Id, latest.ExpiresAt, masked));
         EnsurePepper(); var id = Guid.NewGuid(); var code = RandomNumberGenerator.GetInt32(0, 1_000_000).ToString("D6");
         var challenge = new OtpChallenge { Id = id, AdminUserId = user.Id, Channel = "email", Destination = email, CodeHash = HashOtp(id, code), ExpiresAt = expiry, MaxAttempts = options.OtpMaxAttempts, CreatedAt = now, IpAddress = context.IpAddress, UserAgent = Limit(context.UserAgent, 500) };
-        await repository.CreateChallengeAsync(challenge, ct); await emailSender.SendOtpAsync(email, code, expiry, ct);
+        await repository.CreateChallengeAsync(challenge, ct);
+        try { await emailSender.SendOtpAsync(id, email, code, expiry, ct); }
+        catch (OperationCanceledException) { await repository.InvalidateChallengeAsync(id, CancellationToken.None); throw; }
+        catch { await repository.InvalidateChallengeAsync(id, ct); return Result<OtpChallengeDto>.Failure(new(ErrorType.Unexpected, "email_delivery_failed", "The access code could not be delivered. Try again later.")); }
         return Result<OtpChallengeDto>.Success(new(id, expiry, masked));
     }
 

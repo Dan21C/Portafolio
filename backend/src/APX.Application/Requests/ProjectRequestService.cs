@@ -2,14 +2,16 @@ using System.Net.Mail;
 using APX.Application.Catalog;
 using APX.Application.Common;
 namespace APX.Application.Requests;
-public sealed class ProjectRequestService(IProjectRequestRepository repository, ProjectRequestOptions options)
+public sealed class ProjectRequestService(IProjectRequestRepository repository, IProjectRequestNotifier notifier, ProjectRequestOptions options)
 {
-    public Task<Result<ProjectRequestCreatedDto>> CreateAsync(CreateProjectRequestDto request, CancellationToken ct)
+    public async Task<Result<ProjectRequestCreatedDto>> CreateAsync(CreateProjectRequestDto request, CancellationToken ct)
     {
         var errors = Validate(request, options);
-        if (errors.Count > 0) return Task.FromResult(Result<ProjectRequestCreatedDto>.Failure(Errors.Validation("Review the project request fields.", errors)));
+        if (errors.Count > 0) return Result<ProjectRequestCreatedDto>.Failure(Errors.Validation("Review the project request fields.", errors));
         var normalized = request with { Name = request.Name.Trim(), Company = NullIfBlank(request.Company), Email = request.Email.Trim().ToLowerInvariant(), Phone = request.Phone.Trim(), City = request.City.Trim(), Message = NullIfBlank(request.Message), Website = null, Items = request.Items!.DistinctBy(x => x.SolutionId).ToArray() };
-        return repository.CreateAsync(normalized, options, ct);
+        var result = await repository.CreateAsync(normalized, options, ct);
+        if (result.Succeeded) { var notification = await repository.GetNotificationAsync(result.Value!.Id, ct); if (notification is not null) await notifier.NotifyCreatedAsync(notification, ct); }
+        return result;
     }
     public Task<Result<PagedResult<AdminProjectRequestListDto>>> GetAsync(AdminProjectRequestQuery query, CancellationToken ct)
     {

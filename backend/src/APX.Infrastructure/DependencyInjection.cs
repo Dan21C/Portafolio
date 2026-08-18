@@ -6,6 +6,10 @@ using APX.Application.Authentication;
 using APX.Infrastructure.Authentication;
 using APX.Application.Requests;
 using APX.Infrastructure.Requests;
+using APX.Application.Emailing;
+using APX.Infrastructure.Emailing;
+using APX.Application.AdminUsers;
+using APX.Infrastructure.AdminUsers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,6 +29,9 @@ public static class DependencyInjection
         services.AddScoped<IMediaRepository>(provider => provider.GetRequiredService<ICatalogRepository>() as IMediaRepository ?? throw new InvalidOperationException("Catalog repository must implement media persistence."));
         services.AddScoped<IAuthRepository, EfAuthRepository>();
         services.AddScoped<IProjectRequestRepository, EfProjectRequestRepository>();
+        services.AddScoped<IEmailDeliveryRepository, EfEmailDeliveryRepository>();
+        services.AddScoped<IAdminUserManagementRepository, EfAdminUserManagementRepository>();
+        services.AddScoped<IAdminInvitationSender, AdminInvitationSender>();
         var supabase = new SupabaseStorageOptions(
             configuration["Supabase:Url"] ?? string.Empty,
             configuration["Supabase:StorageBucket"] ?? string.Empty,

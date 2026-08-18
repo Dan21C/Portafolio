@@ -9,6 +9,9 @@ using APX.Domain.Admin;
 using APX.Infrastructure.Persistence;
 using APX.Application.Requests;
 using APX.Infrastructure.Requests;
+using APX.Domain.Emailing;
+using APX.Application.AdminUsers;
+using APX.Infrastructure.AdminUsers;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 
@@ -191,11 +194,41 @@ public sealed class PostgresIntegrationTests
         Assert.False(await db.ProjectRequests.AnyAsync(x => x.Email == "phase2g-smoke@example.test" || x.Email == "phase2g-unavailable@example.test")); Assert.False(await db.Solutions.IgnoreQueryFilters().AnyAsync(x => x.Slug.StartsWith("api-integration-phase2g-")));
     }
 
+    [IntegrationFact]
+    [Trait("Category", "Integration")]
+    public async Task AdminUserManagement_EnforcesRoleRevocationStatusConcurrencyAndLastAdmin()
+    {
+        Guid actorId=Guid.Empty,targetId=Guid.Empty;
+        try
+        {
+            await using(var db=CreateContext()){var actor=await new EfAuthRepository(db).BootstrapAdminAsync($"integration-users-actor-{Guid.NewGuid():N}@example.test","Actor Admin",default);Assert.True(actor.Succeeded);actorId=actor.Value;var repo=new EfAdminUserManagementRepository(db);var created=await repo.CreateAsync(new("Managed User",$"integration-users-target-{Guid.NewGuid():N}@example.test","Editor"),actorId,default);Assert.True(created.Succeeded);targetId=created.Value!.Id;db.AdminSessions.Add(new AdminSession{Id=Guid.NewGuid(),AdminUserId=targetId,TokenHash=Guid.NewGuid().ToString("N"),CreatedAt=DateTimeOffset.UtcNow,ExpiresAt=DateTimeOffset.UtcNow.AddHours(1),LastSeenAt=DateTimeOffset.UtcNow});await db.SaveChangesAsync();}
+            string stale;
+            await using(var db=CreateContext()){var repo=new EfAdminUserManagementRepository(db);var detail=await repo.GetByIdAsync(targetId,default);Assert.NotNull(detail);stale=detail.RowVersion;var changed=await repo.UpdateAsync(targetId,new("Managed Viewer","Viewer",detail.RowVersion),actorId,default);Assert.True(changed.Succeeded);Assert.Equal("Viewer",changed.Value!.Roles.Single());Assert.Equal(0,changed.Value.ActiveSessionsCount);var conflict=await repo.UpdateAsync(targetId,new("Stale","Editor",stale),actorId,default);Assert.False(conflict.Succeeded);Assert.Equal(ErrorType.Concurrency,conflict.Error!.Type);var disabled=await repo.SetActiveAsync(targetId,false,changed.Value.RowVersion,actorId,default);Assert.True(disabled.Succeeded);Assert.Equal("Disabled",disabled.Value!.Status);var active=await repo.SetActiveAsync(targetId,true,disabled.Value.RowVersion,actorId,default);Assert.True(active.Succeeded);Assert.Equal("Active",active.Value!.Status);Assert.Equal(0,active.Value.ActiveSessionsCount);}
+        }
+        finally{await using var db=CreateContext();var ids=new[]{actorId,targetId}.Where(x=>x!=Guid.Empty).ToArray();if(ids.Length>0){await db.AuditLog.Where(x=>ids.Contains(x.EntityId)||x.AdminUserId!=null&&ids.Contains(x.AdminUserId.Value)).ExecuteDeleteAsync();await db.AdminUsers.Where(x=>ids.Contains(x.Id)).ExecuteDeleteAsync();}}
+    }
+
+    [IntegrationFact]
+    [Trait("Category", "Integration")]
+    public async Task AdminUserSmokeFixture_CanBeCleanedSafely()
+    {
+        const string email="apxtechlab+phase2i@gmail.com"; await using var db=CreateContext(); var user=await db.AdminUsers.SingleOrDefaultAsync(x=>x.Email==email); if(user is null)return;Assert.Equal(AdminUserStatus.Active,user.Status);Assert.False(await db.AdminSessions.AnyAsync(x=>x.AdminUserId==user.Id&&x.RevokedAt==null&&x.ExpiresAt>DateTimeOffset.UtcNow));Assert.False(await db.OtpChallenges.AnyAsync(x=>x.AdminUserId==user.Id&&x.ConsumedAt==null&&x.LockedAt==null&&x.ExpiresAt>DateTimeOffset.UtcNow));Assert.True(await db.EmailDeliveries.AnyAsync(x=>x.RelatedEntityId==user.Id&&x.Type==EmailDeliveryType.AdminInvitation&&x.Status==EmailDeliveryStatus.Sent));var sessionIds=await db.AdminSessions.Where(x=>x.AdminUserId==user.Id).Select(x=>x.Id).ToArrayAsync();var challengeIds=await db.OtpChallenges.Where(x=>x.AdminUserId==user.Id).Select(x=>x.Id).ToArrayAsync();var deliveryIds=await db.EmailDeliveries.Where(x=>x.RelatedEntityId==user.Id||challengeIds.Contains(x.RelatedEntityId)).Select(x=>x.Id).ToArrayAsync();await db.AuditLog.Where(x=>x.AdminUserId==user.Id||x.EntityId==user.Id||sessionIds.Contains(x.EntityId)||challengeIds.Contains(x.EntityId)||deliveryIds.Contains(x.EntityId)).ExecuteDeleteAsync();await db.EmailDeliveries.Where(x=>deliveryIds.Contains(x.Id)).ExecuteDeleteAsync();await db.AdminUsers.Where(x=>x.Id==user.Id).ExecuteDeleteAsync();Assert.False(await db.AdminUsers.AnyAsync(x=>x.Email==email));Assert.False(await db.EmailDeliveries.AnyAsync(x=>deliveryIds.Contains(x.Id)));
+    }
+
+    [IntegrationFact]
+    [Trait("Category", "Integration")]
+    public async Task TransactionalEmailSmoke_IsTrackedAndCleanedSafely()
+    {
+        await using var db = CreateContext(); var fixtures = await db.ProjectRequests.Where(x => x.Name == "Phase 2H SMTP Smoke" && x.Email == "apxtechlab@gmail.com").ToListAsync(); if (fixtures.Count == 0) return; var ids = fixtures.Select(x => x.Id).ToArray();
+        var deliveries = await db.EmailDeliveries.AsNoTracking().Where(x => ids.Contains(x.RelatedEntityId)).ToListAsync(); Assert.Equal(fixtures.Count * 2, deliveries.Count); Assert.All(deliveries, x => Assert.Equal(EmailDeliveryStatus.Sent, x.Status)); Assert.Contains(deliveries, x => x.Type == EmailDeliveryType.ProjectRequestCustomerConfirmation); Assert.Contains(deliveries, x => x.Type == EmailDeliveryType.ProjectRequestInternalNotification);
+        await db.AuditLog.Where(x => ids.Contains(x.EntityId)).ExecuteDeleteAsync(); await db.EmailDeliveries.Where(x => ids.Contains(x.RelatedEntityId)).ExecuteDeleteAsync(); await db.ProjectRequests.Where(x => ids.Contains(x.Id)).ExecuteDeleteAsync(); Assert.False(await db.ProjectRequests.AnyAsync(x => ids.Contains(x.Id))); Assert.False(await db.EmailDeliveries.AnyAsync(x => ids.Contains(x.RelatedEntityId)));
+    }
+
     private static ApxDbContext CreateContext() => new(new DbContextOptionsBuilder<ApxDbContext>().UseNpgsql(Environment.GetEnvironmentVariable("APX_TEST_CONNECTION_STRING")!).Options);
     private static CreateSolutionRequest Request(Guid categoryId, string slug) => new("Integration test", slug, categoryId, null, "Temporary integration solution", "Temporary integration description", [new("Feature", null)], [], [], [], null, "quote", null, null, "COP", false, "draft", new("Integration SEO", null, ["integration"]), [], 9999);
     private static UpdateSolutionRequest Update(AdminSolutionDetailDto source, string rowVersion, string eyebrow) => new(rowVersion, source.Name, source.Slug, source.CategoryId, eyebrow, source.ShortDescription, source.Description, source.Features.Select(x => new FeatureInput(x.Title, x.Description)).ToList(), [], [], [], source.ImplementationTime, source.PriceMode, source.PriceFrom, source.PriceTo, source.Currency, source.Featured, source.Status, source.Seo is null ? null : new(source.Seo.Title, source.Seo.Description, source.Seo.Keywords), [], source.Order);
     private static async Task<HashSet<string>> ReadStringsAsync(ApxDbContext db, string sql) { var values = new HashSet<string>(StringComparer.Ordinal); var connection = db.Database.GetDbConnection(); if (connection.State != ConnectionState.Open) await connection.OpenAsync(); await using var command = connection.CreateCommand(); command.CommandText = sql; await using var reader = await command.ExecuteReaderAsync(); while (await reader.ReadAsync()) values.Add(reader.GetString(0)); return values; }
     private static async Task<string> ReadXminAsync(ApxDbContext db, Guid id) { var connection = db.Database.GetDbConnection(); if (connection.State != ConnectionState.Open) await connection.OpenAsync(); await using var command = connection.CreateCommand(); command.CommandText = "SELECT xmin::text FROM solutions WHERE id = @id"; var parameter = command.CreateParameter(); parameter.ParameterName = "id"; parameter.Value = id; command.Parameters.Add(parameter); return (string)(await command.ExecuteScalarAsync())!; }
     private static async Task CleanupAsync(IReadOnlyCollection<Guid> ids) { if (ids.Count == 0) return; await using var db = CreateContext(); await db.AuditLog.Where(x => ids.Contains(x.EntityId)).ExecuteDeleteAsync(); await db.Solutions.IgnoreQueryFilters().Where(x => ids.Contains(x.Id)).ExecuteDeleteAsync(); }
-    private sealed class CapturingEmailSender : IEmailSender { public string? Code { get; private set; } public Task SendOtpAsync(string email, string code, DateTimeOffset expiresAt, CancellationToken ct) { Code = code; return Task.CompletedTask; } }
+    private sealed class CapturingEmailSender : IEmailSender { public string? Code { get; private set; } public Task SendOtpAsync(Guid challengeId, string email, string code, DateTimeOffset expiresAt, CancellationToken ct) { Code = code; return Task.CompletedTask; } }
 }

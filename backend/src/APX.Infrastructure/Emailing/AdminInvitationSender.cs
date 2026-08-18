@@ -1,0 +1,10 @@
+using System.Text.Encodings.Web;
+using APX.Application.AdminUsers;
+using APX.Application.Emailing;
+using Microsoft.Extensions.Logging;
+namespace APX.Infrastructure.Emailing;
+public sealed class AdminInvitationSender(IEmailTransport transport,IEmailDeliveryRepository deliveries,TransactionalEmailOptions options,ILogger<AdminInvitationSender> logger):IAdminInvitationSender
+{
+    public async Task<bool> SendAsync(AdminUserDetailDto user,CancellationToken ct){var id=await deliveries.CreateAsync(new(EmailDeliveryType.AdminInvitation,user.Email,"AdminUser",user.Id),ct);var login=string.IsNullOrWhiteSpace(options.AdminBaseUrl)?string.Empty:$"{options.AdminBaseUrl.TrimEnd('/')}/login";var role=user.Roles.First();var message=new EmailMessage([new(user.Email,user.DisplayName)],"Ya tienes acceso al administrador de APX",$"Hola {user.DisplayName},\n\nTe han dado acceso al administrador APX.\n\nRol: {role}\n\nPara ingresar: {login}\n\nUsa tu correo y recibirás un código temporal de acceso.",$"<div style=\"font-family:Arial,sans-serif;max-width:600px;margin:auto;color:#171717\"><p style=\"font-weight:800;letter-spacing:.18em\">APX</p><h1>Ya tienes acceso al administrador</h1><p>Hola {E(user.DisplayName)},</p><p>Te han dado acceso al administrador APX.</p><p><b>Rol:</b> {E(role)}</p>{(string.IsNullOrWhiteSpace(login)?string.Empty:$"<p><a href=\"{E(login)}\">Ingresar al administrador</a></p>")}<p>Usa tu correo y recibirás un código temporal de acceso. No necesitas contraseña.</p></div>",string.IsNullOrWhiteSpace(options.ReplyToAddress)?null:new(options.ReplyToAddress,options.FromName));try{await transport.SendAsync(message,ct);await deliveries.MarkSentAsync(id,ct);return true;}catch(Exception ex){var code=ex is EmailTransportException transportError?transportError.Code:ex.GetType().Name;await deliveries.MarkFailedAsync(id,code,ct);logger.LogError("Admin invitation failed for user {AdminUserId} with code {ErrorCode}.",user.Id,code);return false;}}
+    private static string E(string value)=>HtmlEncoder.Default.Encode(value);
+}

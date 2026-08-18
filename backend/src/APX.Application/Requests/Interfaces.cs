@@ -7,4 +7,6 @@ public interface IProjectRequestRepository
     Task<PagedResult<AdminProjectRequestListDto>> GetAsync(AdminProjectRequestQuery query, CancellationToken ct);
     Task<AdminProjectRequestDetailDto?> GetByIdAsync(Guid id, CancellationToken ct);
     Task<Result<AdminProjectRequestDetailDto>> UpdateStatusAsync(Guid id, UpdateProjectRequestStatusDto request, Guid adminUserId, CancellationToken ct);
+    Task<ProjectRequestNotificationDto?> GetNotificationAsync(Guid id, CancellationToken ct);
 }
+public interface IProjectRequestNotifier { Task NotifyCreatedAsync(ProjectRequestNotificationDto request, CancellationToken ct); }

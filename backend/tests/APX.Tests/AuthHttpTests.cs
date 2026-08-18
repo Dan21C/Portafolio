@@ -4,6 +4,7 @@ using APX.Application.Authentication;
 using APX.Application.Catalog;
 using APX.Application.Common;
 using APX.Domain.Admin;
+using APX.Application.AdminUsers;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -38,6 +39,15 @@ public sealed class AuthHttpTests
         Assert.Equal(expected, (await client.SendAsync(delete)).StatusCode);
     }
 
+    [Theory] [InlineData("Admin", HttpStatusCode.OK)] [InlineData("Editor", HttpStatusCode.Forbidden)] [InlineData("Viewer", HttpStatusCode.Forbidden)]
+    public async Task UserManagementEndpoint_RequiresUsersManagePermission(string role, HttpStatusCode expected)
+    {
+        await using var factory = new AuthApiFactory(role); using var client = factory.CreateClient(new() { HandleCookies = true });
+        var requested = await (await client.PostAsJsonAsync("/api/v1/auth/otp/request", new { channel = "email", destination = factory.Auth.User.Email })).Content.ReadFromJsonAsync<OtpChallengeDto>();
+        await client.PostAsJsonAsync("/api/v1/auth/otp/verify", new { challengeId = requested!.ChallengeId, code = factory.Email.Code });
+        Assert.Equal(expected, (await client.GetAsync("/api/v1/admin/users?page=1&pageSize=20")).StatusCode);
+    }
+
     private sealed class AuthApiFactory : WebApplicationFactory<Program>
     {
         public FakeAuthRepository Auth { get; } = new(); public CapturingEmailSender Email { get; } = new();
@@ -45,11 +55,11 @@ public sealed class AuthHttpTests
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
             builder.UseEnvironment("Development"); builder.ConfigureAppConfiguration((_, config) => config.AddInMemoryCollection(new Dictionary<string, string?> { ["Auth:OtpPepper"] = "http-test-pepper-with-at-least-32-characters", ["Cors:AllowedOrigins:0"] = "http://localhost:5174", ["Database:InitializeOnStartup"] = "false" }));
-            builder.ConfigureTestServices(services => { services.RemoveAll<IAuthRepository>(); services.RemoveAll<IEmailSender>(); services.RemoveAll<ICatalogRepository>(); services.RemoveAll<AuthOptions>(); services.AddSingleton(new AuthOptions(OtpPepper: "http-test-pepper-with-at-least-32-characters")); services.AddSingleton<IAuthRepository>(Auth); services.AddSingleton<IEmailSender>(Email); services.AddSingleton<ICatalogRepository, EmptyCatalogRepository>(); });
+            builder.ConfigureTestServices(services => { services.RemoveAll<IAuthRepository>(); services.RemoveAll<IEmailSender>(); services.RemoveAll<ICatalogRepository>(); services.RemoveAll<IAdminUserManagementRepository>(); services.RemoveAll<AuthOptions>(); services.AddSingleton(new AuthOptions(OtpPepper: "http-test-pepper-with-at-least-32-characters")); services.AddSingleton<IAuthRepository>(Auth); services.AddSingleton<IEmailSender>(Email); services.AddSingleton<ICatalogRepository, EmptyCatalogRepository>(); services.AddSingleton<IAdminUserManagementRepository, EmptyAdminUserRepository>(); });
         }
     }
 
-    private sealed class CapturingEmailSender : IEmailSender { public string? Code { get; private set; } public Task SendOtpAsync(string email, string code, DateTimeOffset expiresAt, CancellationToken ct) { Code = code; return Task.CompletedTask; } }
+    private sealed class CapturingEmailSender : IEmailSender { public string? Code { get; private set; } public Task SendOtpAsync(Guid challengeId, string email, string code, DateTimeOffset expiresAt, CancellationToken ct) { Code = code; return Task.CompletedTask; } }
     private sealed class FakeAuthRepository : IAuthRepository
     {
         public AdminUser User { get; } = new() { Id = Guid.NewGuid(), Email = "http-admin@example.test", DisplayName = "HTTP Admin", Status = AdminUserStatus.Active }; private OtpChallenge? challenge; private AdminSession? session;
@@ -57,6 +67,7 @@ public sealed class AuthHttpTests
         public Task<AdminUser?> FindActiveUserByEmailAsync(string email, CancellationToken ct) => Task.FromResult<AdminUser?>(email == User.Email ? User : null);
         public Task<OtpChallenge?> GetLatestOpenChallengeAsync(Guid id, CancellationToken ct) => Task.FromResult(challenge);
         public Task CreateChallengeAsync(OtpChallenge value, CancellationToken ct) { challenge = value; value.AdminUser = User; return Task.CompletedTask; }
+        public Task InvalidateChallengeAsync(Guid id, CancellationToken ct) { if (challenge?.Id == id) challenge.LockedAt = DateTimeOffset.UtcNow; return Task.CompletedTask; }
         public Task<OtpChallenge?> GetChallengeAsync(Guid id, CancellationToken ct) => Task.FromResult(challenge?.Id == id ? challenge : null);
         public Task<bool> SaveFailedAttemptAsync(OtpChallenge value, AuthRequestContext context, CancellationToken ct) { value.Attempts++; return Task.FromResult(value.Attempts >= value.MaxAttempts); }
         public Task CreateSessionAsync(OtpChallenge value, AdminSession created, int max, AuthRequestContext context, CancellationToken ct) { value.ConsumedAt = DateTimeOffset.UtcNow; created.AdminUser = User; session = created; return Task.CompletedTask; }
@@ -72,5 +83,14 @@ public sealed class AuthHttpTests
         public Task<IReadOnlyList<CategoryListDto>> GetPublicCategoriesAsync(CancellationToken ct) => Task.FromResult<IReadOnlyList<CategoryListDto>>([]); public Task<CategoryDetailDto?> GetPublicCategoryAsync(string slug, CancellationToken ct) => Task.FromResult<CategoryDetailDto?>(null); public Task<PagedResult<SolutionCardDto>> GetPublicSolutionsAsync(PublicSolutionQuery q, CancellationToken ct) => Task.FromResult(new PagedResult<SolutionCardDto>([], q.Page, q.PageSize, 0, 0)); public Task<SolutionDetailDto?> GetPublicSolutionAsync(string slug, CancellationToken ct) => Task.FromResult<SolutionDetailDto?>(null); public Task<IReadOnlyList<SolutionCardDto>> GetFeaturedAsync(int limit, CancellationToken ct) => Task.FromResult<IReadOnlyList<SolutionCardDto>>([]);
         public Task<bool> CategoryExistsAsync(Guid id, CancellationToken ct) => Task.FromResult(true); public Task<bool> SolutionSlugExistsAsync(string slug, Guid? id, CancellationToken ct) => Task.FromResult(false); public Task<bool> CategorySlugExistsAsync(string slug, Guid? id, CancellationToken ct) => Task.FromResult(false);
         public Task<Result<AdminSolutionDetailDto>> CreateSolutionAsync(CreateSolutionRequest r, CancellationToken ct) => throw new NotSupportedException(); public Task<Result<AdminSolutionDetailDto>> UpdateSolutionAsync(Guid id, UpdateSolutionRequest r, CancellationToken ct) => throw new NotSupportedException(); public Task<Result> DeleteSolutionAsync(Guid id, CancellationToken ct) => Task.FromResult(Result.Success()); public Task<Result<AdminSolutionDetailDto>> DuplicateSolutionAsync(Guid id, DuplicateSolutionRequest r, CancellationToken ct) => throw new NotSupportedException(); public Task<Result<AdminSolutionDetailDto>> SetPublishedAsync(Guid id, bool p, CancellationToken ct) => throw new NotSupportedException(); public Task<Result<AdminCategoryDto>> CreateCategoryAsync(CreateCategoryRequest r, CancellationToken ct) => throw new NotSupportedException(); public Task<Result<AdminCategoryDto>> UpdateCategoryAsync(Guid id, UpdateCategoryRequest r, CancellationToken ct) => throw new NotSupportedException(); public Task<Result> DeleteCategoryAsync(Guid id, CancellationToken ct) => Task.FromResult(Result.Success()); public Task<Result> ReorderCategoriesAsync(ReorderCategoriesRequest r, CancellationToken ct) => Task.FromResult(Result.Success());
+    }
+    private sealed class EmptyAdminUserRepository : IAdminUserManagementRepository
+    {
+        public Task<PagedResult<AdminUserListDto>> GetAsync(AdminUserListQuery query, CancellationToken ct) => Task.FromResult(new PagedResult<AdminUserListDto>([],query.Page,query.PageSize,0,0));
+        public Task<AdminUserDetailDto?> GetByIdAsync(Guid id, CancellationToken ct) => Task.FromResult<AdminUserDetailDto?>(null);
+        public Task<bool> EmailExistsAsync(string email, CancellationToken ct) => Task.FromResult(false);
+        public Task<Result<AdminUserDetailDto>> CreateAsync(CreateAdminUserDto request, Guid actorId, CancellationToken ct) => throw new NotSupportedException();
+        public Task<Result<AdminUserDetailDto>> UpdateAsync(Guid id, UpdateAdminUserDto request, Guid actorId, CancellationToken ct) => throw new NotSupportedException();
+        public Task<Result<AdminUserDetailDto>> SetActiveAsync(Guid id, bool active, string rowVersion, Guid actorId, CancellationToken ct) => throw new NotSupportedException();
     }
 }

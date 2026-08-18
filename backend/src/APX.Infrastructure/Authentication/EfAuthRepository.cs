@@ -17,6 +17,7 @@ public sealed class EfAuthRepository(ApxDbContext db) : IAuthRepository
         await db.OtpChallenges.Where(x => x.AdminUserId == challenge.AdminUserId && x.ConsumedAt == null && x.LockedAt == null).ExecuteUpdateAsync(update => update.SetProperty(x => x.LockedAt, now), ct);
         db.OtpChallenges.Add(challenge); Audit(challenge.AdminUserId, challenge.Id, "OtpRequested", challenge.IpAddress); await db.SaveChangesAsync(ct); await tx.CommitAsync(ct);
     }
+    public async Task InvalidateChallengeAsync(Guid id, CancellationToken ct) { var now = DateTimeOffset.UtcNow; await db.OtpChallenges.Where(x => x.Id == id && x.ConsumedAt == null).ExecuteUpdateAsync(x => x.SetProperty(c => c.LockedAt, now), ct); }
 
     public Task<OtpChallenge?> GetChallengeAsync(Guid id, CancellationToken ct) => db.OtpChallenges.Include(x => x.AdminUser).ThenInclude(x => x.UserRoles).ThenInclude(x => x.Role).SingleOrDefaultAsync(x => x.Id == id, ct);
     public async Task<bool> SaveFailedAttemptAsync(OtpChallenge challenge, AuthRequestContext context, CancellationToken ct)

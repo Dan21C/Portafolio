@@ -1,7 +1,7 @@
 import { categories as seedCategories, solutions as seedSolutions, slugify, CATEGORY_IDS } from '../../catalog-core/seed';
 import { getSolutionCover } from '../../catalog-core/mappers';
-import type { AdminCatalogRepository, AdminProjectRequestRepository, AuthRepository, MediaRepository } from '../../catalog-core/repositories';
-import type { AdminProjectRequestDetailDto, AdminProjectRequestListDto, AdminProjectRequestQuery, AdminSolutionListItem, AdminSolutionQuery, CreateCategoryInput, CreateMediaUploadRequest, CreateSolutionInput, MediaUploadResultDto, OtpChallengeDto, PagedResult, ReorderCategoryItem, RequestOtpDto, UpdateCategoryInput, UpdateMediaMetadataRequest, UpdateSolutionInput, VerifyOtpDto } from '../../catalog-core/contracts';
+import type { AdminCatalogRepository, AdminProjectRequestRepository, AdminUserRepository, AuthRepository, MediaRepository } from '../../catalog-core/repositories';
+import type { AdminProjectRequestDetailDto, AdminProjectRequestListDto, AdminProjectRequestQuery, AdminSolutionListItem, AdminSolutionQuery, AdminUserDetailDto, AdminUserListDto, AdminUserQuery, CreateAdminUserDto, CreateAdminUserResultDto, CreateCategoryInput, CreateMediaUploadRequest, CreateSolutionInput, MediaUploadResultDto, OtpChallengeDto, PagedResult, ReorderCategoryItem, RequestOtpDto, UpdateAdminUserDto, UpdateCategoryInput, UpdateMediaMetadataRequest, UpdateSolutionInput, VerifyOtpDto } from '../../catalog-core/contracts';
 import type { AuthSession, ProjectRequestStatus, ServiceCategory, Solution, SolutionMedia } from '../../catalog-core/models';
 import { AdminApiError, adminApiConfigured, apiRequest } from './api/apiClient';
 
@@ -78,7 +78,17 @@ export class ApiAdminProjectRequestRepository implements AdminProjectRequestRepo
   getRequest(id: string): Promise<AdminProjectRequestDetailDto> { return apiRequest(`/api/v1/admin/project-requests/${id}`); }
   updateStatus(id: string, status: ProjectRequestStatus, rowVersion: string): Promise<AdminProjectRequestDetailDto> { return apiRequest(`/api/v1/admin/project-requests/${id}/status`, { method: 'PUT', body: JSON.stringify({ status, rowVersion }) }); }
 }
+export class ApiAdminUserRepository implements AdminUserRepository {
+  getUsers(query: AdminUserQuery = {}): Promise<PagedResult<AdminUserListDto>> { const p = new URLSearchParams(); if (query.search) p.set('search', query.search); if (query.role) p.set('role', query.role); if (query.status) p.set('status', query.status); p.set('page', String(query.page ?? 1)); p.set('pageSize', String(query.pageSize ?? 20)); return apiRequest(`/api/v1/admin/users?${p}`); }
+  getUser(id: string): Promise<AdminUserDetailDto> { return apiRequest(`/api/v1/admin/users/${id}`); }
+  createUser(input: CreateAdminUserDto): Promise<CreateAdminUserResultDto> { return apiRequest('/api/v1/admin/users', { method: 'POST', body: JSON.stringify(input) }); }
+  updateUser(id: string, input: UpdateAdminUserDto): Promise<AdminUserDetailDto> { return apiRequest(`/api/v1/admin/users/${id}`, { method: 'PUT', body: JSON.stringify(input) }); }
+  disableUser(id: string, rowVersion: string): Promise<AdminUserDetailDto> { return apiRequest(`/api/v1/admin/users/${id}/disable`, { method: 'POST', body: JSON.stringify({ rowVersion }) }); }
+  reactivateUser(id: string, rowVersion: string): Promise<AdminUserDetailDto> { return apiRequest(`/api/v1/admin/users/${id}/reactivate`, { method: 'POST', body: JSON.stringify({ rowVersion }) }); }
+  resendInvitation(id: string): Promise<CreateAdminUserResultDto> { return apiRequest(`/api/v1/admin/users/${id}/resend-invitation`, { method: 'POST' }); }
+}
 export const authRepository: AuthRepository = adminApiConfigured ? new ApiAuthRepository() : new MockAuthRepository();
 export const adminRepository: AdminCatalogRepository = adminApiConfigured ? new ApiAdminCatalogRepository() : new MockAdminCatalogRepository();
 export const mediaRepository: MediaRepository = adminApiConfigured ? new ApiMediaRepository() : new MockMediaRepository();
 export const projectRequestAdminRepository: AdminProjectRequestRepository = new ApiAdminProjectRequestRepository();
+export const adminUserRepository: AdminUserRepository = new ApiAdminUserRepository();

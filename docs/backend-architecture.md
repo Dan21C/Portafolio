@@ -134,6 +134,29 @@ El consentimiento registra fecha, version y URL configuradas mediante `ProjectRe
 
 Admin usa `GET /api/v1/admin/project-requests`, `GET /api/v1/admin/project-requests/{id}` y `PUT /api/v1/admin/project-requests/{id}/status`. Viewer puede leer; Admin y Editor pueden cambiar estado mediante `project-request.write`. Cada transicion actualiza `xmin`, timestamps comerciales, historial y auditoria sin duplicar datos personales completos. El Project Builder conserva `apx-project-selection` ante cualquier error y solo ejecuta `clearProject()` tras `201 Created`.
 
+## Fase 2H - email transaccional
+
+Application define `IEmailTransport`, mensajes neutrales al proveedor y servicios especializados para OTP y solicitudes. Infrastructure selecciona explícitamente `Development` o `Smtp`; SMTP usa MailKit con STARTTLS, timeout y hasta tres intentos cortos. Producción rechaza el provider Development y SMTP incompleto falla al iniciar sin revelar credenciales.
+
+`EmailDelivery` registra tipo, destinatario, entidad relacionada, estado, intentos y código seguro de error, nunca OTP ni cuerpos. Un fallo OTP invalida el challenge y devuelve `email_delivery_failed`. Las confirmaciones de solicitud se intentan después del commit: sus fallos quedan auditados individualmente sin cambiar el `201 Created`.
+
+Configuración local segura con User Secrets:
+
+```powershell
+dotnet user-secrets set --project backend/src/APX.Api "Email:Provider" "Smtp"
+dotnet user-secrets set --project backend/src/APX.Api "Email:Smtp:Username" "..."
+dotnet user-secrets set --project backend/src/APX.Api "Email:Smtp:Password" "..."
+```
+
+La función `netlify/functions/contact.mjs` continúa independiente. Una migración futura al transporte ASP.NET queda fuera de esta fase.
+
 ### Estado local temporal
 
 `apx-project-selection` continúa siendo la persistencia del Project Builder. `clearProject()` limpia estado React, localStorage, drawer, contador y resumen tras una creación exitosa. La autenticación administrativa continúa usando temporalmente `apx-admin-auth`, aislada por `AdminProtectedRoute`.
+## FASE 2I — gestión de usuarios administradores
+
+La gestión vive en `/api/v1/admin/users` y exige la policy `UserManagement`, basada en el permiso `users.manage` (sólo el rol `Admin`). Los endpoints no comparan nombres de rol. El correo se normaliza al crear, queda inmutable y además del índice existente se protege en PostgreSQL mediante un índice único sobre `lower(email)`.
+
+Cada usuario tiene exactamente un rol operativo (`Admin`, `Editor` o `Viewer`). Cambiarlo revoca todas sus sesiones; deshabilitar también las revoca y reactivar no crea sesión. Se bloquean la autodeshabilitación, la autopérdida del rol Admin y cualquier operación que deje el sistema sin un Admin activo. Las escrituras usan `xmin` como `rowVersion` y responden `409 concurrency_conflict` ante datos obsoletos.
+
+El alta envía una invitación transaccional mediante `IEmailTransport`; no crea contraseña ni OTP. Una falla SMTP queda en `email_deliveries` como `AdminInvitation/Failed`, pero el usuario permanece creado y la respuesta indica `invitationSent: false`. El panel expone `/admin/usuarios` sólo a sesiones con `users.manage` y mantiene una defensa adicional de UI, mientras la API sigue siendo la autoridad.

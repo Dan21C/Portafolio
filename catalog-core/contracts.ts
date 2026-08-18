@@ -36,3 +36,11 @@ export interface CreateMediaUploadRequest { solutionId: string; file: File; alt:
 export interface MediaUploadResultDto extends MediaDto {}
 export interface UpdateMediaMetadataRequest { alt: string; order: number; }
 export interface SolutionEditorData { name: string; slug: string; categoryId: string; shortDescription: string; description: string; gallery: SolutionMedia[]; features: SolutionFeature[]; useCases: string[]; tags: string[]; modalities?: string[]; implementationTime?: string; priceMode: PriceMode; featured: boolean; status: SolutionStatus; seo?: SolutionSeo; }
+export type AdminOperationalRole = 'Admin' | 'Editor' | 'Viewer';
+export type AdminUserStatus = 'Active' | 'Disabled';
+export interface AdminUserQuery { search?: string; role?: AdminOperationalRole; status?: AdminUserStatus; page?: number; pageSize?: number; }
+export interface AdminUserListDto { id: string; displayName: string; email: string; role: AdminOperationalRole; status: AdminUserStatus; lastLoginAt?: string; }
+export interface AdminUserDetailDto { id: string; displayName: string; email: string; status: AdminUserStatus; roles: AdminOperationalRole[]; createdAt: string; updatedAt: string; lastLoginAt?: string; activeSessionsCount: number; rowVersion: string; }
+export interface CreateAdminUserDto { displayName: string; email: string; role: AdminOperationalRole; }
+export interface CreateAdminUserResultDto { user: AdminUserDetailDto; invitationSent: boolean; }
+export interface UpdateAdminUserDto { displayName: string; role: AdminOperationalRole; rowVersion: string; }

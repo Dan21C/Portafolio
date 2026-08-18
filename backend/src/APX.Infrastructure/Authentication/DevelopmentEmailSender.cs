@@ -7,7 +7,7 @@ public sealed record EmailSenderRuntimeOptions(bool IsDevelopment);
 
 public sealed class DevelopmentEmailSender(EmailSenderRuntimeOptions environment, AuthOptions options, ILogger<DevelopmentEmailSender> logger) : IEmailSender
 {
-    public Task SendOtpAsync(string email, string code, DateTimeOffset expiresAt, CancellationToken ct)
+    public Task SendOtpAsync(Guid challengeId, string email, string code, DateTimeOffset expiresAt, CancellationToken ct)
     {
         if (!environment.IsDevelopment) throw new InvalidOperationException("A production email provider has not been configured.");
         if (options.EnableDevelopmentOtpDisclosure) logger.LogWarning("DEVELOPMENT ONLY — OTP for {MaskedEmail}: {OtpCode}; expires {ExpiresAt}", Mask(email), code, expiresAt);

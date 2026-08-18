@@ -1,6 +1,7 @@
 using APX.Domain.Admin;
 using APX.Domain.Catalog;
 using APX.Domain.Requests;
+using APX.Domain.Emailing;
 using Microsoft.EntityFrameworkCore;
 
 namespace APX.Infrastructure.Persistence;
@@ -17,6 +18,7 @@ public sealed class ApxDbContext(DbContextOptions<ApxDbContext> options) : DbCon
     public DbSet<ProjectRequest> ProjectRequests => Set<ProjectRequest>();
     public DbSet<ProjectRequestItem> ProjectRequestItems => Set<ProjectRequestItem>();
     public DbSet<ProjectRequestStatusHistory> ProjectRequestStatusHistory => Set<ProjectRequestStatusHistory>();
+    public DbSet<EmailDelivery> EmailDeliveries => Set<EmailDelivery>();
     public DbSet<AdminUser> AdminUsers => Set<AdminUser>();
     public DbSet<Role> Roles => Set<Role>();
     public DbSet<AuditEntry> AuditLog => Set<AuditEntry>();

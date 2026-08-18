@@ -12,6 +12,9 @@ using Microsoft.AspNetCore.Authorization;
 using System.Threading.RateLimiting;
 using APX.Infrastructure.Authentication;
 using APX.Application.Requests;
+using APX.Application.Emailing;
+using APX.Infrastructure.Emailing;
+using APX.Application.AdminUsers;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Logging.ClearProviders();
@@ -31,6 +34,7 @@ builder.Services.AddScoped<AdminCategoryService>();
 builder.Services.AddScoped<MediaService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<ProjectRequestService>();
+builder.Services.AddScoped<AdminUserManagementService>();
 var authOptions = new AuthOptions(
     builder.Configuration.GetValue("Auth:OtpLifetimeMinutes", 5), builder.Configuration.GetValue("Auth:OtpMaxAttempts", 5),
     builder.Configuration.GetValue("Auth:OtpCooldownSeconds", 60), builder.Configuration.GetValue("Auth:SessionLifetimeHours", 8),
@@ -38,8 +42,15 @@ var authOptions = new AuthOptions(
     builder.Configuration["Auth:OtpPepper"] ?? string.Empty, builder.Configuration.GetValue("Auth:EnableDevelopmentOtpDisclosure", false));
 builder.Services.AddSingleton(authOptions);
 builder.Services.AddSingleton(new ProjectRequestOptions(builder.Configuration.GetValue("ProjectRequests:MaxItems", 20), builder.Configuration["ProjectRequests:PrivacyPolicyVersion"] ?? "2026-08", builder.Configuration["ProjectRequests:PrivacyPolicyUrl"]));
-builder.Services.AddSingleton(new EmailSenderRuntimeOptions(builder.Environment.IsDevelopment()));
-builder.Services.AddScoped<IEmailSender, DevelopmentEmailSender>();
+var emailProvider = builder.Configuration["Email:Provider"]?.Trim() is { Length: > 0 } configuredProvider ? configuredProvider : "Development";
+var emailOptions = new TransactionalEmailOptions(emailProvider, builder.Configuration["Email:FromAddress"] ?? string.Empty, builder.Configuration["Email:FromName"] ?? "APX", builder.Configuration["Email:ReplyToAddress"], builder.Configuration.GetSection("Email:InternalRecipients").Get<string[]>() ?? [], new(builder.Configuration["Email:Smtp:Host"] ?? string.Empty, builder.Configuration.GetValue("Email:Smtp:Port", 587), builder.Configuration["Email:Smtp:Username"] ?? string.Empty, builder.Configuration["Email:Smtp:Password"] ?? string.Empty, builder.Configuration.GetValue("Email:Smtp:UseStartTls", true), builder.Configuration.GetValue("Email:Smtp:TimeoutSeconds", 15), builder.Configuration.GetValue("Email:Smtp:MaxAttempts", 3)), builder.Configuration["AppUrls:AdminBaseUrl"]);
+if (emailProvider.Equals("Development", StringComparison.OrdinalIgnoreCase) && !builder.Environment.IsDevelopment()) throw new InvalidOperationException("Email:Provider=Development is only allowed in Development.");
+if (emailProvider.Equals("Smtp", StringComparison.OrdinalIgnoreCase) && (string.IsNullOrWhiteSpace(emailOptions.FromAddress) || string.IsNullOrWhiteSpace(emailOptions.Smtp.Host) || emailOptions.Smtp.Port is < 1 or > 65535 || string.IsNullOrWhiteSpace(emailOptions.Smtp.Username) || string.IsNullOrWhiteSpace(emailOptions.Smtp.Password))) throw new InvalidOperationException("Email SMTP configuration is incomplete. Configure host, port, username, password and from address.");
+if (!emailProvider.Equals("Development", StringComparison.OrdinalIgnoreCase) && !emailProvider.Equals("Smtp", StringComparison.OrdinalIgnoreCase)) throw new InvalidOperationException("Email:Provider must be Development or Smtp.");
+builder.Services.AddSingleton(emailOptions); builder.Services.AddSingleton(new EmailSenderRuntimeOptions(builder.Environment.IsDevelopment()));
+if (emailProvider.Equals("Smtp", StringComparison.OrdinalIgnoreCase)) { builder.Services.AddScoped<IEmailTransport, SmtpEmailTransport>(); builder.Services.AddScoped<IEmailSender, TransportOtpEmailSender>(); }
+else { builder.Services.AddScoped<IEmailTransport, DevelopmentEmailTransport>(); builder.Services.AddScoped<IEmailSender, DevelopmentEmailSender>(); }
+builder.Services.AddScoped<IProjectRequestNotifier, ProjectRequestEmailNotifier>();
 builder.Services.AddAuthentication(AdminAuth.Scheme).AddScheme<AdminSessionSchemeOptions, AdminSessionAuthenticationHandler>(AdminAuth.Scheme, _ => { });
 builder.Services.AddAuthorization(options =>
 {
@@ -51,6 +62,7 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy(AdminAuth.MediaWrite, policy => policy.RequireClaim("permission", AdminPermissions.MediaWrite));
     options.AddPolicy(AdminAuth.ProjectRequestRead, policy => policy.RequireClaim("permission", AdminPermissions.ProjectRequestRead));
     options.AddPolicy(AdminAuth.ProjectRequestWrite, policy => policy.RequireClaim("permission", AdminPermissions.ProjectRequestWrite));
+    options.AddPolicy(AdminAuth.UserManagement, policy => policy.RequireClaim("permission", AdminPermissions.UserManage));
 });
 builder.Services.AddSingleton<IAuthorizationMiddlewareResultHandler, ProblemAuthorizationResultHandler>();
 builder.Services.AddRateLimiter(options =>
@@ -83,6 +95,7 @@ app.MapCatalogApi();
 app.MapAuthApi(authOptions);
 app.MapAdminApi();
 app.MapProjectRequestApi();
+app.MapAdminUserApi();
 if (app.Environment.IsDevelopment()) app.MapOpenApi();
 
 var connectionString = builder.Configuration.GetConnectionString("ApxDatabase");

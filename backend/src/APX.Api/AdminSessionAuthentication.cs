@@ -8,7 +8,7 @@ namespace APX.Api;
 
 internal static class AdminAuth
 {
-    public const string Scheme = "AdminSession"; public const string SessionItemKey = "APX.AdminSession"; public const string Read = "AdminRead"; public const string ContentWrite = "ContentWrite"; public const string Publish = "ContentPublish"; public const string Delete = "ContentDelete"; public const string CategoryManage = "CategoryManage"; public const string MediaWrite = "MediaWrite"; public const string ProjectRequestRead = "ProjectRequestRead"; public const string ProjectRequestWrite = "ProjectRequestWrite";
+    public const string Scheme = "AdminSession"; public const string SessionItemKey = "APX.AdminSession"; public const string Read = "AdminRead"; public const string ContentWrite = "ContentWrite"; public const string Publish = "ContentPublish"; public const string Delete = "ContentDelete"; public const string CategoryManage = "CategoryManage"; public const string MediaWrite = "MediaWrite"; public const string ProjectRequestRead = "ProjectRequestRead"; public const string ProjectRequestWrite = "ProjectRequestWrite"; public const string UserManagement = "UserManagement";
 }
 
 internal sealed class AdminSessionSchemeOptions : AuthenticationSchemeOptions;

@@ -8,6 +8,7 @@ public interface IAuthRepository
     Task<AdminUser?> FindActiveUserByEmailAsync(string normalizedEmail, CancellationToken ct);
     Task<OtpChallenge?> GetLatestOpenChallengeAsync(Guid adminUserId, CancellationToken ct);
     Task CreateChallengeAsync(OtpChallenge challenge, CancellationToken ct);
+    Task InvalidateChallengeAsync(Guid challengeId, CancellationToken ct);
     Task<OtpChallenge?> GetChallengeAsync(Guid challengeId, CancellationToken ct);
     Task<bool> SaveFailedAttemptAsync(OtpChallenge challenge, AuthRequestContext context, CancellationToken ct);
     Task CreateSessionAsync(OtpChallenge challenge, AdminSession session, int maximumActiveSessions, AuthRequestContext context, CancellationToken ct);
@@ -16,4 +17,4 @@ public interface IAuthRepository
     Task<Result<Guid>> BootstrapAdminAsync(string normalizedEmail, string displayName, CancellationToken ct);
 }
 
-public interface IEmailSender { Task SendOtpAsync(string email, string code, DateTimeOffset expiresAt, CancellationToken ct); }
+public interface IEmailSender { Task SendOtpAsync(Guid challengeId, string email, string code, DateTimeOffset expiresAt, CancellationToken ct); }
