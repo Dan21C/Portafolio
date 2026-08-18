@@ -1,3 +1,4 @@
 import { StrictMode } from 'react'; import { createRoot } from 'react-dom/client'; import App from './App'; import './styles.css';
 import { BrowserRouter } from 'react-router-dom';
-createRoot(document.getElementById('root')).render(<StrictMode><BrowserRouter basename="/admin"><App/></BrowserRouter></StrictMode>);
+import { AdminAuthProvider } from './auth/AdminAuthContext';
+createRoot(document.getElementById('root')).render(<StrictMode><BrowserRouter basename="/admin"><AdminAuthProvider><App/></AdminAuthProvider></BrowserRouter></StrictMode>);

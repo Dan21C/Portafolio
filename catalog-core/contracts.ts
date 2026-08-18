@@ -1,7 +1,7 @@
 import type { PriceMode, ProjectSelection, ServiceCategory, Solution, SolutionFeature, SolutionMedia, SolutionSeo, SolutionStatus } from './models';
 export interface PagedResult<T> { items: T[]; page: number; pageSize: number; totalItems: number; totalPages: number; }
 export interface CatalogSolutionQuery { categorySlug?: string; search?: string; featured?: boolean; tags?: string[]; useCase?: string; modality?: string; sort?: 'featured' | 'name' | 'order' | 'newest'; page?: number; pageSize?: number; }
-export interface AdminSolutionQuery { categoryId?: string; search?: string; status?: SolutionStatus; page?: number; pageSize?: number; }
+export interface AdminSolutionQuery { categoryId?: string; search?: string; status?: SolutionStatus; featured?: boolean; sort?: 'featured' | 'name' | 'order' | 'newest'; page?: number; pageSize?: number; }
 export interface MediaDto extends SolutionMedia {}
 export interface CategoryListDto { id: string; name: string; slug: string; shortDescription: string; image?: string; order: number; }
 export interface CategoryDetailDto extends CategoryListDto { description?: string; icon?: string; }
@@ -26,7 +26,8 @@ export interface ProjectRequestCreatedDto { id: string; status: 'received'; crea
 export interface RequestOtpDto { channel: 'email' | 'whatsapp'; destination: string; }
 export interface OtpChallengeDto { challengeId: string; expiresAt: string; maskedDestination: string; }
 export interface VerifyOtpDto { challengeId: string; code: string; }
-export interface AuthSessionDto { authenticated: boolean; userId?: string; displayName?: string; roles: string[]; expiresAt?: string; }
-export interface CreateMediaUploadRequest { fileName: string; mimeType: string; bytes: number; solutionId?: string; }
-export interface MediaUploadResultDto { mediaId: string; storageKey: string; url: string; }
+export interface AuthSessionDto { authenticated: boolean; userId?: string; displayName?: string; email?: string; roles: string[]; permissions: string[]; expiresAt?: string; }
+export interface CreateMediaUploadRequest { solutionId: string; file: File; alt: string; isCover?: boolean; order?: number; }
+export interface MediaUploadResultDto extends MediaDto {}
+export interface UpdateMediaMetadataRequest { alt: string; order: number; }
 export interface SolutionEditorData { name: string; slug: string; categoryId: string; shortDescription: string; description: string; gallery: SolutionMedia[]; features: SolutionFeature[]; useCases: string[]; tags: string[]; modalities?: string[]; implementationTime?: string; priceMode: PriceMode; featured: boolean; status: SolutionStatus; seo?: SolutionSeo; }

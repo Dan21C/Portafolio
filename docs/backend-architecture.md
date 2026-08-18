@@ -120,6 +120,12 @@ El backend implementa OTP por email con HMAC-SHA256 y pepper del servidor, chall
 
 Las mutaciones con cookie validan `Origin` o `Referer` contra los origenes CORS configurados. El rate limiter HTTP es por instancia y se complementa con estado PostgreSQL. React Admin permanece en mocks hasta Fase 2F; no usa aun estas cookies ni endpoints.
 
+## Fase 2F - integracion del panel administrador
+
+El Admin selecciona conjuntamente `ApiAuthRepository`, `ApiAdminCatalogRepository` y `ApiMediaRepository` cuando `VITE_USE_API=true` y existe `VITE_API_URL`. El cliente compartido usa `credentials: include`, conserva ProblemDetails y notifica globalmente los 401 sin convertir los 403 en logout.
+
+La sesion se recupera con `/api/v1/auth/me`; no existe autenticacion en localStorage. Listados, editor, categorias, publicacion y media consumen la API real. Los previews `blob:` solo existen antes del upload y nunca se envian como metadatos persistentes. Solicitudes, proyectos, usuarios y metricas permanecen fuera de esta fase.
+
 ### Estado local temporal
 
 `apx-project-selection` continúa siendo la persistencia del Project Builder. `clearProject()` limpia estado React, localStorage, drawer, contador y resumen tras una creación exitosa. La autenticación administrativa continúa usando temporalmente `apx-admin-auth`, aislada por `AdminProtectedRoute`.

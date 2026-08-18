@@ -35,7 +35,7 @@ export class ApiCatalogRepository implements CatalogRepository {
 }
 export class MockProjectRequestRepository implements ProjectRequestRepository { async create(_request: CreateProjectRequestDto): Promise<ProjectRequestCreatedDto> { return { id: crypto.randomUUID(), status: 'received', createdAt: new Date().toISOString() }; } }
 export class ApiProjectRequestRepository implements ProjectRequestRepository { async create(_request: CreateProjectRequestDto): Promise<ProjectRequestCreatedDto> { throw new Error('TODO BACKEND PHASE'); } }
-export class ApiMediaRepository implements MediaRepository { async createUpload(_request: CreateMediaUploadRequest): Promise<MediaUploadResultDto> { throw new Error('TODO BACKEND PHASE'); } async saveMetadata(_media: SolutionMedia[]): Promise<SolutionMedia[]> { throw new Error('TODO BACKEND PHASE'); } }
+export class ApiMediaRepository implements MediaRepository { async createUpload(_request: CreateMediaUploadRequest): Promise<MediaUploadResultDto> { throw new Error('Admin-only repository'); } async updateMetadata(_solutionId: string, _mediaId: string): Promise<SolutionMedia> { throw new Error('Admin-only repository'); } async setCover(_solutionId: string, _mediaId: string): Promise<SolutionMedia> { throw new Error('Admin-only repository'); } async delete(_solutionId: string, _mediaId: string): Promise<void> { throw new Error('Admin-only repository'); } }
 const useApi = import.meta.env.VITE_USE_API === 'true' && Boolean(import.meta.env.VITE_API_URL);
 export const catalogRepository: CatalogRepository = useApi ? new ApiCatalogRepository() : new MockCatalogRepository();
 export const projectRequestRepository: ProjectRequestRepository = new MockProjectRequestRepository();
