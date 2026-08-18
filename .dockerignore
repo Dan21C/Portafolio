@@ -1,0 +1,16 @@
+.git
+.env
+.env.*
+!.env.example
+node_modules
+dist
+coverage
+logs
+*.log
+backend/tests
+backend/**/bin
+backend/**/obj
+backend/artifacts
+.vs
+.vscode
+.idea

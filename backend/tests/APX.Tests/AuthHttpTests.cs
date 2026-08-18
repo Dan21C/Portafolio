@@ -12,11 +12,14 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace APX.Tests;
 
 public sealed class AuthHttpTests
 {
+    [Fact]public async Task Liveness_is_public_and_safe(){await using var factory=new AuthApiFactory();using var client=factory.CreateClient();var response=await client.GetAsync("/health/live");Assert.Equal(HttpStatusCode.OK,response.StatusCode);Assert.Contains("nosniff",response.Headers.GetValues("X-Content-Type-Options"));Assert.DoesNotContain("connection",await response.Content.ReadAsStringAsync(),StringComparison.OrdinalIgnoreCase);}
+    [Fact]public async Task Readiness_is_unhealthy_when_database_is_unavailable_without_leaking_configuration(){await using var factory=new AuthApiFactory();using var client=factory.CreateClient();var response=await client.GetAsync("/health/ready");var body=await response.Content.ReadAsStringAsync();Assert.True(response.StatusCode==HttpStatusCode.ServiceUnavailable,$"Expected 503, got {(int)response.StatusCode}: {body}");Assert.Contains("Unhealthy",body);Assert.DoesNotContain("localhost",body,StringComparison.OrdinalIgnoreCase);Assert.DoesNotContain("password",body,StringComparison.OrdinalIgnoreCase);}
     [Fact]
     public async Task OtpCookieMeAdminAndLogout_FlowIsProtected()
     {
@@ -61,8 +64,8 @@ public sealed class AuthHttpTests
         public AuthApiFactory(string role = "Admin") => Auth.User.UserRoles.Single().Role.Name = role;
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
-            builder.UseEnvironment("Development"); builder.ConfigureAppConfiguration((_, config) => config.AddInMemoryCollection(new Dictionary<string, string?> { ["Auth:OtpPepper"] = "http-test-pepper-with-at-least-32-characters", ["Cors:AllowedOrigins:0"] = "http://localhost:5174", ["Database:InitializeOnStartup"] = "false" }));
-            builder.ConfigureTestServices(services => { services.RemoveAll<IAuthRepository>(); services.RemoveAll<IEmailSender>(); services.RemoveAll<ICatalogRepository>(); services.RemoveAll<IAdminUserManagementRepository>(); services.RemoveAll<IDashboardRepository>(); services.RemoveAll<AuthOptions>(); services.AddSingleton(new AuthOptions(OtpPepper: "http-test-pepper-with-at-least-32-characters")); services.AddSingleton<IAuthRepository>(Auth); services.AddSingleton<IEmailSender>(Email); services.AddSingleton<ICatalogRepository, EmptyCatalogRepository>(); services.AddSingleton<IAdminUserManagementRepository, EmptyAdminUserRepository>(); services.AddSingleton<IDashboardRepository, EmptyDashboardRepository>(); });
+            builder.UseEnvironment("Development"); builder.ConfigureAppConfiguration((_, config) => config.AddInMemoryCollection(new Dictionary<string, string?> { ["Auth:OtpPepper"] = "http-test-pepper-with-at-least-32-characters", ["Cors:AllowedOrigins:0"] = "http://localhost:5174", ["Database:InitializeOnStartup"] = "false", ["ConnectionStrings:ApxDatabase"] = "Host=127.0.0.1;Port=1;Database=unavailable;Username=test;Timeout=1" }));
+            builder.ConfigureTestServices(services => { services.RemoveAll<IAuthRepository>(); services.RemoveAll<IEmailSender>(); services.RemoveAll<ICatalogRepository>(); services.RemoveAll<IAdminUserManagementRepository>(); services.RemoveAll<IDashboardRepository>(); services.RemoveAll<AuthOptions>(); services.AddSingleton(new AuthOptions(OtpPepper: "http-test-pepper-with-at-least-32-characters")); services.AddSingleton<IAuthRepository>(Auth); services.AddSingleton<IEmailSender>(Email); services.AddSingleton<ICatalogRepository, EmptyCatalogRepository>(); services.AddSingleton<IAdminUserManagementRepository, EmptyAdminUserRepository>(); services.AddSingleton<IDashboardRepository, EmptyDashboardRepository>(); services.PostConfigure<HealthCheckServiceOptions>(options=>{options.Registrations.Clear();options.Registrations.Add(new("postgresql",_=>new UnhealthyCheck(),HealthStatus.Unhealthy,["ready"]));}); });
         }
     }
 
@@ -101,4 +104,5 @@ public sealed class AuthHttpTests
         public Task<Result<AdminUserDetailDto>> SetActiveAsync(Guid id, bool active, string rowVersion, Guid actorId, CancellationToken ct) => throw new NotSupportedException();
     }
     private sealed class EmptyDashboardRepository:IDashboardRepository{public Task<DashboardDto> GetAsync(DateTimeOffset from,DateTimeOffset to,DateTimeOffset now,int attentionHours,CancellationToken ct)=>Task.FromResult(new DashboardDto(new(from,to,attentionHours),new(0,0,0,0,0,0,0,0),[],new(0,0,0),new(null,null),new(0,null),[],new(0,0,null,null),[],[],[],[],new(0,[])));}
+    private sealed class UnhealthyCheck:IHealthCheck{public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context,CancellationToken ct=default)=>Task.FromResult(HealthCheckResult.Unhealthy("Unavailable."));}
 }

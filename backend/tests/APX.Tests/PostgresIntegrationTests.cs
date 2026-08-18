@@ -15,6 +15,9 @@ using APX.Infrastructure.AdminUsers;
 using APX.Application.Dashboard;
 using APX.Infrastructure.Dashboard;
 using APX.Domain.Requests;
+using APX.Api;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 
@@ -31,6 +34,7 @@ public sealed class IntegrationFactAttribute : FactAttribute
 
 public sealed class PostgresIntegrationTests
 {
+    [IntegrationFact][Trait("Category","Integration")]public async Task Database_readiness_is_healthy_with_configured_PostgreSQL(){var services=new ServiceCollection();services.AddLogging();services.AddDbContext<ApxDbContext>(options=>options.UseNpgsql(Environment.GetEnvironmentVariable("APX_TEST_CONNECTION_STRING")!));await using var provider=services.BuildServiceProvider();var result=await new DatabaseReadinessHealthCheck(provider.GetRequiredService<IServiceScopeFactory>()).CheckHealthAsync(new HealthCheckContext());Assert.Equal(HealthStatus.Healthy,result.Status);}
     [IntegrationFact]
     [Trait("Category", "Integration")]
     public async Task SchemaSeedIndexesAndPostgresFilters_AreReal()

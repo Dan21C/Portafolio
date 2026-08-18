@@ -155,4 +155,5 @@ vite.config.ts.timestamp-*
 !backend/APX.sln
 backend/**/bin/
 backend/**/obj/
+backend/artifacts/
 *.sw?
