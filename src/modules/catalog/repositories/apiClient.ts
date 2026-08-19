@@ -7,7 +7,7 @@ export class CatalogApiError extends Error {
 }
 
 export class ApiClient {
-  constructor(private readonly baseUrl: string, private readonly fetchImpl: typeof fetch = fetch) {}
+  constructor(private readonly baseUrl: string, private readonly fetchImpl: typeof fetch = (...args) => fetch(...args)) {}
   async get<T>(path: string, signal?: AbortSignal): Promise<T> {
     let response: Response;
     try { response = await this.fetchImpl(`${this.baseUrl.replace(/\/$/, '')}${path}`, { headers: { Accept: 'application/json' }, signal }); }
