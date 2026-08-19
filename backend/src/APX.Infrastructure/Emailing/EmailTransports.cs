@@ -12,7 +12,7 @@ public sealed class SmtpEmailTransport(TransactionalEmailOptions options, ILogge
 {
     public async Task SendAsync(EmailMessage message, CancellationToken ct)
     {
-        Validate(message); Exception? last = null;
+        EmailMessageValidation.Validate(message); Exception? last = null;
         for (var attempt = 1; attempt <= Math.Clamp(options.Smtp.MaxAttempts, 1, 3); attempt++)
         {
             try { await SendOnce(message, ct); return; }
@@ -25,6 +25,9 @@ public sealed class SmtpEmailTransport(TransactionalEmailOptions options, ILogge
         var message = new MimeMessage(); message.From.Add(new MailboxAddress(options.FromName, options.FromAddress)); foreach (var recipient in source.To) message.To.Add(new MailboxAddress(recipient.Name ?? string.Empty, recipient.Address)); if (source.ReplyTo is not null) message.ReplyTo.Add(new MailboxAddress(source.ReplyTo.Name ?? string.Empty, source.ReplyTo.Address)); message.Subject = source.Subject; message.Body = new BodyBuilder { TextBody = source.TextBody, HtmlBody = source.HtmlBody }.ToMessageBody();
         using var client = new SmtpClient { Timeout = Math.Clamp(options.Smtp.TimeoutSeconds, 5, 60) * 1000 }; var socket = options.Smtp.UseStartTls ? SecureSocketOptions.StartTls : SecureSocketOptions.Auto; await client.ConnectAsync(options.Smtp.Host, options.Smtp.Port, socket, ct); await client.AuthenticateAsync(options.Smtp.Username, options.Smtp.Password, ct); await client.SendAsync(message, ct); await client.DisconnectAsync(true, ct);
     }
-    private static void Validate(EmailMessage message) { if (message.To.Count == 0 || message.To.Any(x => !MailboxAddress.TryParse(x.Address, out _)) || (message.ReplyTo is not null && !MailboxAddress.TryParse(message.ReplyTo.Address, out _)) || message.Subject.Contains('\r') || message.Subject.Contains('\n')) throw new EmailTransportException("invalid_email_headers"); }
+}
+internal static class EmailMessageValidation
+{
+    public static void Validate(EmailMessage message) { if (message.To.Count == 0 || message.To.Any(x => !MailboxAddress.TryParse(x.Address, out _)) || (message.ReplyTo is not null && !MailboxAddress.TryParse(message.ReplyTo.Address, out _)) || message.Subject.Contains('\r') || message.Subject.Contains('\n')) throw new EmailTransportException("invalid_email_headers"); }
 }
 public sealed class EmailTransportException(string code, Exception? inner = null) : Exception("Transactional email delivery failed.", inner) { public string Code { get; } = code; }

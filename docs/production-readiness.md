@@ -2,7 +2,7 @@
 
 ## Architecture and startup
 
-Production consists of the public SPA, Admin SPA, ASP.NET API, Supabase PostgreSQL through the Session Pooler, and Supabase Storage. SMTP is server-side. The API must run behind HTTPS/reverse proxy and accepts `PORT` or `ASPNETCORE_URLS`; the container defaults to port 8080 as non-root.
+Production consists of the public SPA, Admin SPA, ASP.NET API, Supabase PostgreSQL through the Session Pooler, and Supabase Storage. Transactional email is server-side, via either SMTP (MailKit) or Resend (HTTPS API) depending on `Email__Provider`. The API must run behind HTTPS/reverse proxy and accepts `PORT` or `ASPNETCORE_URLS`; the container defaults to port 8080 as non-root.
 
 Production startup validates configuration and refuses Development email, OTP disclosure, localhost/non-HTTPS URLs, empty CORS, automatic database initialization, or missing secrets. OpenAPI remains Development-only. `.env` and `launchSettings.json` are local tooling only.
 
@@ -35,6 +35,18 @@ Dashboard__LeadAttentionHours=24
 Proxy__KnownProxies__0=<trusted proxy IP when required>
 ```
 
+Alternative: use Resend (HTTPS API) instead of SMTP by setting `Email__Provider=Resend` and replacing the `Email__Smtp__*` block above with:
+
+```text
+Email__Provider=Resend
+Email__Resend__ApiKey=replace-with-server-only-secret
+Email__Resend__BaseUrl=https://api.resend.com
+Email__Resend__TimeoutSeconds=15
+Email__Resend__MaxAttempts=3
+```
+
+`Email__FromAddress`, `Email__FromName`, `Email__ReplyToAddress` and `Email__InternalRecipients__*` are shared by both providers. Production validation requires `Email__Resend__ApiKey` and an HTTPS, non-localhost `Email__Resend__BaseUrl` when `Email__Provider=Resend`, and does not require any `Email__Smtp__*` value in that case.
+
 OTP/session/rate-limit values have safe application defaults but should be reviewed. Never use `VITE_*` for backend secrets. Cookie domain remains unset. With `www`, `admin`, and `api` under one registrable HTTPS domain, `SameSite=Lax` works because they are same-site despite being cross-origin. A genuinely cross-site Admin requires `SameSite=None`; Production cookies remain `Secure`, and CORS/CSRF origins must still be explicit.
 
 ## Frontend builds
@@ -49,7 +61,7 @@ Only `X-Forwarded-For` and `X-Forwarded-Proto` are processed, one hop, from ASP.
 - `/health/ready`: PostgreSQL connectivity with five-second timeout.
 - `/health`: compatibility endpoint.
 
-Storage is intentionally outside readiness to avoid platform coupling; SMTP never sends health email. Request logs contain method, path, status, duration, trace ID and authenticated Admin ID, never bodies, cookies, OTPs, credentials or tokens.
+Storage is intentionally outside readiness to avoid platform coupling; email delivery (SMTP or Resend) never sends health email. Request logs contain method, path, status, duration, trace ID and authenticated Admin ID, never bodies, cookies, OTPs, credentials, API keys or tokens.
 
 ## Migrations, seed and administration
 
@@ -68,7 +80,7 @@ Run retention manually from a trusted job/shell: `dotnet APX.Api.dll cleanup-aut
 - [ ] Public, Admin and API domains selected; HTTPS active.
 - [ ] Backend environment/secrets loaded in provider secret store.
 - [ ] Public/Admin builds use the final API URL and real API mode.
-- [ ] SMTP sender/App Password verified.
+- [ ] Email provider verified: SMTP sender/App Password, or Resend API key and sender domain.
 - [ ] Supabase DB pooler, Storage URL/bucket/secret verified.
 - [ ] Explicit CORS origins and trusted proxy IP configured.
 - [ ] Database backup confirmed and migrations applied explicitly.

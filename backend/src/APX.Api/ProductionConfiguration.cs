@@ -11,7 +11,14 @@ public static class ProductionConfigurationValidator
     {
         if(!environment.IsProduction())return;var missing=new List<string>();
         RequiredConnection(configuration,"ConnectionStrings:ApxDatabase",missing);Required(configuration,"Auth:OtpPepper",missing,value=>value.Length>=32,"must contain at least 32 characters");
-        Required(configuration,"Email:Provider",missing,value=>value.Equals("Smtp",StringComparison.OrdinalIgnoreCase),"must be Smtp");foreach(var key in new[]{"Email:FromAddress","Email:Smtp:Host","Email:Smtp:Username","Email:Smtp:Password","Supabase:Url","Supabase:StorageBucket","AppUrls:PublicBaseUrl","AppUrls:AdminBaseUrl"})Required(configuration,key,missing);
+        Required(configuration,"Email:Provider",missing,value=>value.Equals("Smtp",StringComparison.OrdinalIgnoreCase)||value.Equals("Resend",StringComparison.OrdinalIgnoreCase),"must be Smtp or Resend");
+        foreach(var key in new[]{"Email:FromAddress","Supabase:Url","Supabase:StorageBucket","AppUrls:PublicBaseUrl","AppUrls:AdminBaseUrl"})Required(configuration,key,missing);
+        if((configuration["Email:Provider"]??string.Empty).Equals("Resend",StringComparison.OrdinalIgnoreCase))
+        {
+            Required(configuration,"Email:Resend:ApiKey",missing);
+            if(configuration["Email:Resend:BaseUrl"] is{Length:>0} resendBaseUrl&&!ProductionHttps(resendBaseUrl))missing.Add("Email:Resend:BaseUrl must be an absolute HTTPS URL without localhost");
+        }
+        else foreach(var key in new[]{"Email:Smtp:Host","Email:Smtp:Username","Email:Smtp:Password"})Required(configuration,key,missing);
         if(string.IsNullOrWhiteSpace(configuration["Supabase:SecretKey"])&&string.IsNullOrWhiteSpace(configuration["Supabase:ServiceRoleKey"]))missing.Add("Supabase:SecretKey is required");
         var origins=configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()??[];if(origins.Length==0)missing.Add("Cors:AllowedOrigins requires at least one explicit origin");foreach(var origin in origins)if(!ProductionHttps(origin))missing.Add("Cors:AllowedOrigins entries must be absolute HTTPS origins without localhost");
         foreach(var key in new[]{"AppUrls:PublicBaseUrl","AppUrls:AdminBaseUrl","Supabase:Url"})if(configuration[key] is{Length:>0} value&&!ProductionHttps(value))missing.Add($"{key} must be an absolute HTTPS URL without localhost");

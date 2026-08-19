@@ -1,6 +1,6 @@
 namespace APX.Application.Emailing;
 public sealed record EmailAddress(string Address, string? Name = null);
-public sealed record EmailMessage(IReadOnlyList<EmailAddress> To, string Subject, string TextBody, string HtmlBody, EmailAddress? ReplyTo = null);
+public sealed record EmailMessage(IReadOnlyList<EmailAddress> To, string Subject, string TextBody, string HtmlBody, EmailAddress? ReplyTo = null, string? IdempotencyKey = null);
 public interface IEmailTransport { Task SendAsync(EmailMessage message, CancellationToken ct); }
 public enum EmailDeliveryType { AdminOtp, AdminInvitation, ProjectRequestCustomerConfirmation, ProjectRequestInternalNotification }
 public enum EmailDeliveryStatus { Pending, Sent, Failed }
