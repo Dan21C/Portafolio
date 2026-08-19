@@ -5,6 +5,17 @@ import { CatalogApiError } from './apiClient';
 const json = (value: unknown, status = 200) => new Response(JSON.stringify(value), { status, headers: { 'Content-Type': 'application/json' } });
 const media = { id: '20000000-0000-4000-8000-000000000001', url: '/Assets/cover.webp', alt: 'Cover', type: 'image', order: 0, isCover: true };
 
+// A fetch stand-in that mimics the browser's real "Illegal invocation" TypeError whenever it is
+// invoked with a receiver other than globalThis (e.g. `this.fetchImpl(...)` on a detached bare
+// reference). Native `fetch` is a WebIDL-branded operation and throws in exactly this situation;
+// vi.fn() mocks don't, so they can't catch a regression to `fetchImpl: typeof fetch = fetch`.
+function receiverCheckingFetch(response: Response): typeof fetch {
+  return function (this: unknown) {
+    if (this !== globalThis) throw new TypeError("Failed to execute 'fetch' on 'Window': Illegal invocation");
+    return Promise.resolve(response);
+  } as unknown as typeof fetch;
+}
+
 describe('ApiCatalogRepository', () => {
   it('maps categories to domain models', async () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(json([{ id: '00000000-0000-4000-8000-000000000001', name: 'Experiencias', slug: 'experiencias', shortDescription: 'Short', image: '/Assets/category.webp', order: 1 }]));
@@ -36,6 +47,22 @@ describe('ApiCatalogRepository', () => {
     const promise = new ApiCatalogRepository('https://api.test', fetchMock).getSolutions({ page: -1 });
     await expect(promise).rejects.toMatchObject({ kind: 'validation', status: 400, code: 'validation_error', traceId: 'trace-1', detail: 'Invalid page' } satisfies Partial<CatalogApiError>);
   });
+
+  it('regression: uses the default fetch (no fetchImpl argument) without an illegal invocation', async () => {
+    const payload = [{ id: '00000000-0000-4000-8000-000000000001', name: 'Experiencias', slug: 'experiencias', shortDescription: 'Short', image: '/Assets/category.webp', order: 1 }];
+    vi.stubGlobal('fetch', receiverCheckingFetch(json(payload)));
+    try {
+      const result = await new ApiCatalogRepository('https://api.test').getCategories();
+      expect(result[0]).toMatchObject({ slug: 'experiencias', isActive: true });
+    } finally { vi.unstubAllGlobals(); }
+  });
+
+  it('an injected fetch mock still works as before', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(json([{ id: '00000000-0000-4000-8000-000000000001', name: 'Experiencias', slug: 'experiencias', shortDescription: 'Short', image: '/Assets/category.webp', order: 1 }]));
+    const result = await new ApiCatalogRepository('https://api.test', fetchMock).getCategories();
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(result[0]).toMatchObject({ slug: 'experiencias' });
+  });
 });
 
 describe('ApiProjectRequestRepository', () => {
@@ -43,6 +70,14 @@ describe('ApiProjectRequestRepository', () => {
   it('posts the anonymous request and returns its number', async () => { const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(json({ id: '30000000-0000-4000-8000-000000000001', requestNumber: 'APX-000123', createdAt: new Date().toISOString(), status: 'New' }, 201)); const result = await new ApiProjectRequestRepository('https://api.test', fetchMock).create(request); expect(result.requestNumber).toBe('APX-000123'); expect(fetchMock.mock.calls[0]?.[1]).toMatchObject({ method: 'POST' }); });
   it.each([[400, 'validation'], [429, 'unexpected']])('preserves HTTP %s errors', async (status, kind) => { const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(json({ code: status === 429 ? 'rate_limited' : 'validation_error', detail: 'Rejected', errors: { items: ['Unavailable'] } }, status)); await expect(new ApiProjectRequestRepository('https://api.test', fetchMock).create(request)).rejects.toMatchObject({ status, kind }); });
   it('maps network failure safely', async () => { const fetchMock = vi.fn<typeof fetch>().mockRejectedValue(new TypeError('offline')); await expect(new ApiProjectRequestRepository('https://api.test', fetchMock).create(request)).rejects.toMatchObject({ kind: 'network_error' }); });
+
+  it('regression: uses the default fetch (no fetchImpl argument) without an illegal invocation', async () => {
+    vi.stubGlobal('fetch', receiverCheckingFetch(json({ id: '30000000-0000-4000-8000-000000000001', requestNumber: 'APX-000123', createdAt: new Date().toISOString(), status: 'New' }, 201)));
+    try {
+      const result = await new ApiProjectRequestRepository('https://api.test').create(request);
+      expect(result.requestNumber).toBe('APX-000123');
+    } finally { vi.unstubAllGlobals(); }
+  });
 });
 
 describe.skipIf(!import.meta.env.VITE_REAL_API_URL)('ApiCatalogRepository real smoke', () => {

@@ -6,6 +6,7 @@ import { mapCategoryDetail, mapCategoryList, mapSolutionCard, mapSolutionDetail 
 import { ApiClient, CatalogApiError } from './apiClient';
 
 const clone = <T>(value: T): T => structuredClone(value);
+const defaultFetch: typeof fetch = (...args) => globalThis.fetch(...args);
 export class MockCatalogRepository implements CatalogRepository {
   async getCategories(): Promise<ServiceCategory[]> { return clone(categories.filter((item) => item.isActive).sort((a, b) => a.order - b.order)); }
   async getCategoryBySlug(slug: string): Promise<ServiceCategory | null> { return (await this.getCategories()).find((item) => item.slug === slug) ?? null; }
@@ -24,7 +25,7 @@ export class MockCatalogRepository implements CatalogRepository {
 }
 export class ApiCatalogRepository implements CatalogRepository {
   private readonly client: ApiClient;
-  constructor(baseUrl = import.meta.env.VITE_API_URL ?? '', fetchImpl: typeof fetch = fetch) { this.client = new ApiClient(baseUrl, fetchImpl); }
+  constructor(baseUrl = import.meta.env.VITE_API_URL ?? '', fetchImpl: typeof fetch = defaultFetch) { this.client = new ApiClient(baseUrl, fetchImpl); }
   async getCategories(signal?: AbortSignal): Promise<ServiceCategory[]> { return (await this.client.get<CategoryListDto[]>('/api/v1/catalog/categories', signal)).map(mapCategoryList); }
   async getCategoryBySlug(slug: string, signal?: AbortSignal): Promise<ServiceCategory | null> { try { return mapCategoryDetail(await this.client.get<CategoryDetailDto>(`/api/v1/catalog/categories/${encodeURIComponent(slug)}`, signal)); } catch (error) { if (error instanceof CatalogApiError && error.kind === 'not_found') return null; throw error; } }
   async getSolutions(query: CatalogSolutionQuery = {}, signal?: AbortSignal): Promise<Solution[]> { return (await this.getSolutionsPage(query, signal)).items; }
@@ -34,7 +35,7 @@ export class ApiCatalogRepository implements CatalogRepository {
   async getFeaturedSolutions(signal?: AbortSignal): Promise<Solution[]> { return (await this.client.get<SolutionCardDto[]>('/api/v1/catalog/featured', signal)).map(mapSolutionCard); }
 }
 export class MockProjectRequestRepository implements ProjectRequestRepository { async create(_request: CreateProjectRequestDto): Promise<ProjectRequestCreatedDto> { return { id: crypto.randomUUID(), requestNumber: 'APX-000001', status: 'New', createdAt: new Date().toISOString() }; } }
-export class ApiProjectRequestRepository implements ProjectRequestRepository { private readonly client: ApiClient; constructor(baseUrl = import.meta.env.VITE_API_URL ?? '', fetchImpl: typeof fetch = fetch) { this.client = new ApiClient(baseUrl, fetchImpl); } create(request: CreateProjectRequestDto): Promise<ProjectRequestCreatedDto> { return this.client.post('/api/v1/project-requests', request); } }
+export class ApiProjectRequestRepository implements ProjectRequestRepository { private readonly client: ApiClient; constructor(baseUrl = import.meta.env.VITE_API_URL ?? '', fetchImpl: typeof fetch = defaultFetch) { this.client = new ApiClient(baseUrl, fetchImpl); } create(request: CreateProjectRequestDto): Promise<ProjectRequestCreatedDto> { return this.client.post('/api/v1/project-requests', request); } }
 export class ApiMediaRepository implements MediaRepository { async createUpload(_request: CreateMediaUploadRequest): Promise<MediaUploadResultDto> { throw new Error('Admin-only repository'); } async updateMetadata(_solutionId: string, _mediaId: string): Promise<SolutionMedia> { throw new Error('Admin-only repository'); } async setCover(_solutionId: string, _mediaId: string): Promise<SolutionMedia> { throw new Error('Admin-only repository'); } async delete(_solutionId: string, _mediaId: string): Promise<void> { throw new Error('Admin-only repository'); } }
 const useApi = import.meta.env.VITE_USE_API === 'true' && Boolean(import.meta.env.VITE_API_URL);
 export const catalogRepository: CatalogRepository = useApi ? new ApiCatalogRepository() : new MockCatalogRepository();
