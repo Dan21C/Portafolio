@@ -12,11 +12,15 @@
   align-items: center;
   justify-content: center;
   color: var(--text);
-  background: #050709;
+  background-color: var(--showcase-stage-bg);
+  background-image: var(--showcase-stage-image);
+  background-position: center;
+  background-size: cover;
 }
 
 :global([data-theme='light']) .section {
-  background: #F3F3F0;
+  background-color: var(--showcase-stage-bg);
+  background-image: var(--showcase-stage-image);
 }
 
 @supports (height: 100svh) {
