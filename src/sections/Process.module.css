@@ -285,19 +285,24 @@
   }
 }
 
-@media (max-width: 680px) {
+@media (max-width: 900px) {
   .wrapper {
-    height: 650vh;
+    height: auto;
   }
 
   .section {
-    min-height: 560px;
-    padding-top: 52px;
+    position: relative;
+    top: auto;
+    height: auto;
+    min-height: 0;
+    padding: 62px 0 46px;
     justify-content: flex-start;
   }
 
   .header {
-    margin-bottom: 20px;
+    width: 100%;
+    margin-bottom: 24px;
+    padding: 0 max(20px, env(safe-area-inset-left));
   }
 
   .header h2 {
@@ -305,12 +310,39 @@
   }
 
   .row {
-    --scene-width: 88vw;
-    gap: 16px;
+    --scene-width: min(84vw, 340px);
+    width: 100%;
+    gap: 14px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 20px;
+    overscroll-behavior-inline: contain;
+    touch-action: pan-x;
+    padding: 0 max(20px, env(safe-area-inset-left)) 10px;
+    transform: none !important;
+    will-change: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .row::-webkit-scrollbar {
+    display: none;
   }
 
   .scene {
+    flex-basis: var(--scene-width);
+    width: var(--scene-width);
+    aspect-ratio: 4 / 3;
     border-radius: 12px;
+    scroll-snap-align: center;
+    scroll-snap-stop: always;
+    opacity: .62;
+    transform: scale(.985);
+  }
+
+  .sceneActive {
+    opacity: 1;
+    transform: scale(1);
   }
 
   .scene::after {
@@ -334,9 +366,81 @@
   .sceneLabel h3 {
     font-size: clamp(1.3rem, 6vw, 1.8rem);
   }
+
+  .rowSpacer {
+    flex-basis: 2px;
+  }
+
+  .progress {
+    margin-top: 12px;
+    padding: 0 max(20px, env(safe-area-inset-left));
+  }
 }
 
-@media (max-height: 720px) and (min-width: 681px) {
+@media (min-width: 681px) and (max-width: 900px) {
+  .section {
+    min-height: 100svh;
+    padding: 56px 0 42px;
+    justify-content: center;
+  }
+
+  .header {
+    width: min(680px, 92vw);
+    padding-inline: max(30px, env(safe-area-inset-left));
+  }
+
+  .header h2 {
+    font-size: clamp(2.7rem, 7vw, 3.6rem);
+  }
+
+  .row {
+    --scene-width: min(81vw, 620px);
+    scroll-padding-inline: 30px;
+    padding-inline: max(30px, env(safe-area-inset-left));
+  }
+
+  .scene {
+    aspect-ratio: 3 / 2;
+  }
+
+  .progress {
+    padding-inline: max(30px, env(safe-area-inset-left));
+  }
+}
+
+@media (min-width: 681px) and (max-width: 900px) and (max-height: 500px) and (orientation: landscape) {
+  .section {
+    min-height: 100svh;
+    padding: 24px 0 18px;
+  }
+
+  .header {
+    margin-bottom: 12px;
+  }
+
+  .header h2 {
+    font-size: 2rem;
+  }
+
+  .header p {
+    margin-top: 6px;
+    font-size: .76rem;
+  }
+
+  .eyebrow {
+    margin-bottom: 6px;
+  }
+
+  .row {
+    --scene-width: min(72vw, calc(55svh * 1.5), 520px);
+  }
+
+  .progress {
+    margin-top: 7px;
+  }
+}
+
+@media (max-height: 720px) and (min-width: 901px) {
   .section {
     padding-top: 22px;
     padding-bottom: 16px;

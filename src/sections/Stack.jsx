@@ -45,6 +45,8 @@ const Stack = () => {
   // Scroll-driven card rotation
   useEffect(() => {
     const handleScroll = () => {
+      if (window.matchMedia('(max-width: 560px)').matches) return;
+
       const wrapper = ctaWrapperRef.current;
       if (!wrapper) return;
       const rect           = wrapper.getBoundingClientRect();
@@ -69,7 +71,24 @@ const Stack = () => {
   }, []);
 
   const flipBack = () => {
+    if (window.matchMedia('(max-width: 560px)').matches) {
+      setRotation(0);
+      return;
+    }
+
     const top = ctaWrapperRef.current?.offsetTop ?? 0;
+    window.scrollTo({ top, behavior: 'smooth' });
+  };
+
+  const openContact = () => {
+    if (window.matchMedia('(max-width: 560px)').matches) {
+      setRotation(180);
+      return;
+    }
+
+    const top = (ctaWrapperRef.current?.offsetTop ?? 0)
+      + (ctaWrapperRef.current?.offsetHeight ?? 0)
+      - window.innerHeight;
     window.scrollTo({ top, behavior: 'smooth' });
   };
 
@@ -144,7 +163,7 @@ const Stack = () => {
           {/* ── 3D Flip Card ──────────────────────────────── */}
           <div className={styles.ctaScene}>
             <div
-              className={styles.ctaCard}
+              className={`${styles.ctaCard} ${rotation >= 90 ? styles.ctaCardFlipped : ''}`}
               style={{ transform: `rotateY(${rotation}deg)` }}
             >
 
@@ -172,12 +191,7 @@ const Stack = () => {
                     <div className={styles.ctaFrontActions}>
                       <button
                         className={styles.ctaBtnPrimary}
-                        onClick={() => {
-                          const top = (ctaWrapperRef.current?.offsetTop ?? 0)
-                            + (ctaWrapperRef.current?.offsetHeight ?? 0)
-                            - window.innerHeight;
-                          window.scrollTo({ top, behavior: 'smooth' });
-                        }}
+                        onClick={openContact}
                         type="button"
                       >
                         Hablemos <Arrow />

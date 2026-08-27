@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Moon, Sun } from 'lucide-react';
 import styles from './Navbar.module.css';
 
 const links = [
@@ -19,6 +20,17 @@ const Navbar = ({ theme = 'dark', onThemeChange = () => {} }) => {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  useEffect(() => {
+    if (!menuOpen) return undefined;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [menuOpen]);
+
   return (
     <nav className={`${styles.nav} ${scrolled ? styles.scrolled : ''}`}>
 
@@ -26,7 +38,10 @@ const Navbar = ({ theme = 'dark', onThemeChange = () => {} }) => {
         <span className={styles.wordmark}>APX</span>
       </a>
 
-      <ul className={`${styles.links} ${menuOpen ? styles.open : ''}`}>
+      <ul
+        id="mobile-navigation"
+        className={`${styles.links} ${menuOpen ? styles.open : ''}`}
+      >
         {links.map(({ label, href }) => (
           <li key={href}>
             <a href={href} onClick={() => setMenuOpen(false)}>{label}</a>
@@ -53,11 +68,22 @@ const Navbar = ({ theme = 'dark', onThemeChange = () => {} }) => {
             Claro
           </button>
         </div>
+        <button
+          type="button"
+          className={styles.mobileThemeButton}
+          onClick={() => onThemeChange(theme === 'dark' ? 'light' : 'dark')}
+          aria-label={theme === 'dark' ? 'Activar modo claro' : 'Activar modo oscuro'}
+          aria-pressed={theme === 'light'}
+        >
+          {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+        </button>
         <a href="/#contacto" className={styles.cta}>Hablemos</a>
         <button
           className={`${styles.burger} ${menuOpen ? styles.burgerOpen : ''}`}
           onClick={() => setMenuOpen(v => !v)}
-          aria-label="Menu"
+          aria-label={menuOpen ? 'Cerrar menu' : 'Abrir menu'}
+          aria-expanded={menuOpen}
+          aria-controls="mobile-navigation"
         >
           <span /><span /><span />
         </button>

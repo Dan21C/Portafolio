@@ -869,7 +869,7 @@
   padding: 15px 32px;
   border-radius: 12px;
   background: linear-gradient(135deg, var(--accent) 0%, var(--accent) 100%);
-  color: #fff;
+  color: #090B0D;
   font-family: var(--font-b);
   font-size: 15px;
   font-weight: 600;
@@ -1313,6 +1313,18 @@ select.ctaInput option {
     grid-template-rows: auto;
   }
   .solCardMain { grid-row: auto; }
+
+  .ctaInput,
+  .ctaTextarea,
+  .budgetSelect,
+  select.ctaInput {
+    font-size: 16px;
+  }
+
+  .ctaFlipBack {
+    width: 44px;
+    height: 44px;
+  }
 }
 
 @media (max-width: 820px) {
@@ -1330,19 +1342,75 @@ select.ctaInput option {
 
 @media (max-width: 560px) {
   .section    { padding: 64px 4% 72px; }
-  .ctaSection { padding: 80px 4% 90px; }
+
+  .ctaWrapper { height: auto; }
+
+  .ctaSection {
+    position: relative;
+    top: auto;
+    height: auto;
+    min-height: 0;
+    padding: 72px max(16px, env(safe-area-inset-right)) calc(32px + env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+    overflow: hidden;
+    align-items: flex-start;
+  }
+
+  .ctaInner {
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .ctaEyebrow { display: none; }
+
+  .ctaScene { margin-bottom: 0; }
 
   .ctaFront,
-  .ctaBack    { padding: 28px 22px; }
+  .ctaBack {
+    min-height: 0;
+    padding: 24px 20px;
+    border-radius: 18px;
+  }
+
+  .ctaFront {
+    position: relative;
+    inset: auto;
+  }
+
+  .ctaBack { display: none; }
+  .ctaCardFlipped .ctaFront { display: none; }
+  .ctaCardFlipped .ctaBack { display: flex; }
 
   .ctaFrontLayout {
     flex-direction: column;
     align-items: flex-start;
-    gap: 24px;
+    gap: 18px;
   }
 
   .ctaFrontLeft  { padding-right: 0; }
-  .ctaFrontRight { padding-left: 0; width: 100%; }
+  .ctaFrontRight {
+    width: 100%;
+    padding-left: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 12px;
+  }
+
+  .ctaFeatureItem {
+    color: #CBD5E1;
+    font-size: 12px;
+    line-height: 1.35;
+  }
+
+  .ctaTitle {
+    font-size: clamp(2rem, 11vw, 2.65rem);
+    line-height: .98;
+    letter-spacing: 0;
+  }
+
+  .ctaSub {
+    color: #94A3B8;
+    margin-bottom: 22px;
+  }
 
   .ctaFrontDivider {
     width: 100%;
@@ -1360,10 +1428,41 @@ select.ctaInput option {
     gap: 10px;
   }
 
-  .ctaBtnPrimary { width: 100%; justify-content: center; }
+  .ctaBtnPrimary {
+    width: 100%;
+    min-height: 48px;
+    justify-content: center;
+  }
+
+  .ctaBtnText {
+    width: 100%;
+    min-height: 42px;
+    justify-content: center;
+    color: #CBD5E1;
+  }
+
+  .ctaInput,
+  .ctaTextarea,
+  select.ctaInput {
+    font-size: 16px;
+  }
 
   .ctaTrustSep { display: none; }
-  .ctaTrust { flex-direction: column; gap: 12px; }
+  .ctaTrust {
+    width: 100%;
+    margin-top: 14px;
+    padding: 10px 12px;
+    gap: 8px 14px;
+    flex-direction: row;
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 12px;
+    background: rgba(255,255,255,.035);
+  }
+
+  .ctaTrustItem {
+    color: #94A3B8;
+    font-size: 11px;
+  }
 }
 
 /* ══════════════════════════════════════════════════════
