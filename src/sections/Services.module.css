@@ -4284,10 +4284,23 @@
     height: 46px;
   }
 
-  .automationBenefits,
   .productCard,
   .automationCta {
     grid-template-columns: 1fr;
+  }
+
+  .automationBenefits {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 20px;
+  }
+
+  .automationBenefits span {
+    min-height: 68px;
+    gap: 7px;
+    padding: 10px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
   }
 
   .automationCta a {

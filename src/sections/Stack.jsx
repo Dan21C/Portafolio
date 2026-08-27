@@ -14,16 +14,23 @@ const Arrow = () => (
 const Stack = () => {
   const ctaWrapperRef  = useRef(null);
   const ctaRef         = useRef(null);
+  const formStartedRef = useRef(0);
 
   const [ctaVisible, setCtaVisible] = useState(false);
   const [rotation,   setRotation]   = useState(0);   // 0–180 driven by scroll
   const [formSent,   setFormSent]   = useState(false);
+  const [formSending, setFormSending] = useState(false);
+  const [formError, setFormError] = useState('');
   const [step,       setStep]       = useState(1);
   const [currency,   setCurrency]   = useState('usd');
   const [formData,   setFormData]   = useState({
     name:'', lastName:'', email:'', phone:'', company:'', role:'', country:'',
-    type:'', budget:'', urgency:'', source:'', msg:'',
+    type:'', budget:'', urgency:'', source:'', msg:'', website:'', privacyAccepted:false,
   });
+
+  useEffect(() => {
+    formStartedRef.current = Date.now();
+  }, []);
 
   // CTA section reveal (wrapper enters viewport)
   useEffect(() => {
@@ -38,6 +45,8 @@ const Stack = () => {
   // Scroll-driven card rotation
   useEffect(() => {
     const handleScroll = () => {
+      if (window.matchMedia('(max-width: 560px)').matches) return;
+
       const wrapper = ctaWrapperRef.current;
       if (!wrapper) return;
       const rect           = wrapper.getBoundingClientRect();
@@ -62,7 +71,24 @@ const Stack = () => {
   }, []);
 
   const flipBack = () => {
+    if (window.matchMedia('(max-width: 560px)').matches) {
+      setRotation(0);
+      return;
+    }
+
     const top = ctaWrapperRef.current?.offsetTop ?? 0;
+    window.scrollTo({ top, behavior: 'smooth' });
+  };
+
+  const openContact = () => {
+    if (window.matchMedia('(max-width: 560px)').matches) {
+      setRotation(180);
+      return;
+    }
+
+    const top = (ctaWrapperRef.current?.offsetTop ?? 0)
+      + (ctaWrapperRef.current?.offsetHeight ?? 0)
+      - window.innerHeight;
     window.scrollTo({ top, behavior: 'smooth' });
   };
 
@@ -72,12 +98,44 @@ const Stack = () => {
     setFormSent(false);
     setStep(1);
     setCurrency('usd');
-    setFormData({ name:'', lastName:'', email:'', phone:'', company:'', role:'', country:'', type:'', budget:'', urgency:'', source:'', msg:'' });
+    setFormSending(false);
+    setFormError('');
+    formStartedRef.current = Date.now();
+    setFormData({ name:'', lastName:'', email:'', phone:'', company:'', role:'', country:'', type:'', budget:'', urgency:'', source:'', msg:'', website:'', privacyAccepted:false });
   };
 
   const switchCurrency = (c) => {
     setCurrency(c);
     setFormData(p => ({ ...p, budget: '' }));
+  };
+
+  const submitContact = async (event) => {
+    event.preventDefault();
+    if (formSending) return;
+    setFormSending(true);
+    setFormError('');
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          firstName: formData.name, lastName: formData.lastName, email: formData.email,
+          phone: formData.phone, company: formData.company, role: formData.role,
+          country: formData.country, projectType: formData.type, budgetRange: formData.budget,
+          currency, urgency: formData.urgency, source: formData.source, message: formData.msg,
+          website: formData.website, privacyAccepted: formData.privacyAccepted,
+          startedAt: formStartedRef.current,
+        }),
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok || !result.success) throw new Error(result.error || 'No pudimos enviar el mensaje. Intenta nuevamente.');
+      setFormSent(true);
+    } catch (error) {
+      setFormError(error.message || 'No pudimos enviar el mensaje. Intenta nuevamente.');
+    } finally {
+      setFormSending(false);
+    }
   };
 
   return (
@@ -105,7 +163,7 @@ const Stack = () => {
           {/* ── 3D Flip Card ──────────────────────────────── */}
           <div className={styles.ctaScene}>
             <div
-              className={styles.ctaCard}
+              className={`${styles.ctaCard} ${rotation >= 90 ? styles.ctaCardFlipped : ''}`}
               style={{ transform: `rotateY(${rotation}deg)` }}
             >
 
@@ -133,12 +191,7 @@ const Stack = () => {
                     <div className={styles.ctaFrontActions}>
                       <button
                         className={styles.ctaBtnPrimary}
-                        onClick={() => {
-                          const top = (ctaWrapperRef.current?.offsetTop ?? 0)
-                            + (ctaWrapperRef.current?.offsetHeight ?? 0)
-                            - window.innerHeight;
-                          window.scrollTo({ top, behavior: 'smooth' });
-                        }}
+                        onClick={openContact}
                         type="button"
                       >
                         Hablemos <Arrow />
@@ -281,7 +334,7 @@ const Stack = () => {
 
                     ) : (
                       /* ── Step 2 ── */
-                      <form className={styles.ctaForm} onSubmit={e => { e.preventDefault(); setFormSent(true); }}>
+                      <form className={styles.ctaForm} onSubmit={submitContact}>
                         <div className={styles.ctaFormRow}>
                           <div className={styles.ctaField}>
                             <label className={styles.ctaFieldLabel}>Tipo de proyecto *</label>
@@ -352,12 +405,21 @@ const Stack = () => {
                           <label className={styles.ctaFieldLabel}>Cuéntanos tu reto *</label>
                           <textarea className={styles.ctaTextarea} placeholder="Describe brevemente tu proyecto o necesidad..." rows={2} required value={formData.msg} onChange={set('msg')} />
                         </div>
+                        <div className={styles.honeypot} aria-hidden="true">
+                          <label htmlFor="contact-website">Sitio web</label>
+                          <input id="contact-website" name="website" type="text" tabIndex="-1" autoComplete="off" value={formData.website} onChange={set('website')} />
+                        </div>
+                        <label className={styles.privacyCheck}>
+                          <input type="checkbox" required checked={formData.privacyAccepted} onChange={e => setFormData(p => ({ ...p, privacyAccepted: e.target.checked }))} />
+                          <span>Acepto el tratamiento de mis datos para que APX responda esta solicitud. *</span>
+                        </label>
+                        {formError && <p className={styles.formError} role="alert">{formError}</p>}
                         <div className={styles.ctaFormNav}>
-                          <button type="button" className={styles.ctaBtnBack} onClick={() => setStep(1)}>
+                          <button type="button" className={styles.ctaBtnBack} onClick={() => setStep(1)} disabled={formSending}>
                             ← Anterior
                           </button>
-                          <button type="submit" className={styles.ctaBtnPrimary}>
-                            Enviar mensaje <Arrow />
+                          <button type="submit" className={styles.ctaBtnPrimary} disabled={formSending}>
+                            {formSending ? 'Enviando…' : 'Enviar mensaje'} <Arrow />
                           </button>
                         </div>
                       </form>

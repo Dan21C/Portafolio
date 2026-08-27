@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { Menu, Moon, Sun, X } from 'lucide-react';
 import styles from './Hero.module.css';
 
 const darkHeroVideo = '/Assets/Hero/Hero_showreel.mp4';
@@ -36,8 +37,26 @@ const Hero = ({ theme = 'dark', onThemeChange = () => {} }) => {
   const videoRef = useRef(null);
   const loopCountRef = useRef(0);
   const [showStaticImage, setShowStaticImage] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const heroVideoSrc = theme === 'dark' ? darkHeroVideo : lightHeroVideo;
+
+  useEffect(() => {
+    if (!menuOpen) return undefined;
+
+    const previousOverflow = document.body.style.overflow;
+    const closeOnEscape = (event) => {
+      if (event.key === 'Escape') setMenuOpen(false);
+    };
+
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', closeOnEscape);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', closeOnEscape);
+    };
+  }, [menuOpen]);
 
   useEffect(() => {
     const section = heroRef.current;
@@ -104,19 +123,41 @@ const Hero = ({ theme = 'dark', onThemeChange = () => {} }) => {
     <section ref={heroRef} className={styles.hero} id="inicio" data-mode={theme}>
       <div className={styles.shell}>
         <nav className={styles.nav} aria-label="Navegación principal">
-          <a href="#inicio" className={styles.logo} onClick={(event) => scrollToTarget(event, '#inicio')}>APX</a>
+          <a
+            href="#inicio"
+            className={styles.logo}
+            onClick={(event) => {
+              setMenuOpen(false);
+              scrollToTarget(event, '#inicio');
+            }}
+          >
+            APX
+          </a>
 
-          <div className={styles.navLinks}>
+          <div id="hero-mobile-menu" className={`${styles.navLinks} ${menuOpen ? styles.navLinksOpen : ''}`}>
             {navLinks.map(({ label, href }) => (
               <a
                 key={href}
                 href={href}
                 className={label === 'Inicio' ? styles.navActive : ''}
-                onClick={(event) => scrollToTarget(event, href)}
+                onClick={(event) => {
+                  setMenuOpen(false);
+                  scrollToTarget(event, href);
+                }}
               >
                 {label}
               </a>
             ))}
+            <a
+              href="#contacto"
+              className={styles.mobileContactLink}
+              onClick={(event) => {
+                setMenuOpen(false);
+                scrollToTarget(event, '#contacto');
+              }}
+            >
+              Hablemos
+            </a>
           </div>
 
           <div className={styles.navActions}>
@@ -136,6 +177,25 @@ const Hero = ({ theme = 'dark', onThemeChange = () => {} }) => {
                 Claro
               </button>
             </div>
+            <button
+              type="button"
+              className={styles.mobileThemeButton}
+              onClick={() => onThemeChange(theme === 'dark' ? 'light' : 'dark')}
+              aria-label={theme === 'dark' ? 'Activar modo claro' : 'Activar modo oscuro'}
+              aria-pressed={theme === 'light'}
+            >
+              {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+            </button>
+            <button
+              type="button"
+              className={styles.menuButton}
+              onClick={() => setMenuOpen((open) => !open)}
+              aria-label={menuOpen ? 'Cerrar menu' : 'Abrir menu'}
+              aria-expanded={menuOpen}
+              aria-controls="hero-mobile-menu"
+            >
+              {menuOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
             <a href="#contacto" className={styles.talkBtn} onClick={(event) => scrollToTarget(event, '#contacto')}>
               Hablemos
             </a>

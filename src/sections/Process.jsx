@@ -73,6 +73,11 @@ const Process = () => {
       const section = sectionRef.current;
       if (!wrapper || !row || !section) return;
 
+      if (window.matchMedia('(max-width: 900px)').matches) {
+        setTranslateX(0);
+        return;
+      }
+
       const totalScrollable = wrapper.offsetHeight - window.innerHeight;
       if (totalScrollable <= 0) return;
 
@@ -105,6 +110,30 @@ const Process = () => {
     };
   }, []);
 
+  const handleRowScroll = () => {
+    if (!window.matchMedia('(max-width: 900px)').matches) return;
+
+    const row = rowRef.current;
+    if (!row) return;
+
+    const scenes = Array.from(row.querySelectorAll('[data-service-scene]'));
+    const viewportCenter = row.scrollLeft + row.clientWidth / 2;
+    let closestIndex = 0;
+    let closestDistance = Number.POSITIVE_INFINITY;
+
+    scenes.forEach((scene, index) => {
+      const sceneCenter = scene.offsetLeft + scene.offsetWidth / 2;
+      const distance = Math.abs(sceneCenter - viewportCenter);
+
+      if (distance < closestDistance) {
+        closestDistance = distance;
+        closestIndex = index;
+      }
+    });
+
+    setActiveIndex(closestIndex);
+  };
+
   return (
     <div ref={wrapperRef} id="servicios" className={styles.wrapper}>
       <section
@@ -135,6 +164,7 @@ const Process = () => {
           ref={rowRef}
           className={styles.row}
           style={{ transform: `translate3d(${translateX}px, 0, 0)` }}
+          onScroll={handleRowScroll}
         >
           {SERVICE_SCENES.map((scene, index) => {
             const isActive = index === activeIndex;
@@ -142,6 +172,7 @@ const Process = () => {
             return (
               <article
                 key={scene.number}
+                data-service-scene
                 className={`${styles.scene} ${isActive ? styles.sceneActive : ''}`}
                 aria-current={isActive ? 'step' : undefined}
               >
