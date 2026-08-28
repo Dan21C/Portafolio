@@ -1,0 +1,50 @@
+.section {
+  padding: clamp(120px, 14vh, 160px) 1.5rem clamp(80px, 10vh, 120px);
+}
+
+.container {
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.updated {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-bottom: 2.5rem;
+}
+
+.container h2 {
+  font-family: var(--font-h);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--white);
+  margin: 2.5rem 0 0.9rem;
+}
+
+.container h2:first-of-type {
+  margin-top: 0;
+}
+
+.container p {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: var(--muted);
+  margin-bottom: 1rem;
+}
+
+.container ul {
+  margin: 0 0 1rem 1.2rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.8;
+}
+
+.container a {
+  color: var(--purple-l);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.container strong {
+  color: var(--text);
+}

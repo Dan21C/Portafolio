@@ -1,0 +1,21 @@
+.section {
+  padding: clamp(60px, 10vh, 100px) 1.5rem;
+}
+
+.card {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: clamp(2rem, 4vw, 3rem);
+  border: 1px solid var(--border-w);
+  border-radius: var(--radius-lg);
+  background: var(--card);
+  text-align: center;
+}
+
+.card p {
+  font-size: 0.95rem;
+  line-height: 1.75;
+  color: var(--muted);
+  max-width: 46ch;
+  margin: 0.9rem auto 1.6rem;
+}

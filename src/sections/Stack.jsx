@@ -197,7 +197,7 @@ const Stack = () => {
                         Hablemos <Arrow />
                       </button>
                       <a
-                        href="https://wa.me/573000000000"
+                        href="https://wa.me/573107700619"
                         target="_blank"
                         rel="noreferrer"
                         className={styles.ctaBtnText}
