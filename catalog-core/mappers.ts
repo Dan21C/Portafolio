@@ -1,6 +1,9 @@
-import type { CreateProjectRequestDto, CreateSolutionRequest, SolutionDetailDto } from './contracts';
-import type { ProjectRequest, Solution, SolutionMedia } from './models';
+import type { CategoryDetailDto, CategoryListDto, CreateProjectRequestDto, CreateSolutionRequest, SolutionCardDto, SolutionDetailDto } from './contracts';
+import type { ProjectRequest, ServiceCategory, Solution, SolutionMedia } from './models';
 export const getSolutionCover = (solution: Pick<Solution, 'gallery'>): SolutionMedia | undefined => solution.gallery.find((media) => media.isCover) ?? solution.gallery.slice().sort((a, b) => a.order - b.order)[0];
 export const mapSolutionDetail = (dto: SolutionDetailDto): Solution => ({ ...dto, gallery: dto.gallery.map((media) => ({ ...media })) });
+export const mapCategoryList = (dto: CategoryListDto): ServiceCategory => ({ ...dto, isActive: true });
+export const mapCategoryDetail = (dto: CategoryDetailDto): ServiceCategory => ({ ...dto, isActive: true });
+export const mapSolutionCard = (dto: SolutionCardDto): Solution => ({ id: dto.id, categoryId: dto.categoryId, name: dto.name, slug: dto.slug, eyebrow: dto.eyebrow, shortDescription: dto.shortDescription, description: dto.shortDescription, gallery: dto.coverMedia ? [{ ...dto.coverMedia }] : [], features: [], useCases: [], tags: [...dto.tags], modalities: [], priceMode: 'quote', featured: dto.featured, status: 'published', order: 0 });
 export const mapCreateSolutionRequest = (solution: Omit<Solution, 'id' | 'order'>): CreateSolutionRequest => ({ ...solution, gallery: solution.gallery.map((media) => ({ ...media })) });
-export const mapCreateProjectRequest = (request: Omit<ProjectRequest, 'id' | 'createdAt'>): CreateProjectRequestDto => ({ name: request.name, company: request.company, email: request.email, phone: request.phone, projectType: request.projectType, city: request.city, approximateDate: request.approximateDate, attendees: request.attendees, message: request.message, items: request.selections.map((item) => ({ ...item })) });
+export const mapCreateProjectRequest = (request: Omit<ProjectRequest, 'id' | 'createdAt'>): CreateProjectRequestDto => ({ name: request.name, company: request.company, email: request.email, phone: request.phone, city: request.city, approximateDate: request.approximateDate, attendees: request.attendees, message: request.message, acceptedPrivacy: request.acceptedPrivacy, privacyPolicyVersion: request.privacyPolicyVersion, website: request.website, items: request.selections.map((item) => ({ solutionId: item.solutionId })) });

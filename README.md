@@ -104,5 +104,15 @@ que ya definía el sitio, sin introducir una isla visual nueva.
 
 ## Estado del proyecto
 
-Privado, en desarrollo activo. Sin licencia pública — todos los derechos reservados a APX.
+### Catálogo público con API
 
+El catálogo puede usar mocks o la API ASP.NET Core sin cambiar componentes. Copia `.env.example` a tu configuración local y define:
+
+```env
+VITE_API_URL=http://localhost:5000
+VITE_USE_API=true
+```
+
+Si `VITE_USE_API` no es `true` o falta `VITE_API_URL`, el sitio usa `MockCatalogRepository`. El administrador y el formulario de propuesta continúan en mocks. Para probar el adaptador HTTP ejecuta `npm run test:catalog`.
+
+Privado, en desarrollo activo. Sin licencia pública — todos los derechos reservados a APX.

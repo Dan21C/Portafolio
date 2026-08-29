@@ -1,8 +1,9 @@
 import { categories as seedCategories, solutions as seedSolutions, slugify, CATEGORY_IDS } from '../../catalog-core/seed';
 import { getSolutionCover } from '../../catalog-core/mappers';
-import type { AdminCatalogRepository, AuthRepository, MediaRepository } from '../../catalog-core/repositories';
-import type { AdminSolutionListItem, AdminSolutionQuery, CreateCategoryInput, CreateMediaUploadRequest, CreateSolutionInput, MediaUploadResultDto, OtpChallengeDto, PagedResult, ReorderCategoryItem, RequestOtpDto, UpdateCategoryInput, UpdateSolutionInput, VerifyOtpDto } from '../../catalog-core/contracts';
-import type { AuthSession, ServiceCategory, Solution, SolutionMedia } from '../../catalog-core/models';
+import type { AdminCatalogRepository, AdminProjectRequestRepository, AdminUserRepository, AuthRepository, DashboardRepository, MediaRepository } from '../../catalog-core/repositories';
+import type { AdminProjectRequestDetailDto, AdminProjectRequestListDto, AdminProjectRequestQuery, AdminSolutionListItem, AdminSolutionQuery, AdminUserDetailDto, AdminUserListDto, AdminUserQuery, CreateAdminUserDto, CreateAdminUserResultDto, CreateCategoryInput, CreateMediaUploadRequest, CreateSolutionInput, DashboardDto, DashboardQuery, MediaUploadResultDto, OtpChallengeDto, PagedResult, ReorderCategoryItem, RequestOtpDto, UpdateAdminUserDto, UpdateCategoryInput, UpdateMediaMetadataRequest, UpdateSolutionInput, VerifyOtpDto } from '../../catalog-core/contracts';
+import type { AuthSession, ProjectRequestStatus, ServiceCategory, Solution, SolutionMedia } from '../../catalog-core/models';
+import { AdminApiError, adminApiConfigured, apiRequest } from './api/apiClient';
 
 const SOLUTIONS = 'apx-admin-solutions'; const CATEGORIES = 'apx-admin-categories';
 const read = <T>(key: string, seed: T): T => { try { const stored = localStorage.getItem(key); return stored ? JSON.parse(stored) as T : structuredClone(seed); } catch { return structuredClone(seed); } };
@@ -12,10 +13,18 @@ const normalizeSolution = (value: Solution & { published?: boolean; coverImage?:
 const allSolutions = (): Solution[] => read<(Solution & { published?: boolean; coverImage?: string })[]>(SOLUTIONS, seedSolutions).map(normalizeSolution);
 
 export class MockAuthRepository implements AuthRepository {
+  private session: AuthSession | null = null;
   async requestCode(request: RequestOtpDto): Promise<OtpChallengeDto> { return { challengeId: crypto.randomUUID(), expiresAt: new Date(Date.now() + 300_000).toISOString(), maskedDestination: request.destination }; }
-  async verifyCode(request: VerifyOtpDto): Promise<AuthSession> { return { authenticated: request.code === '123456', roles: request.code === '123456' ? ['admin'] : [] }; }
+  async verifyCode(request: VerifyOtpDto): Promise<AuthSession> { this.session = request.code === '123456' ? { authenticated: true, userId: 'mock-admin', displayName: 'Admin APX', roles: ['Admin'], permissions: ['admin.read', 'content.write', 'content.publish', 'content.delete', 'category.manage', 'media.write'] } : null; return this.session ?? { authenticated: false, roles: [], permissions: [] }; }
+  async getCurrentSession(): Promise<AuthSession | null> { return this.session; }
+  async logout(): Promise<void> { this.session = null; }
 }
-export class ApiAuthRepository implements AuthRepository { async requestCode(_request: RequestOtpDto): Promise<OtpChallengeDto> { throw new Error('TODO BACKEND PHASE'); } async verifyCode(_request: VerifyOtpDto): Promise<AuthSession> { throw new Error('TODO BACKEND PHASE'); } }
+export class ApiAuthRepository implements AuthRepository {
+  requestCode(request: RequestOtpDto): Promise<OtpChallengeDto> { return apiRequest('/api/v1/auth/otp/request', { method: 'POST', body: JSON.stringify(request), skipUnauthorizedHandler: true }); }
+  async verifyCode(request: VerifyOtpDto): Promise<AuthSession> { await apiRequest<AuthSession>('/api/v1/auth/otp/verify', { method: 'POST', body: JSON.stringify(request), skipUnauthorizedHandler: true }); return (await this.getCurrentSession())!; }
+  async getCurrentSession(): Promise<AuthSession | null> { try { return await apiRequest('/api/v1/auth/me', { skipUnauthorizedHandler: true }); } catch (error) { if (error instanceof AdminApiError && error.status === 401) return null; throw error; } }
+  logout(): Promise<void> { return apiRequest('/api/v1/auth/logout', { method: 'POST' }); }
+}
 export class MockAdminCatalogRepository implements AdminCatalogRepository {
   async getSolutions(query: AdminSolutionQuery = {}): Promise<PagedResult<AdminSolutionListItem>> { let result = allSolutions(); if (query.search) result = result.filter((item) => item.name.toLocaleLowerCase().includes(query.search!.toLocaleLowerCase())); if (query.categoryId) result = result.filter((item) => item.categoryId === query.categoryId); if (query.status) result = result.filter((item) => item.status === query.status); const page = query.page ?? 1; const pageSize = query.pageSize ?? Math.max(result.length, 1); const items = result.slice((page - 1) * pageSize, page * pageSize).map((item) => ({ id: item.id, name: item.name, slug: item.slug, categoryId: item.categoryId, status: item.status, featured: item.featured, coverMedia: getSolutionCover(item) })); return { items, page, pageSize, totalItems: result.length, totalPages: Math.ceil(result.length / pageSize) }; }
   async getSolutionById(id: string): Promise<Solution | null> { return allSolutions().find((item) => item.id === id) ?? null; }
@@ -31,7 +40,57 @@ export class MockAdminCatalogRepository implements AdminCatalogRepository {
   async deleteCategory(id: string): Promise<void> { save(CATEGORIES, (await this.getCategories()).filter((item) => item.id !== id)); }
   async reorderCategories(items: ReorderCategoryItem[]): Promise<void> { const orders = new Map(items.map((item) => [item.id, item.order])); save(CATEGORIES, (await this.getCategories()).map((item) => ({ ...item, order: orders.get(item.id) ?? item.order })).sort((a, b) => a.order - b.order)); }
 }
-export class ApiAdminCatalogRepository implements AdminCatalogRepository { async getSolutions(_query?: AdminSolutionQuery): Promise<PagedResult<AdminSolutionListItem>> { throw new Error('TODO BACKEND PHASE'); } async getSolutionById(_id: string): Promise<Solution | null> { throw new Error('TODO BACKEND PHASE'); } async createSolution(_input: CreateSolutionInput): Promise<Solution> { throw new Error('TODO BACKEND PHASE'); } async updateSolution(_id: string, _input: UpdateSolutionInput): Promise<Solution> { throw new Error('TODO BACKEND PHASE'); } async deleteSolution(_id: string): Promise<void> { throw new Error('TODO BACKEND PHASE'); } async duplicateSolution(_id: string): Promise<Solution> { throw new Error('TODO BACKEND PHASE'); } async publishSolution(_id: string): Promise<Solution> { throw new Error('TODO BACKEND PHASE'); } async unpublishSolution(_id: string): Promise<Solution> { throw new Error('TODO BACKEND PHASE'); } async getCategories(): Promise<ServiceCategory[]> { throw new Error('TODO BACKEND PHASE'); } async createCategory(_input: CreateCategoryInput): Promise<ServiceCategory> { throw new Error('TODO BACKEND PHASE'); } async updateCategory(_id: string, _input: UpdateCategoryInput): Promise<ServiceCategory> { throw new Error('TODO BACKEND PHASE'); } async deleteCategory(_id: string): Promise<void> { throw new Error('TODO BACKEND PHASE'); } async reorderCategories(_items: ReorderCategoryItem[]): Promise<void> { throw new Error('TODO BACKEND PHASE'); } }
-export class MockMediaRepository implements MediaRepository { async createUpload(_request: CreateMediaUploadRequest): Promise<MediaUploadResultDto> { throw new Error('Mock uploads use URL.createObjectURL in the editor'); } async saveMetadata(media: SolutionMedia[]): Promise<SolutionMedia[]> { return media; } }
-export class ApiMediaRepository implements MediaRepository { async createUpload(_request: CreateMediaUploadRequest): Promise<MediaUploadResultDto> { throw new Error('TODO BACKEND PHASE'); } async saveMetadata(_media: SolutionMedia[]): Promise<SolutionMedia[]> { throw new Error('TODO BACKEND PHASE'); } }
-export const authRepository: AuthRepository = new MockAuthRepository(); export const adminRepository: AdminCatalogRepository = new MockAdminCatalogRepository();
+export class ApiAdminCatalogRepository implements AdminCatalogRepository {
+  getSolutions(query: AdminSolutionQuery = {}): Promise<PagedResult<AdminSolutionListItem>> { const p = new URLSearchParams(); if (query.search) p.set('search', query.search); if (query.categoryId) p.set('category', query.categoryId); if (query.status) p.set('status', query.status); if (query.featured !== undefined) p.set('featured', String(query.featured)); if (query.sort) p.set('sort', query.sort); p.set('page', String(query.page ?? 1)); p.set('pageSize', String(query.pageSize ?? 12)); return apiRequest(`/api/v1/admin/solutions?${p}`); }
+  async getSolutionById(id: string): Promise<Solution | null> { try { return await apiRequest(`/api/v1/admin/solutions/${id}`); } catch (error) { if (error instanceof AdminApiError && error.status === 404) return null; throw error; } }
+  createSolution(input: CreateSolutionInput): Promise<Solution> { return apiRequest('/api/v1/admin/solutions', { method: 'POST', body: JSON.stringify(solutionPayload(input)) }); }
+  updateSolution(id: string, input: UpdateSolutionInput): Promise<Solution> { return apiRequest(`/api/v1/admin/solutions/${id}`, { method: 'PUT', body: JSON.stringify(solutionPayload(input, true)) }); }
+  deleteSolution(id: string): Promise<void> { return apiRequest(`/api/v1/admin/solutions/${id}`, { method: 'DELETE' }); }
+  duplicateSolution(id: string): Promise<Solution> { return apiRequest(`/api/v1/admin/solutions/${id}/duplicate`, { method: 'POST', body: '{}' }); }
+  publishSolution(id: string): Promise<Solution> { return apiRequest(`/api/v1/admin/solutions/${id}/publish`, { method: 'POST' }); }
+  unpublishSolution(id: string): Promise<Solution> { return apiRequest(`/api/v1/admin/solutions/${id}/unpublish`, { method: 'POST' }); }
+  getCategories(): Promise<ServiceCategory[]> { return apiRequest('/api/v1/admin/categories'); }
+  createCategory(input: CreateCategoryInput): Promise<ServiceCategory> { return apiRequest('/api/v1/admin/categories', { method: 'POST', body: JSON.stringify(input) }); }
+  updateCategory(id: string, input: UpdateCategoryInput): Promise<ServiceCategory> { return apiRequest(`/api/v1/admin/categories/${id}`, { method: 'PUT', body: JSON.stringify(input) }); }
+  deleteCategory(id: string): Promise<void> { return apiRequest(`/api/v1/admin/categories/${id}`, { method: 'DELETE' }); }
+  reorderCategories(items: ReorderCategoryItem[]): Promise<void> { return apiRequest('/api/v1/admin/categories/reorder', { method: 'PUT', body: JSON.stringify({ items }) }); }
+}
+
+const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const solutionPayload = (input: CreateSolutionInput | UpdateSolutionInput, updating = false) => ({
+  ...(updating ? { rowVersion: (input as Solution).rowVersion ?? '' } : {}), name: input.name ?? '', slug: input.slug ?? '', categoryId: input.categoryId, eyebrow: input.eyebrow ?? null,
+  shortDescription: input.shortDescription ?? '', description: input.description ?? '', features: (input.features ?? []).map(({ title, description }) => ({ title, description: description ?? null })),
+  useCaseIds: (input.useCases ?? []).filter((value) => uuid.test(value)), tagIds: (input.tags ?? []).filter((value) => uuid.test(value)), modalityIds: (input.modalities ?? []).filter((value) => uuid.test(value)),
+  implementationTime: input.implementationTime ?? null, priceMode: input.priceMode ?? 'quote', priceFrom: input.priceFrom ?? null, priceTo: input.priceTo ?? null, currency: input.currency ?? null,
+  featured: input.featured ?? false, status: input.status ?? 'draft', seo: input.seo ?? null,
+  media: (input.gallery ?? []).filter((media) => media.storageKey && !media.url.startsWith('blob:')).map((media) => ({ url: media.url, alt: media.alt, type: media.type, order: media.order, isCover: media.isCover, storageKey: media.storageKey, mimeType: media.mimeType ?? null, width: media.width ?? null, height: media.height ?? null, bytes: media.bytes ?? null })), order: input.order ?? 0
+});
+
+export class MockMediaRepository implements MediaRepository { async createUpload(_request: CreateMediaUploadRequest): Promise<MediaUploadResultDto> { throw new Error('Mock uploads use URL.createObjectURL in the editor'); } async updateMetadata(_solutionId: string, _mediaId: string, request: UpdateMediaMetadataRequest): Promise<SolutionMedia> { throw new Error(`Mock metadata: ${request.alt}`); } async setCover(): Promise<SolutionMedia> { throw new Error('Mock cover is local'); } async delete(): Promise<void> {} }
+export class ApiMediaRepository implements MediaRepository {
+  createUpload(request: CreateMediaUploadRequest): Promise<MediaUploadResultDto> { const form = new FormData(); form.append('file', request.file); form.append('alt', request.alt); form.append('isCover', String(request.isCover ?? false)); form.append('order', String(request.order ?? 0)); return apiRequest(`/api/v1/admin/solutions/${request.solutionId}/media`, { method: 'POST', body: form }); }
+  updateMetadata(solutionId: string, mediaId: string, request: UpdateMediaMetadataRequest): Promise<SolutionMedia> { return apiRequest(`/api/v1/admin/solutions/${solutionId}/media/${mediaId}`, { method: 'PUT', body: JSON.stringify(request) }); }
+  setCover(solutionId: string, mediaId: string): Promise<SolutionMedia> { return apiRequest(`/api/v1/admin/solutions/${solutionId}/media/${mediaId}/cover`, { method: 'PUT' }); }
+  delete(solutionId: string, mediaId: string): Promise<void> { return apiRequest(`/api/v1/admin/solutions/${solutionId}/media/${mediaId}`, { method: 'DELETE' }); }
+}
+export class ApiAdminProjectRequestRepository implements AdminProjectRequestRepository {
+  getRequests(query: AdminProjectRequestQuery = {}): Promise<PagedResult<AdminProjectRequestListDto>> { const p = new URLSearchParams(); if (query.search) p.set('search', query.search); if (query.status) p.set('status', query.status); if (query.dateFrom) p.set('dateFrom', query.dateFrom); if (query.dateTo) p.set('dateTo', query.dateTo); if (query.city) p.set('city', query.city); p.set('sort', query.sort ?? 'newest'); p.set('page', String(query.page ?? 1)); p.set('pageSize', String(query.pageSize ?? 20)); return apiRequest(`/api/v1/admin/project-requests?${p}`); }
+  getRequest(id: string): Promise<AdminProjectRequestDetailDto> { return apiRequest(`/api/v1/admin/project-requests/${id}`); }
+  updateStatus(id: string, status: ProjectRequestStatus, rowVersion: string): Promise<AdminProjectRequestDetailDto> { return apiRequest(`/api/v1/admin/project-requests/${id}/status`, { method: 'PUT', body: JSON.stringify({ status, rowVersion }) }); }
+}
+export class ApiAdminUserRepository implements AdminUserRepository {
+  getUsers(query: AdminUserQuery = {}): Promise<PagedResult<AdminUserListDto>> { const p = new URLSearchParams(); if (query.search) p.set('search', query.search); if (query.role) p.set('role', query.role); if (query.status) p.set('status', query.status); p.set('page', String(query.page ?? 1)); p.set('pageSize', String(query.pageSize ?? 20)); return apiRequest(`/api/v1/admin/users?${p}`); }
+  getUser(id: string): Promise<AdminUserDetailDto> { return apiRequest(`/api/v1/admin/users/${id}`); }
+  createUser(input: CreateAdminUserDto): Promise<CreateAdminUserResultDto> { return apiRequest('/api/v1/admin/users', { method: 'POST', body: JSON.stringify(input) }); }
+  updateUser(id: string, input: UpdateAdminUserDto): Promise<AdminUserDetailDto> { return apiRequest(`/api/v1/admin/users/${id}`, { method: 'PUT', body: JSON.stringify(input) }); }
+  disableUser(id: string, rowVersion: string): Promise<AdminUserDetailDto> { return apiRequest(`/api/v1/admin/users/${id}/disable`, { method: 'POST', body: JSON.stringify({ rowVersion }) }); }
+  reactivateUser(id: string, rowVersion: string): Promise<AdminUserDetailDto> { return apiRequest(`/api/v1/admin/users/${id}/reactivate`, { method: 'POST', body: JSON.stringify({ rowVersion }) }); }
+  resendInvitation(id: string): Promise<CreateAdminUserResultDto> { return apiRequest(`/api/v1/admin/users/${id}/resend-invitation`, { method: 'POST' }); }
+}
+export class ApiDashboardRepository implements DashboardRepository { getDashboard(query: DashboardQuery = {}): Promise<DashboardDto> { const p=new URLSearchParams();if(query.dateFrom)p.set('dateFrom',query.dateFrom);if(query.dateTo)p.set('dateTo',query.dateTo);return apiRequest(`/api/v1/admin/dashboard?${p}`); } }
+export const authRepository: AuthRepository = adminApiConfigured ? new ApiAuthRepository() : new MockAuthRepository();
+export const adminRepository: AdminCatalogRepository = adminApiConfigured ? new ApiAdminCatalogRepository() : new MockAdminCatalogRepository();
+export const mediaRepository: MediaRepository = adminApiConfigured ? new ApiMediaRepository() : new MockMediaRepository();
+export const projectRequestAdminRepository: AdminProjectRequestRepository = new ApiAdminProjectRequestRepository();
+export const adminUserRepository: AdminUserRepository = new ApiAdminUserRepository();
+export const dashboardRepository: DashboardRepository = new ApiDashboardRepository();

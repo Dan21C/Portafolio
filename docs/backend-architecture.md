@@ -1,6 +1,6 @@
 # Arquitectura backend prevista
 
-Este repositorio no implementa backend en la fase actual. La UI pública y el administrador consumen contratos compartidos desde `catalog-core` y usan repositorios mock reemplazables.
+La Fase 2A implementa la base de dominio y persistencia del backend. La UI pública y el administrador aún consumen contratos compartidos desde `catalog-core` y conservan sus repositorios mock reemplazables; la conexión HTTP queda reservada para una fase posterior.
 
 ## Plataforma objetivo
 
@@ -86,6 +86,86 @@ Esta sección congela la frontera que deberá respetar la primera implementació
 
 Los paths documentados arriba se versionarán como `/api/v1/...` al implementar backend. Las consultas de soluciones deberán aceptar búsqueda, categoría, estado, featured, orden y paginación representados por `CatalogSolutionQuery` y `AdminSolutionQuery`.
 
+## Fase 2A implementada
+
+La solucion `backend/APX.sln` separa `APX.Domain`, `APX.Application`, `APX.Infrastructure` y `APX.Api`. Entity Framework Core modela catalogo, solicitudes de proyecto, administracion y auditoria sobre PostgreSQL. La migracion inicial crea indices, restricciones, relaciones, borrado logico y concurrencia optimista mediante `xmin`.
+
+El seed idempotente conserva los UUID del frontend, 6 categorias, 36 soluciones y los roles `Admin`, `Editor` y `Viewer`. No contiene usuarios ni secretos. La API solo publica `GET /health`; no hay endpoints de catalogo, autenticacion ni integracion con Storage en esta fase.
+
+La configuracion y los comandos operativos se documentan en `backend/README.md`. Los slugs se almacenan en minusculas y deben normalizarse en la futura capa Application/API. PostgreSQL sera la fuente de verdad una vez que los repositorios mock se sustituyan por adaptadores HTTP.
+
+## Fase 2B - Catalog API
+
+La API implementa el flujo Endpoint -> Application service -> repository de infraestructura -> EF Core. Los endpoints nunca acceden directamente al `ApxDbContext`. Los contratos HTTP usan DTOs camelCase y errores ProblemDetails; las entidades EF no se serializan.
+
+El catalogo publico filtra exclusivamente contenido publicado, no eliminado y con categoria activa. La administracion permanece sin autenticacion solo como capacidad local: requiere simultaneamente entorno Development y `Features:EnableUnsafeDevelopmentAdminApi=true`. En Production las rutas admin no se registran incluso si alguien configura el flag por error.
+
+El frontend sigue utilizando `MockCatalogRepository` y `MockAdminCatalogRepository`. La sustitucion por adaptadores HTTP, Storage y autenticacion quedan fuera de esta fase.
+
+## Fase 2B.5 - PostgreSQL real
+
+Las migraciones `InitialCatalogSchema` y `CatalogApiIndexes` fueron validadas contra PostgreSQL alojado en Supabase mediante Npgsql, sin SDK de Supabase. La suite `PostgresIntegrationTests` cubre esquema, seed, `ILIKE`, indices, transacciones, restricciones unique, soft delete, auditoria y concurrencia `xmin`; se omite de forma segura cuando no existe `APX_TEST_CONNECTION_STRING`.
+
+La validacion real detecto y corrigio el tracking de hijos durante `PUT`: el reemplazo ahora elimina las colecciones con operaciones set-based dentro de la transaccion y marca explicitamente los nuevos UUID como `Added`. Los fixtures `integration-*` y `api-integration-*` se limpian al terminar.
+
+## Fase 2C - Integracion del catalogo publico
+
+El sitio publico selecciona `ApiCatalogRepository` solo cuando `VITE_USE_API=true` y existe `VITE_API_URL`; de lo contrario conserva `MockCatalogRepository`. El adaptador usa fetch nativo, mapea DTOs a dominio y preserva ProblemDetails mediante un error tipado. Search, categoria, sort y paginacion se ejecutan en la API, con debounce y cancelacion de requests en React.
+
+Las paginas de categoria y detalle consultan sus endpoints dedicados y distinguen 404 de errores de red. El administrador, ProjectRequest, Storage y Auth permanecen sin conexion real. Los paths `/Assets/...` siguen siendo URLs locales validas hasta la fase de Storage.
+
+## Fase 2E - autenticacion administrativa
+
+El backend implementa OTP por email con HMAC-SHA256 y pepper del servidor, challenges de un solo uso, cooldown e intentos persistidos. Una verificacion correcta crea una sesion opaca nueva; la cookie HttpOnly contiene el token aleatorio y PostgreSQL almacena solo su hash. Todos los endpoints `/api/v1/admin/**` usan el esquema `AdminSession` y policies de permisos para Admin, Editor y Viewer.
+
+Las mutaciones con cookie validan `Origin` o `Referer` contra los origenes CORS configurados. El rate limiter HTTP es por instancia y se complementa con estado PostgreSQL. React Admin permanece en mocks hasta Fase 2F; no usa aun estas cookies ni endpoints.
+
+## Fase 2F - integracion del panel administrador
+
+El Admin selecciona conjuntamente `ApiAuthRepository`, `ApiAdminCatalogRepository` y `ApiMediaRepository` cuando `VITE_USE_API=true` y existe `VITE_API_URL`. El cliente compartido usa `credentials: include`, conserva ProblemDetails y notifica globalmente los 401 sin convertir los 403 en logout.
+
+La sesion se recupera con `/api/v1/auth/me`; no existe autenticacion en localStorage. Listados, editor, categorias, publicacion y media consumen la API real. Los previews `blob:` solo existen antes del upload y nunca se envian como metadatos persistentes. Solicitudes, proyectos, usuarios y metricas permanecen fuera de esta fase.
+
+## Fase 2G - solicitudes de propuesta
+
+`POST /api/v1/project-requests` recibe solicitudes anonimas, aplica validacion y rate limit independiente (5 por 15 minutos por IP), verifica soluciones publicadas y persiste en una transaccion la solicitud, snapshots comerciales, estado inicial e historial. PostgreSQL genera `APX-000001` mediante `project_request_number_seq`; el UUID sigue siendo la PK.
+
+El consentimiento registra fecha, version y URL configuradas mediante `ProjectRequests__PrivacyPolicyVersion` y `ProjectRequests__PrivacyPolicyUrl`. El honeypot `website` complementa el limite de frecuencia. No existen cuentas, sesiones ni endpoints publicos de consulta para clientes.
+
+Admin usa `GET /api/v1/admin/project-requests`, `GET /api/v1/admin/project-requests/{id}` y `PUT /api/v1/admin/project-requests/{id}/status`. Viewer puede leer; Admin y Editor pueden cambiar estado mediante `project-request.write`. Cada transicion actualiza `xmin`, timestamps comerciales, historial y auditoria sin duplicar datos personales completos. El Project Builder conserva `apx-project-selection` ante cualquier error y solo ejecuta `clearProject()` tras `201 Created`.
+
+## Fase 2H - email transaccional
+
+Application define `IEmailTransport`, mensajes neutrales al proveedor y servicios especializados para OTP y solicitudes. Infrastructure selecciona explícitamente `Development` o `Smtp`; SMTP usa MailKit con STARTTLS, timeout y hasta tres intentos cortos. Producción rechaza el provider Development y SMTP incompleto falla al iniciar sin revelar credenciales.
+
+`EmailDelivery` registra tipo, destinatario, entidad relacionada, estado, intentos y código seguro de error, nunca OTP ni cuerpos. Un fallo OTP invalida el challenge y devuelve `email_delivery_failed`. Las confirmaciones de solicitud se intentan después del commit: sus fallos quedan auditados individualmente sin cambiar el `201 Created`.
+
+Configuración local segura con User Secrets:
+
+```powershell
+dotnet user-secrets set --project backend/src/APX.Api "Email:Provider" "Smtp"
+dotnet user-secrets set --project backend/src/APX.Api "Email:Smtp:Username" "..."
+dotnet user-secrets set --project backend/src/APX.Api "Email:Smtp:Password" "..."
+```
+
+La función `netlify/functions/contact.mjs` continúa independiente. Una migración futura al transporte ASP.NET queda fuera de esta fase.
+
 ### Estado local temporal
 
 `apx-project-selection` continúa siendo la persistencia del Project Builder. `clearProject()` limpia estado React, localStorage, drawer, contador y resumen tras una creación exitosa. La autenticación administrativa continúa usando temporalmente `apx-admin-auth`, aislada por `AdminProtectedRoute`.
+## FASE 2I — gestión de usuarios administradores
+
+La gestión vive en `/api/v1/admin/users` y exige la policy `UserManagement`, basada en el permiso `users.manage` (sólo el rol `Admin`). Los endpoints no comparan nombres de rol. El correo se normaliza al crear, queda inmutable y además del índice existente se protege en PostgreSQL mediante un índice único sobre `lower(email)`.
+
+Cada usuario tiene exactamente un rol operativo (`Admin`, `Editor` o `Viewer`). Cambiarlo revoca todas sus sesiones; deshabilitar también las revoca y reactivar no crea sesión. Se bloquean la autodeshabilitación, la autopérdida del rol Admin y cualquier operación que deje el sistema sin un Admin activo. Las escrituras usan `xmin` como `rowVersion` y responden `409 concurrency_conflict` ante datos obsoletos.
+
+El alta envía una invitación transaccional mediante `IEmailTransport`; no crea contraseña ni OTP. Una falla SMTP queda en `email_deliveries` como `AdminInvitation/Failed`, pero el usuario permanece creado y la respuesta indica `invitationSent: false`. El panel expone `/admin/usuarios` sólo a sesiones con `users.manage` y mantiene una defensa adicional de UI, mientras la API sigue siendo la autoridad.
+## FASE 2J — dashboard comercial
+
+`GET /api/v1/admin/dashboard` usa la policy de lectura `AdminRead`, por lo que Admin, Editor y Viewer autenticados pueden consultar el dashboard. Acepta `dateFrom` y `dateTo` como `DateTimeOffset`; sin parámetros usa los últimos 30 días, el límite configurable es 366 días y todas las comparaciones se ejecutan en UTC. El período anterior tiene exactamente la misma duración y termina donde comienza el actual.
+
+El resumen, pipeline, tendencia, rankings y solicitudes recientes filtran por `ProjectRequest.CreatedAt` dentro del rango. El pipeline usa el estado actual y excluye `Archived`; no reconstruye estado desde el historial ni interpreta timestamps antiguos como estado vigente. `qualifiedRate = (Qualified + Won + Lost) / pipelineTotal`; `wonRate = Won / (Won + Lost)` y `lostRate = Lost / (Won + Lost)`. Un denominador cero produce `0`. Los cambios porcentuales contra el período anterior son `null` cuando el valor anterior es cero.
+
+El tiempo de primer contacto usa `LastContactedAt - CreatedAt` sólo cuando existe contacto; PostgreSQL calcula promedio y `percentile_cont(0.5)` en minutos. Backlog y atención son operacionales y por ello consideran todas las solicitudes actualmente `New` o `InReview` sin contacto, independientemente del rango de adquisición. El umbral de atención usa `Dashboard:LeadAttentionHours` (24 horas por defecto).
+
+Los rankings de soluciones y categorías usan exclusivamente snapshots de `project_request_items` y cuentan solicitudes distintas. Las ciudades se agrupan sin distinguir mayúsculas/minúsculas, sin geocodificación. Los índices de reporting cubren contacto/fecha, backlog parcial sin contactar y `lower(city)`/fecha. No existe cache, analytics externo, revenue, forecast ni capacidad de escritura desde el dashboard.

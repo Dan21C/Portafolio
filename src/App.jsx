@@ -8,11 +8,15 @@ import Hero from './sections/Hero';
 import About from './sections/About';
 import Process from './sections/Process';
 import Products from './sections/Products';
+import BlogTeaser from './sections/BlogTeaser';
+import Faq from './sections/Faq';
 import Stack from './sections/Stack';
 import AIAutomationPage from './pages/AIAutomationPage';
 import AutomatizarPage from './pages/AutomatizarPage';
 import ActivarMarcaPage from './pages/ActivarMarcaPage';
 import ProducirEventoPage from './pages/ProducirEventoPage';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
+import TermsPage from './pages/TermsPage';
 
 const CatalogPage = lazy(() => import('./modules/catalog/pages/CatalogPage'));
 const CategoryPage = lazy(() => import('./modules/catalog/pages/CategoryPage'));
@@ -58,6 +62,8 @@ function HomePage({ theme, onThemeChange }) {
         <About />
         <Process />
         <Products />
+        <BlogTeaser />
+        <Faq />
         <Stack />
       </main>
       <Footer />
@@ -188,6 +194,26 @@ function App() {
           <CatalogRoute>
             <ProposalPage />
           </CatalogRoute>
+        }
+      />
+      <Route
+        path="/politica-de-privacidad"
+        element={
+          <StandalonePage
+            component={PrivacyPolicyPage}
+            theme={theme}
+            onThemeChange={setTheme}
+          />
+        }
+      />
+      <Route
+        path="/terminos-y-condiciones"
+        element={
+          <StandalonePage
+            component={TermsPage}
+            theme={theme}
+            onThemeChange={setTheme}
+          />
         }
       />
       <Route path="*" element={<NotFoundPage />} />
