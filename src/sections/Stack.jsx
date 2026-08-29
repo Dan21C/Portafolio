@@ -45,12 +45,11 @@ const Stack = () => {
   // Scroll-driven card rotation
   useEffect(() => {
     const handleScroll = () => {
-      if (window.matchMedia('(max-width: 560px)').matches) return;
-
       const wrapper = ctaWrapperRef.current;
-      if (!wrapper) return;
+      const section = ctaRef.current;
+      if (!wrapper || !section) return;
       const rect           = wrapper.getBoundingClientRect();
-      const totalScrollable = wrapper.offsetHeight - window.innerHeight;
+      const totalScrollable = wrapper.offsetHeight - section.offsetHeight;
       if (totalScrollable <= 0) return;
 
       const scrolled  = Math.max(0, -rect.top);
@@ -71,24 +70,14 @@ const Stack = () => {
   }, []);
 
   const flipBack = () => {
-    if (window.matchMedia('(max-width: 560px)').matches) {
-      setRotation(0);
-      return;
-    }
-
     const top = ctaWrapperRef.current?.offsetTop ?? 0;
     window.scrollTo({ top, behavior: 'smooth' });
   };
 
   const openContact = () => {
-    if (window.matchMedia('(max-width: 560px)').matches) {
-      setRotation(180);
-      return;
-    }
-
     const top = (ctaWrapperRef.current?.offsetTop ?? 0)
       + (ctaWrapperRef.current?.offsetHeight ?? 0)
-      - window.innerHeight;
+      - (ctaRef.current?.offsetHeight ?? window.innerHeight);
     window.scrollTo({ top, behavior: 'smooth' });
   };
 

@@ -1343,16 +1343,16 @@ select.ctaInput option {
 @media (max-width: 560px) {
   .section    { padding: 64px 4% 72px; }
 
-  .ctaWrapper { height: auto; }
+  .ctaWrapper { height: 210svh; }
 
   .ctaSection {
-    position: relative;
-    top: auto;
-    height: auto;
-    min-height: 0;
-    padding: 72px max(16px, env(safe-area-inset-right)) calc(32px + env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    min-height: 560px;
+    padding: max(68px, calc(52px + env(safe-area-inset-top))) max(16px, env(safe-area-inset-right)) max(18px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
     overflow: hidden;
-    align-items: flex-start;
+    align-items: center;
   }
 
   .ctaInner {
@@ -1378,7 +1378,14 @@ select.ctaInput option {
 
   .ctaBack { display: none; }
   .ctaCardFlipped .ctaFront { display: none; }
-  .ctaCardFlipped .ctaBack { display: flex; }
+  .ctaCardFlipped .ctaBack {
+    display: flex;
+    max-height: calc(100svh - max(96px, calc(76px + env(safe-area-inset-top))) - env(safe-area-inset-bottom));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(var(--accent-rgb), .45) transparent;
+  }
 
   .ctaFrontLayout {
     flex-direction: column;
@@ -1462,6 +1469,50 @@ select.ctaInput option {
   .ctaTrustItem {
     color: #94A3B8;
     font-size: 11px;
+  }
+}
+
+@media (max-width: 900px) and (max-height: 600px) and (orientation: landscape) {
+  .ctaWrapper { height: 210svh; }
+
+  .ctaSection {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    min-height: 0;
+    padding: max(14px, env(safe-area-inset-top)) max(28px, env(safe-area-inset-right)) max(14px, env(safe-area-inset-bottom)) max(28px, env(safe-area-inset-left));
+    overflow: hidden;
+  }
+
+  .ctaInner {
+    width: min(700px, 100%);
+    margin: 0 auto;
+  }
+
+  .ctaEyebrow { display: none; }
+  .ctaScene { margin-bottom: 0; }
+
+  .ctaFront,
+  .ctaBack {
+    min-height: 0;
+    padding: 22px 28px;
+    border-radius: 18px;
+  }
+
+  .ctaFront {
+    position: relative;
+    inset: auto;
+  }
+
+  .ctaBack { display: none; }
+  .ctaCardFlipped .ctaFront { display: none; }
+  .ctaCardFlipped .ctaBack {
+    display: flex;
+    max-height: calc(100svh - max(28px, env(safe-area-inset-top) + env(safe-area-inset-bottom)));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(var(--accent-rgb), .45) transparent;
   }
 }
 
