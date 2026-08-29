@@ -132,10 +132,10 @@
   width: var(--scene-width);
   aspect-ratio: 3 / 2;
   overflow: hidden;
-  border: 1px solid rgba(222, 231, 241, 0.16);
-  border-radius: 18px;
-  background: #050608;
-  box-shadow: 0 32px 90px rgba(0, 0, 0, 0.42);
+  border: 1px solid rgba(226, 234, 241, 0.24);
+  border-radius: 12px;
+  background: transparent;
+  box-shadow: 0 26px 74px rgba(0, 0, 0, 0.34);
   opacity: 0.4;
   transform: scale(0.965);
   transition:
@@ -146,28 +146,24 @@
 }
 
 .scene::after {
-  content: '';
-  position: absolute;
-  inset: 14px;
-  z-index: 2;
-  border: 1px solid rgba(237, 242, 247, 0.12);
-  border-radius: 11px;
-  pointer-events: none;
+  content: none;
 }
 
 .sceneActive {
   opacity: 1;
   transform: scale(1);
-  border-color: rgba(229, 236, 244, 0.38);
-  box-shadow: 0 38px 110px rgba(0, 0, 0, 0.54), 0 0 42px rgba(139, 166, 197, 0.09);
+  border-color: rgba(240, 245, 248, 0.52);
+  box-shadow: 0 34px 96px rgba(0, 0, 0, 0.48), 0 0 28px rgba(139, 166, 197, 0.07);
 }
 
 .scene img {
   width: 100%;
   height: 100%;
+  display: block;
   object-fit: cover;
-  transform: scale(1.035);
-  filter: brightness(0.68) contrast(1.08) saturate(0.84);
+  background: transparent;
+  transform: scale(1.015);
+  filter: brightness(0.72) contrast(1.04) saturate(0.9);
   transition:
     transform 1.15s cubic-bezier(0.16, 1, 0.3, 1),
     filter 700ms ease;
@@ -175,7 +171,7 @@
 
 .sceneActive img {
   transform: scale(1);
-  filter: brightness(0.96) contrast(1.03) saturate(0.94);
+  filter: brightness(1) contrast(1.01) saturate(1);
 }
 
 .imageShade {
@@ -277,26 +273,16 @@
 
 @media (max-width: 900px) {
   .wrapper {
-    height: 640vh;
-  }
-
-  .row {
-    --scene-width: min(84vw, calc(56vh * 1.5));
-  }
-}
-
-@media (max-width: 900px) {
-  .wrapper {
-    height: auto;
+    height: 600svh;
   }
 
   .section {
-    position: relative;
-    top: auto;
-    height: auto;
-    min-height: 0;
-    padding: 62px 0 46px;
-    justify-content: flex-start;
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    min-height: 560px;
+    padding: max(62px, calc(48px + env(safe-area-inset-top))) 0 max(24px, env(safe-area-inset-bottom));
+    justify-content: center;
   }
 
   .header {
@@ -311,31 +297,17 @@
 
   .row {
     --scene-width: min(84vw, 340px);
-    width: 100%;
+    width: max-content;
     gap: 14px;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scroll-padding-inline: 20px;
-    overscroll-behavior-inline: contain;
-    touch-action: pan-x;
-    padding: 0 max(20px, env(safe-area-inset-left)) 10px;
-    transform: none !important;
-    will-change: auto;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-  }
-
-  .row::-webkit-scrollbar {
-    display: none;
+    padding-left: max(20px, calc((100vw - var(--scene-width)) / 2));
+    will-change: transform;
   }
 
   .scene {
     flex-basis: var(--scene-width);
     width: var(--scene-width);
-    aspect-ratio: 4 / 3;
+    aspect-ratio: 3 / 2;
     border-radius: 12px;
-    scroll-snap-align: center;
-    scroll-snap-stop: always;
     opacity: .62;
     transform: scale(.985);
   }
@@ -343,11 +315,6 @@
   .sceneActive {
     opacity: 1;
     transform: scale(1);
-  }
-
-  .scene::after {
-    inset: 9px;
-    border-radius: 8px;
   }
 
   .sceneNumber {
@@ -368,7 +335,7 @@
   }
 
   .rowSpacer {
-    flex-basis: 2px;
+    flex-basis: max(20px, calc((100vw - var(--scene-width)) / 2));
   }
 
   .progress {
@@ -395,8 +362,11 @@
 
   .row {
     --scene-width: min(81vw, 620px);
-    scroll-padding-inline: 30px;
-    padding-inline: max(30px, env(safe-area-inset-left));
+    padding-left: max(30px, calc((100vw - var(--scene-width)) / 2));
+  }
+
+  .rowSpacer {
+    flex-basis: max(30px, calc((100vw - var(--scene-width)) / 2));
   }
 
   .scene {
@@ -410,8 +380,8 @@
 
 @media (min-width: 681px) and (max-width: 900px) and (max-height: 500px) and (orientation: landscape) {
   .section {
-    min-height: 100svh;
-    padding: 24px 0 18px;
+    min-height: 0;
+    padding: max(18px, env(safe-area-inset-top)) 0 max(12px, env(safe-area-inset-bottom));
   }
 
   .header {
@@ -432,11 +402,30 @@
   }
 
   .row {
-    --scene-width: min(72vw, calc(55svh * 1.5), 520px);
+    --scene-width: min(64vw, calc(42svh * 1.5), 460px);
   }
 
   .progress {
     margin-top: 7px;
+  }
+}
+
+@media (max-width: 680px) and (max-height: 640px) {
+  .section {
+    min-height: 0;
+    padding-top: max(48px, env(safe-area-inset-top));
+  }
+
+  .header {
+    margin-bottom: 14px;
+  }
+
+  .header p {
+    display: none;
+  }
+
+  .row {
+    --scene-width: min(82vw, calc(48svh * 1.5), 330px);
   }
 }
 

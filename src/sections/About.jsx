@@ -15,21 +15,21 @@ import {
 } from 'lucide-react';
 import styles from './About.module.css';
 
-const asset = (filename) => `/Assets/About/${filename}.png`;
+const ecosystemAsset = (filename) => `/Assets/Ecosystem/${filename}.png`;
 const orbitLightCount = 16;
 
 const ecosystemServices = [
   {
     id: 'experiencias',
-    number: '01',
+    number: '02',
     title: 'Experiencias interactivas',
     description: 'Activaciones, juegos y pantallas para conectar con tu audiencia.',
     lead: 'Interacciones memorables para que la marca se viva.',
     detail:
       'Diseñamos dinámicas, recorridos, pantallas y juegos que convierten cada punto de contacto en participación real. La experiencia se construye para verse potente, sentirse fluida y dejar datos útiles para la marca.',
     result: 'Audiencias más activas, datos útiles y experiencias que se recuerdan.',
-    image: asset('experiencias-interactivas'),
-    preview: asset('thumb-experiencias-interactivas'),
+    image: ecosystemAsset('02-experiencias-clean'),
+    preview: ecosystemAsset('02-experiencias-clean'),
     Icon: MonitorSmartphone,
     features: [
       { label: 'Activaciones', text: 'Experiencias listas para evento.', Icon: Sparkles },
@@ -41,15 +41,15 @@ const ecosystemServices = [
   },
   {
     id: 'automatizacion',
-    number: '02',
+    number: '01',
     title: 'Automatización e integraciones',
     description: 'Conectamos procesos y plataformas para ahorrar tiempo.',
     lead: 'Procesos conectados que liberan horas operativas.',
     detail:
       'Unimos herramientas, datos y reglas de negocio para que las tareas repetitivas avancen sin depender de pasos manuales. El resultado es una operación más clara, trazable y fácil de escalar.',
     result: 'Menos reprocesos, menos errores y más foco para el equipo.',
-    image: asset('automatizacion-integraciones'),
-    preview: asset('thumb-automatizacion-integraciones'),
+    image: ecosystemAsset('01-automatizacion'),
+    preview: ecosystemAsset('01-automatizacion'),
     Icon: Workflow,
     features: [
       { label: 'Flujos', text: 'Tareas repetitivas automatizadas.', Icon: Workflow },
@@ -68,8 +68,8 @@ const ecosystemServices = [
     detail:
       'Coordinamos displays, tótems, pantallas y montaje técnico para que la experiencia se sostenga en campo. Cada pieza se plantea como parte del recorrido, no como un elemento aislado.',
     result: 'Implementaciones más sólidas, visibles y listas para operar.',
-    image: asset('hardware-displays'),
-    preview: asset('thumb-hardware-displays'),
+    image: ecosystemAsset('03-hardware-clean'),
+    preview: ecosystemAsset('03-hardware-clean'),
     Icon: MonitorSmartphone,
     features: [
       { label: 'Tótems', text: 'Puntos interactivos de marca.', Icon: MonitorSmartphone },
@@ -81,15 +81,15 @@ const ecosystemServices = [
   },
   {
     id: 'ia',
-    number: '04',
+    number: '06',
     title: 'IA aplicada',
     description: 'IA útil para crear, entender y responder mejor.',
     lead: 'IA útil, integrada donde realmente genera valor.',
     detail:
       'Aplicamos inteligencia artificial a experiencias, procesos y productos digitales para entender, responder y adaptarse a las necesidades de las personas y del negocio.',
     result: 'Experiencias y procesos capaces de entender, responder y adaptarse.',
-    image: asset('ia-aplicada'),
-    preview: asset('thumb-ia-aplicada'),
+    image: ecosystemAsset('06-ia'),
+    preview: ecosystemAsset('06-ia'),
     Icon: BrainCircuit,
     features: [
       { label: 'Visión', text: 'Detectamos señales del mundo real.', Icon: Bot },
@@ -101,15 +101,15 @@ const ecosystemServices = [
   },
   {
     id: 'analitica',
-    number: '05',
+    number: '04',
     title: 'Analítica y datos',
     description: 'Métricas claras para entender y decidir mejor.',
     lead: 'Datos convertidos en señales simples para decidir.',
     detail:
       'Organizamos información de campañas, eventos y plataformas para leer resultados sin ruido. La medición se vuelve una herramienta práctica para optimizar, comparar y tomar mejores decisiones.',
     result: 'Decisiones más rápidas con indicadores entendibles.',
-    image: asset('analitica-datos'),
-    preview: asset('thumb-analitica-datos'),
+    image: ecosystemAsset('04-analitica-clean'),
+    preview: ecosystemAsset('04-analitica-clean'),
     Icon: BarChart3,
     features: [
       { label: 'Dashboards', text: 'Lectura clara de resultados.', Icon: BarChart3 },
@@ -121,15 +121,15 @@ const ecosystemServices = [
   },
   {
     id: 'software',
-    number: '06',
+    number: '05',
     title: 'Software y operación',
     description: 'Plataformas a la medida para operar mejor.',
     lead: 'Herramientas propias para ordenar la operación.',
     detail:
       'Diseñamos plataformas, dashboards y sistemas internos conectados al proceso real de cada equipo. La interfaz se piensa para operar todos los días, con claridad y control.',
     result: 'Operaciones más simples, trazables y escalables.',
-    image: asset('software-operacion'),
-    preview: asset('thumb-software-operacion'),
+    image: ecosystemAsset('05-plataforma'),
+    preview: ecosystemAsset('05-plataforma'),
     Icon: Code2,
     features: [
       { label: 'Plataformas', text: 'Software hecho a la medida.', Icon: Code2 },
@@ -149,6 +149,15 @@ const orbitPosition = (angle) => {
     y: 50 + Math.sin(radians) * 30.5,
   };
 };
+
+const mobileEcosystemServices = [
+  'automatizacion',
+  'experiencias',
+  'hardware',
+  'analitica',
+  'software',
+  'ia',
+].map((id) => ecosystemServices.find((service) => service.id === id));
 
 const About = () => {
   const ecosystemRef = useRef(null);
@@ -467,32 +476,23 @@ const About = () => {
                   onBlur={clearServiceFocus}
                   aria-label={`${service.title}: ${service.description}`}
                 >
-                  <span className={styles.nodeReference} aria-hidden="true" />
                   <div className={styles.nodeMedia}>
                     <img src={service.preview} alt="" loading="eager" decoding="async" />
                   </div>
-                  <span className={styles.nodeCopy}>
-                    <em>{service.number}</em>
-                    <strong>{service.title}</strong>
-                    <small>{service.description}</small>
-                    <p>{service.lead}</p>
-                  </span>
-                  <span className={styles.nodeBrand} aria-hidden="true">APX</span>
                 </article>
               );
             })}
           </div>
 
           <div className={styles.mobileMap} aria-label="Servicios del ecosistema APX">
-            {ecosystemServices.map((service) => (
+            {mobileEcosystemServices.map((service) => (
               <article key={service.id}>
-                <img src={service.preview} alt="" loading="lazy" decoding="async" />
-                <span>
-                  <small>{service.number}</small>
-                  <strong>{service.title}</strong>
-                  <em>{service.description}</em>
-                  <p>{service.lead}</p>
-                </span>
+                <img
+                  src={service.preview}
+                  alt={`${service.number}. ${service.title}`}
+                  loading="lazy"
+                  decoding="async"
+                />
               </article>
             ))}
           </div>

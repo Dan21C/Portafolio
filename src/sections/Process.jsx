@@ -6,42 +6,42 @@ const SERVICE_SCENES = [
     number: '01',
     category: 'EFICIENCIA OPERATIVA',
     name: 'Automatizar tareas',
-    image: '/Assets/About/automatizacion-integraciones.png',
+    image: '/Assets/Ecosystem/01-automatizacion.png',
     imageAlt: 'Automatización e integraciones APX',
   },
   {
     number: '02',
     category: 'EXPERIENCIAS DE MARCA',
     name: 'Activar mi marca',
-    image: '/Assets/About/experiencias-interactivas.png',
+    image: '/Assets/Ecosystem/02-experiencias-clean.png',
     imageAlt: 'Experiencias interactivas para activar una marca',
   },
   {
     number: '03',
     category: 'PRODUCCIÓN 360',
     name: 'Producir un evento',
-    image: '/Assets/About/hardware-displays.png',
+    image: '/Assets/Ecosystem/03-hardware-clean.png',
     imageAlt: 'Hardware, displays y producción para eventos APX',
   },
   {
     number: '04',
     category: 'ANALÍTICA',
     name: 'Entender mis datos',
-    image: '/Assets/About/analitica-datos.png',
+    image: '/Assets/Ecosystem/04-analitica-clean.png',
     imageAlt: 'Analítica y visualización de datos APX',
   },
   {
     number: '05',
     category: 'SOFTWARE A LA MEDIDA',
     name: 'Crear una plataforma',
-    image: '/Assets/About/software-operacion.png',
+    image: '/Assets/Ecosystem/05-plataforma.png',
     imageAlt: 'Software y plataformas a la medida APX',
   },
   {
     number: '06',
     category: 'SOLUCIÓN INTEGRAL',
     name: 'Conectar varias necesidades',
-    image: '/Assets/About/ia-aplicada.png',
+    image: '/Assets/Ecosystem/06-ia.png',
     imageAlt: 'Inteligencia artificial aplicada al ecosistema APX',
   },
 ];
@@ -73,12 +73,7 @@ const Process = () => {
       const section = sectionRef.current;
       if (!wrapper || !row || !section) return;
 
-      if (window.matchMedia('(max-width: 900px)').matches) {
-        setTranslateX(0);
-        return;
-      }
-
-      const totalScrollable = wrapper.offsetHeight - window.innerHeight;
+      const totalScrollable = wrapper.offsetHeight - section.offsetHeight;
       if (totalScrollable <= 0) return;
 
       const scrolled = Math.max(0, -wrapper.getBoundingClientRect().top);
@@ -110,30 +105,6 @@ const Process = () => {
     };
   }, []);
 
-  const handleRowScroll = () => {
-    if (!window.matchMedia('(max-width: 900px)').matches) return;
-
-    const row = rowRef.current;
-    if (!row) return;
-
-    const scenes = Array.from(row.querySelectorAll('[data-service-scene]'));
-    const viewportCenter = row.scrollLeft + row.clientWidth / 2;
-    let closestIndex = 0;
-    let closestDistance = Number.POSITIVE_INFINITY;
-
-    scenes.forEach((scene, index) => {
-      const sceneCenter = scene.offsetLeft + scene.offsetWidth / 2;
-      const distance = Math.abs(sceneCenter - viewportCenter);
-
-      if (distance < closestDistance) {
-        closestDistance = distance;
-        closestIndex = index;
-      }
-    });
-
-    setActiveIndex(closestIndex);
-  };
-
   return (
     <div ref={wrapperRef} id="servicios" className={styles.wrapper}>
       <section
@@ -164,7 +135,6 @@ const Process = () => {
           ref={rowRef}
           className={styles.row}
           style={{ transform: `translate3d(${translateX}px, 0, 0)` }}
-          onScroll={handleRowScroll}
         >
           {SERVICE_SCENES.map((scene, index) => {
             const isActive = index === activeIndex;
@@ -176,13 +146,12 @@ const Process = () => {
                 className={`${styles.scene} ${isActive ? styles.sceneActive : ''}`}
                 aria-current={isActive ? 'step' : undefined}
               >
-                <img src={scene.image} alt={scene.imageAlt} />
-                <div className={styles.imageShade} />
-                <span className={styles.sceneNumber}>{scene.number}</span>
-                <div className={styles.sceneLabel}>
-                  <small>{scene.category}</small>
-                  <h3>{scene.name}</h3>
-                </div>
+                <img
+                  src={scene.image}
+                  alt={scene.imageAlt}
+                  loading={index < 2 ? 'eager' : 'lazy'}
+                  decoding="async"
+                />
               </article>
             );
           })}
