@@ -281,8 +281,8 @@
     top: 0;
     height: 100svh;
     min-height: 560px;
-    padding: max(62px, calc(48px + env(safe-area-inset-top))) 0 max(24px, env(safe-area-inset-bottom));
-    justify-content: center;
+    padding: max(48px, calc(36px + env(safe-area-inset-top))) 0 max(24px, env(safe-area-inset-bottom));
+    justify-content: flex-start;
   }
 
   .header {
