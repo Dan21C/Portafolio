@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import styles from './About.module.css';
 
-const ecosystemAsset = (filename) => `/Assets/Ecosystem/${filename}.png`;
+const activationAsset = (filename) => `/Assets/Activation/${filename}.png`;
 const orbitLightCount = 16;
 
 const ecosystemServices = [
@@ -28,8 +28,8 @@ const ecosystemServices = [
     detail:
       'Diseñamos dinámicas, recorridos, pantallas y juegos que convierten cada punto de contacto en participación real. La experiencia se construye para verse potente, sentirse fluida y dejar datos útiles para la marca.',
     result: 'Audiencias más activas, datos útiles y experiencias que se recuerdan.',
-    image: ecosystemAsset('02-experiencias-clean'),
-    preview: ecosystemAsset('02-experiencias-clean'),
+    image: activationAsset('melo2'),
+    preview: activationAsset('melo2'),
     Icon: MonitorSmartphone,
     features: [
       { label: 'Activaciones', text: 'Experiencias listas para evento.', Icon: Sparkles },
@@ -37,7 +37,6 @@ const ecosystemServices = [
       { label: 'Recuerdo', text: 'Momentos diseñados para compartir.', Icon: Target },
     ],
     angle: -90,
-    crop: ['412.84%', '437.67%', '78.14%', '11.29%'],
   },
   {
     id: 'automatizacion',
@@ -48,8 +47,8 @@ const ecosystemServices = [
     detail:
       'Unimos herramientas, datos y reglas de negocio para que las tareas repetitivas avancen sin depender de pasos manuales. El resultado es una operación más clara, trazable y fácil de escalar.',
     result: 'Menos reprocesos, menos errores y más foco para el equipo.',
-    image: ecosystemAsset('01-automatizacion'),
-    preview: ecosystemAsset('01-automatizacion'),
+    image: activationAsset('melo1'),
+    preview: activationAsset('melo1'),
     Icon: Workflow,
     features: [
       { label: 'Flujos', text: 'Tareas repetitivas automatizadas.', Icon: Workflow },
@@ -57,7 +56,6 @@ const ecosystemServices = [
       { label: 'Velocidad', text: 'Operación sin fricción diaria.', Icon: Zap },
     ],
     angle: -150,
-    crop: ['388.84%', '437.67%', '34.78%', '6.2%'],
   },
   {
     id: 'hardware',
@@ -68,8 +66,8 @@ const ecosystemServices = [
     detail:
       'Coordinamos displays, tótems, pantallas y montaje técnico para que la experiencia se sostenga en campo. Cada pieza se plantea como parte del recorrido, no como un elemento aislado.',
     result: 'Implementaciones más sólidas, visibles y listas para operar.',
-    image: ecosystemAsset('03-hardware-clean'),
-    preview: ecosystemAsset('03-hardware-clean'),
+    image: activationAsset('melo3'),
+    preview: activationAsset('melo3'),
     Icon: MonitorSmartphone,
     features: [
       { label: 'Tótems', text: 'Puntos interactivos de marca.', Icon: MonitorSmartphone },
@@ -77,7 +75,6 @@ const ecosystemServices = [
       { label: 'Soporte', text: 'Tecnología cuidada en vivo.', Icon: Zap },
     ],
     angle: 150,
-    crop: ['398.1%', '427.73%', '4.15%', '41.05%'],
   },
   {
     id: 'ia',
@@ -88,8 +85,8 @@ const ecosystemServices = [
     detail:
       'Aplicamos inteligencia artificial a experiencias, procesos y productos digitales para entender, responder y adaptarse a las necesidades de las personas y del negocio.',
     result: 'Experiencias y procesos capaces de entender, responder y adaptarse.',
-    image: ecosystemAsset('06-ia'),
-    preview: ecosystemAsset('06-ia'),
+    image: activationAsset('melo6'),
+    preview: activationAsset('melo6'),
     Icon: BrainCircuit,
     features: [
       { label: 'Visión', text: 'Detectamos señales del mundo real.', Icon: Bot },
@@ -97,7 +94,6 @@ const ecosystemServices = [
       { label: 'Asistentes', text: 'Respuestas y decisiones más ágiles.', Icon: Code2 },
     ],
     angle: 90,
-    crop: ['398.1%', '437.67%', '20.61%', '87.47%'],
   },
   {
     id: 'analitica',
@@ -108,8 +104,8 @@ const ecosystemServices = [
     detail:
       'Organizamos información de campañas, eventos y plataformas para leer resultados sin ruido. La medición se vuelve una herramienta práctica para optimizar, comparar y tomar mejores decisiones.',
     result: 'Decisiones más rápidas con indicadores entendibles.',
-    image: ecosystemAsset('04-analitica-clean'),
-    preview: ecosystemAsset('04-analitica-clean'),
+    image: activationAsset('melo4'),
+    preview: activationAsset('melo4'),
     Icon: BarChart3,
     features: [
       { label: 'Dashboards', text: 'Lectura clara de resultados.', Icon: BarChart3 },
@@ -117,7 +113,6 @@ const ecosystemServices = [
       { label: 'Datos', text: 'Información ordenada y accionable.', Icon: Database },
     ],
     angle: 30,
-    crop: ['398.1%', '437.67%', '63.1%', '92.98%'],
   },
   {
     id: 'software',
@@ -128,8 +123,8 @@ const ecosystemServices = [
     detail:
       'Diseñamos plataformas, dashboards y sistemas internos conectados al proceso real de cada equipo. La interfaz se piensa para operar todos los días, con claridad y control.',
     result: 'Operaciones más simples, trazables y escalables.',
-    image: ecosystemAsset('05-plataforma'),
-    preview: ecosystemAsset('05-plataforma'),
+    image: activationAsset('melo5'),
+    preview: activationAsset('melo5'),
     Icon: Code2,
     features: [
       { label: 'Plataformas', text: 'Software hecho a la medida.', Icon: Code2 },
@@ -137,16 +132,15 @@ const ecosystemServices = [
       { label: 'Escala', text: 'Sistemas listos para crecer.', Icon: Zap },
     ],
     angle: -30,
-    crop: ['418%', '437.67%', '93.55%', '55.92%'],
   },
 ];
 
-const orbitPosition = (angle) => {
+const orbitPosition = (angle, radiusX = 34.5, radiusY = 30.5) => {
   const radians = (angle * Math.PI) / 180;
 
   return {
-    x: 50 + Math.cos(radians) * 34.5,
-    y: 50 + Math.sin(radians) * 30.5,
+    x: 50 + Math.cos(radians) * radiusX,
+    y: 50 + Math.sin(radians) * radiusY,
   };
 };
 
@@ -163,7 +157,8 @@ const About = () => {
   const ecosystemRef = useRef(null);
   const pointerFrameRef = useRef(0);
   const orbitFrameRef = useRef(0);
-  const orbitRotationRef = useRef(0);
+  const orbitRotationRef = useRef(60);
+  const activeOrbitIndexRef = useRef(0);
   const orbitNodesRef = useRef({});
   const orbitLightsRef = useRef([]);
   const connectionRefs = useRef({});
@@ -172,6 +167,7 @@ const About = () => {
   const dragRef = useRef({ active: false, pointerId: null, x: 0, velocity: 0 });
   const [hoveredId, setHoveredId] = useState(null);
   const [centerFocused, setCenterFocused] = useState(false);
+  const [activeOrbitIndex, setActiveOrbitIndex] = useState(0);
 
   const focusService = (id) => {
     centerFocusedRef.current = false;
@@ -198,15 +194,17 @@ const About = () => {
   };
 
   const handlePointerMove = (event) => {
-    if (event.pointerType === 'touch' || !ecosystemRef.current) return;
+    if (!ecosystemRef.current) return;
 
     if (dragRef.current.active) {
       const movement = event.clientX - dragRef.current.x;
       dragRef.current.x = event.clientX;
-      dragRef.current.velocity = movement * 0.055;
-      orbitRotationRef.current += movement * 0.16;
+      dragRef.current.velocity = movement * (event.pointerType === 'touch' ? 0.075 : 0.055);
+      orbitRotationRef.current += movement * (event.pointerType === 'touch' ? 0.28 : 0.16);
       return;
     }
+
+    if (event.pointerType === 'touch') return;
 
     const frame = ecosystemRef.current;
     const bounds = frame.getBoundingClientRect();
@@ -224,7 +222,7 @@ const About = () => {
   };
 
   const handlePointerDown = (event) => {
-    if (event.pointerType === 'touch' || event.target.closest('[data-ecosystem-node]')) return;
+    if (event.pointerType !== 'touch' && event.target.closest('[data-ecosystem-node]')) return;
 
     dragRef.current = {
       active: true,
@@ -242,6 +240,20 @@ const About = () => {
     if (ecosystemRef.current?.hasPointerCapture(event.pointerId)) {
       ecosystemRef.current.releasePointerCapture(event.pointerId);
     }
+
+    if (event.pointerType === 'touch') {
+      clearServiceFocus();
+      clearCenterFocus();
+    }
+  };
+
+  const selectOrbitService = (service, index) => {
+    orbitRotationRef.current = -90 - service.angle;
+    dragRef.current.velocity = 0;
+    activeOrbitIndexRef.current = index;
+    setActiveOrbitIndex(index);
+    clearServiceFocus();
+    clearCenterFocus();
   };
 
   const handleWheel = (event) => {
@@ -280,10 +292,23 @@ const About = () => {
         dragRef.current.velocity *= 0.91;
       }
 
+      const isCompact = (ecosystemRef.current?.clientWidth ?? 1000) <= 840;
+      const radiusX = isCompact ? 35.5 : 34.5;
+      const radiusY = isCompact ? 41.5 : 30.5;
+      let nearestServiceId = null;
+      let nearestDistance = Number.POSITIVE_INFINITY;
+
       ecosystemServices.forEach((service) => {
-        const position = orbitPosition(service.angle + orbitRotationRef.current);
+        const renderedAngle = service.angle + orbitRotationRef.current;
+        const position = orbitPosition(renderedAngle, radiusX, radiusY);
         const node = orbitNodesRef.current[service.id];
         const depth = 0.92 + (position.y / 100) * 0.1;
+        const angleFromTop = Math.abs((((renderedAngle + 90 + 180) % 360) + 360) % 360 - 180);
+
+        if (angleFromTop < nearestDistance) {
+          nearestDistance = angleFromTop;
+          nearestServiceId = service.id;
+        }
 
         if (node) {
           node.style.setProperty('--node-x', `${position.x}%`);
@@ -318,11 +343,22 @@ const About = () => {
         }
       });
 
+      const nextActiveIndex = mobileEcosystemServices.findIndex(
+        (service) => service.id === nearestServiceId,
+      );
+
+      if (nextActiveIndex >= 0 && nextActiveIndex !== activeOrbitIndexRef.current) {
+        activeOrbitIndexRef.current = nextActiveIndex;
+        setActiveOrbitIndex(nextActiveIndex);
+      }
+
       orbitLightsRef.current.forEach((light, index) => {
         if (!light) return;
 
         const position = orbitPosition(
           index * (360 / orbitLightCount) + orbitRotationRef.current,
+          radiusX,
+          radiusY,
         );
         light.style.setProperty('--light-x', `${position.x}%`);
         light.style.setProperty('--light-y', `${position.y}%`);
@@ -382,7 +418,7 @@ const About = () => {
             <svg
               className={styles.traceMap}
               viewBox="0 0 1000 750"
-              preserveAspectRatio="xMidYMid meet"
+              preserveAspectRatio="none"
               aria-hidden="true"
             >
               <defs>
@@ -449,7 +485,7 @@ const About = () => {
             </div>
 
             {ecosystemServices.map((service) => {
-              const initialPosition = orbitPosition(service.angle);
+              const initialPosition = orbitPosition(service.angle + 60);
 
               return (
                 <article
@@ -465,10 +501,6 @@ const About = () => {
                     '--node-x': `${initialPosition.x}%`,
                     '--node-y': `${initialPosition.y}%`,
                     '--node-scale': 1,
-                    '--crop-size-x': service.crop[0],
-                    '--crop-size-y': service.crop[1],
-                    '--crop-position-x': service.crop[2],
-                    '--crop-position-y': service.crop[3],
                   }}
                   onPointerEnter={() => focusService(service.id)}
                   onPointerLeave={clearServiceFocus}
@@ -484,17 +516,22 @@ const About = () => {
             })}
           </div>
 
-          <div className={styles.mobileMap} aria-label="Servicios del ecosistema APX">
-            {mobileEcosystemServices.map((service) => (
-              <article key={service.id}>
-                <img
-                  src={service.preview}
-                  alt={`${service.number}. ${service.title}`}
-                  loading="lazy"
-                  decoding="async"
+          <div className={styles.mobileOrbitProgress} aria-label="Servicio visible en el ecosistema">
+            <span>
+              {String(activeOrbitIndex + 1).padStart(2, '0')} / {String(mobileEcosystemServices.length).padStart(2, '0')}
+            </span>
+            <div>
+              {mobileEcosystemServices.map((service, index) => (
+                <button
+                  key={service.id}
+                  type="button"
+                  className={index === activeOrbitIndex ? styles.mobileOrbitDotActive : ''}
+                  onClick={() => selectOrbitService(service, index)}
+                  aria-label={`Ver ${service.title}`}
+                  aria-current={index === activeOrbitIndex ? 'step' : undefined}
                 />
-              </article>
-            ))}
+              ))}
+            </div>
           </div>
 
           <p className={styles.hint}>

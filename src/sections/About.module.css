@@ -350,9 +350,9 @@
   left: var(--node-x);
   top: var(--node-y);
   z-index: 8;
-  width: clamp(205px, 25%, 270px);
+  width: clamp(190px, 22%, 238px);
   min-height: 0;
-  aspect-ratio: 2 / 1;
+  aspect-ratio: 4 / 3;
   display: block;
   overflow: hidden;
   padding: 0;
@@ -388,7 +388,7 @@
 .serviceNode:focus-visible,
 .serviceActive {
   z-index: 140 !important;
-  width: clamp(285px, 30%, 330px);
+  width: clamp(250px, 27%, 292px);
   min-height: 0;
   border-color: rgba(246, 249, 251, 0.64);
   box-shadow:
@@ -438,7 +438,7 @@
 .serviceNode:focus-visible img,
 .serviceActive img {
   filter: grayscale(0.04) brightness(0.94) contrast(1.04);
-  transform: scale(1.12);
+  transform: none;
 }
 
 .nodeCopy {
@@ -520,7 +520,7 @@
   transform: translateY(0);
 }
 
-.mobileMap {
+.mobileOrbitProgress {
   display: none;
 }
 
@@ -952,39 +952,84 @@
   }
 
   .ecosystem {
-    display: none;
-  }
-
-  .mobileMap {
     width: 100%;
-    display: grid;
-    gap: 0.9rem;
-  }
-
-  .mobileMap article {
-    position: relative;
-    width: 100%;
-    min-height: 0;
+    min-height: 520px;
+    max-height: 690px;
     display: block;
     overflow: hidden;
-    padding: 0;
-    border: 1px solid rgba(225, 235, 241, 0.3);
-    border-radius: 10px;
-    background: transparent;
+    aspect-ratio: 3 / 4;
+    touch-action: pan-y;
   }
 
-  .mobileMap article::after {
-    content: none;
+  .serviceNode {
+    width: clamp(86px, 24vw, 108px);
+    border-radius: 8px;
   }
 
-  .mobileMap img {
+  .serviceNode:hover,
+  .serviceNode:focus-visible,
+  .serviceActive {
+    width: clamp(96px, 27vw, 118px);
+    transform: translate(-50%, -50%) scale(calc(var(--node-scale) * 1.03));
+  }
+
+  .centerNode {
+    width: 38%;
+    height: 12%;
+    padding: 0.5rem;
+  }
+
+  .centerNode span {
+    font-size: clamp(0.84rem, 4vw, 1.08rem);
+  }
+
+  .orbitLights span {
+    width: 20px;
+    height: 24px;
+  }
+
+  .orbitLights svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .mobileOrbitProgress {
     width: 100%;
-    height: auto;
-    aspect-ratio: 3 / 2;
-    border-radius: inherit;
-    object-fit: cover;
-    background: transparent;
-    filter: none;
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    color: rgba(255, 255, 255, 0.68);
+    font-family: var(--font-b);
+    font-size: 0.7rem;
+    font-weight: 800;
+  }
+
+  .mobileOrbitProgress > div {
+    display: flex;
+    align-items: center;
+    gap: 0.38rem;
+  }
+
+  .mobileOrbitProgress button {
+    width: 6px;
+    height: 6px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.24);
+    cursor: pointer;
+    transition: width 180ms ease, border-radius 180ms ease, background 180ms ease;
+  }
+
+  .mobileOrbitProgress .mobileOrbitDotActive {
+    width: 28px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.92);
+  }
+
+  .hint {
+    margin-top: 0;
+    font-size: 0.72rem;
   }
 
   .featureGrid {
@@ -1000,16 +1045,6 @@
 
   .copy h2 {
     font-size: clamp(2.35rem, 10vw, 3.35rem);
-  }
-
-  .mobileMap article {
-    grid-template-columns: 1fr;
-    gap: 0.7rem;
-  }
-
-  .mobileMap img {
-    width: 100%;
-    height: auto;
   }
 
   .detailOverlay {
