@@ -354,7 +354,7 @@
   top: -7.65vw;
   width: 54.8vw;
   height: 41.1vw;
-  background: url('/Assets/Figma/faq-wave.png') center / cover no-repeat;
+  background: url('/Assets/Figma/faq-wave.webp') center / cover no-repeat;
   opacity: 0.6;
   z-index: -1;
 }
@@ -410,7 +410,7 @@
   top: -32.12%;
   width: 111.7%;
   height: 139.24%;
-  background: url('/Assets/Figma/footer-wave.png') center / 100% 100% no-repeat;
+  background: url('/Assets/Figma/footer-wave.webp') center / 100% 100% no-repeat;
   opacity: 0.4;
   z-index: -1;
 }
@@ -509,7 +509,7 @@
 .contextImageInner {
   position: absolute;
   inset: 0;
-  background: url('/Assets/Figma/context-ai-humanoid.png') center / cover no-repeat;
+  background: url('/Assets/Figma/context-ai-humanoid.webp') center / cover no-repeat;
   animation: kenburns 26s ease-in-out infinite alternate;
 }
 @keyframes kenburns {

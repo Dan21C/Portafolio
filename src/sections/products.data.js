@@ -12,10 +12,10 @@
    centered in the visible crop instead of pushed toward an edge — X for photos where
    the subject isn't horizontally centered (imagine-ai), Y for how high/low it sits. */
 
-const asset = (filename) => `/Assets/Products/${filename}.png`;
+const asset = (filename) => `/Assets/Products/${filename}.webp`;
 
 export const productBackground = {
-  poster: '/Assets/Products/products-bg-final.png',
+  poster: '/Assets/Products/products-bg-final.webp',
   video: '/Assets/Animation/products-bg.mp4',
 };
 

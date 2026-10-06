@@ -4,7 +4,7 @@ import styles from './Hero.module.css';
 
 const darkHeroVideo = '/Assets/Hero/Hero_showreel.mp4';
 const lightHeroVideo = '/Assets/Hero/Hero_showreel.mp4';
-const heroStaticImage = '/Assets/Hero/herobg.png';
+const heroStaticImage = '/Assets/Hero/herobg.webp';
 const videoLoopsBeforeFreeze = 1;
 const defaultPointer = { x: 0.68, y: 0.45 };
 

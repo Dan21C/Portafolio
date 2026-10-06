@@ -1,24 +1,24 @@
 export const ecosystem = [
-  { n: '01', title: 'Experiencias\ninteractivas', text: 'Instalaciones que responden\na personas, movimiento\ny espacio.', img: '/Assets/About/thumb-experiencias-interactivas.png' },
-  { n: '02', title: 'Software\na la medida', text: 'Aplicaciones y plataformas\ndiseñadas para operar,\nmedir y escalar experiencias.', img: '/Assets/About/thumb-software-operacion.png' },
-  { n: '03', title: 'IA aplicada', text: 'Visión, automatización\ny modelos integrados\na experiencias reales.', img: '/Assets/About/thumb-ia-aplicada.png' },
-  { n: '04', title: 'Hardware\ne integración', text: 'Sensores, displays y\ndispositivos conectados\ncomo un solo sistema.', img: '/Assets/About/thumb-hardware-displays.png' },
-  { n: '05', title: 'Analítica\ny datos', text: 'Información en tiempo real\npara tomar mejores\ndecisiones.', img: '/Assets/About/thumb-analitica-datos.png' },
-  { n: '06', title: 'Automatización\ne integración', text: 'Sistemas que conectan\ncon la operación, marca\ny entorno.', img: '/Assets/About/thumb-automatizacion-integraciones.png' },
+  { n: '01', title: 'Experiencias\ninteractivas', text: 'Instalaciones que responden\na personas, movimiento\ny espacio.', img: '/Assets/Figma/eco-experiencias.webp' },
+  { n: '02', title: 'Software\na la medida', text: 'Aplicaciones y plataformas\ndiseñadas para operar,\nmedir y escalar experiencias.', img: '/Assets/Figma/eco-software.webp' },
+  { n: '03', title: 'IA aplicada', text: 'Visión, automatización\ny modelos integrados\na experiencias reales.', img: '/Assets/Figma/eco-ia.webp' },
+  { n: '04', title: 'Hardware\ne integración', text: 'Sensores, displays y\ndispositivos conectados\ncomo un solo sistema.', img: '/Assets/Figma/eco-hardware.webp' },
+  { n: '05', title: 'Analítica\ny datos', text: 'Información en tiempo real\npara tomar mejores\ndecisiones.', img: '/Assets/Figma/eco-analitica.webp' },
+  { n: '06', title: 'Automatización\ne integración', text: 'Sistemas que conectan\ncon la operación, marca\ny entorno.', img: '/Assets/Figma/eco-automatizacion.webp' },
 ];
 
 export const workflow = [
-  { title: 'Entender', text: 'Exploramos el reto, el contexto y las oportunidades.', icon: '/Assets/Figma/step-entender.png' },
-  { title: 'Diseñar', text: 'Conceptualizamos la solución y definimos la experiencia.', icon: '/Assets/Figma/step-disenar.png' },
-  { title: 'Prototipar', text: 'Validamos con prototipos funcionales y pruebas reales.', icon: '/Assets/Figma/step-prototipar.png' },
-  { title: 'Construir', text: 'Desarrollamos e integramos todos los componentes.', icon: '/Assets/Figma/step-construir.png' },
-  { title: 'Activar', text: 'Implementamos, medimos y evolucionamos.', icon: '/Assets/Figma/step-activar.png' },
+  { title: 'Entender', text: 'Exploramos el reto, el contexto y las oportunidades.', icon: '/Assets/Figma/step-entender.webp' },
+  { title: 'Diseñar', text: 'Conceptualizamos la solución y definimos la experiencia.', icon: '/Assets/Figma/step-disenar.webp' },
+  { title: 'Prototipar', text: 'Validamos con prototipos funcionales y pruebas reales.', icon: '/Assets/Figma/step-prototipar.webp' },
+  { title: 'Construir', text: 'Desarrollamos e integramos todos los componentes.', icon: '/Assets/Figma/step-construir.webp' },
+  { title: 'Activar', text: 'Implementamos, medimos y evolucionamos.', icon: '/Assets/Figma/step-activar.webp' },
 ];
 
 export const labPosts = [
-  { img: '/Assets/Figma/lab-1.png', title: 'Visión por computador\nen espacios reales', text: 'Como la IA y el cómputo visual\npueden mejorar la manera en que\nlas personas viven un espacio.', date: '12 SEP 2026' },
-  { img: '/Assets/Figma/lab-2.png', title: 'IA + Experiencias', text: 'Aplicaciones reales de inteligencia\nartificial en experiencias interactivas\ny entornos físicos.', date: '2 SEP 2026' },
-  { img: '/Assets/Figma/lab-3.png', title: 'Del sensor a la pantalla', text: 'El camino de los datos para una\nexperiencia inmersiva.', date: '18 AGO 2026' },
+  { img: '/Assets/Figma/lab-1.webp', title: 'Visión por computador\nen espacios reales', text: 'Como la IA y el cómputo visual\npueden mejorar la manera en que\nlas personas viven un espacio.', date: '12 SEP 2026' },
+  { img: '/Assets/Figma/lab-2.webp', title: 'IA + Experiencias', text: 'Aplicaciones reales de inteligencia\nartificial en experiencias interactivas\ny entornos físicos.', date: '2 SEP 2026' },
+  { img: '/Assets/Figma/lab-3.webp', title: 'Del sensor a la pantalla', text: 'El camino de los datos para una\nexperiencia inmersiva.', date: '18 AGO 2026' },
 ];
 
 export const faqs = [
