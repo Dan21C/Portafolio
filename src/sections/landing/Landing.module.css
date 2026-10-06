@@ -1,0 +1,595 @@
+/* Design tokens from the Figma landing (light sections are fixed, independent of theme) */
+.context, .ecosystem, .workflow, .lab, .faq, .footer {
+  --paper: #f7f6f2;
+  --ink: #111214;
+  --soft: #7b7b78;
+  --line: rgba(17, 18, 20, 0.14);
+  font-family: var(--font-h);
+}
+
+.eyebrow {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  line-height: 1.4;
+}
+
+.btnLight, .btnOutline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.85rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--ink);
+  transition: transform 0.2s, background 0.2s;
+}
+.btnLight { background: #fff; border: 1px solid var(--line); }
+.btnOutline { border: 1px solid var(--line); background: rgba(255, 255, 255, 0.6); }
+.btnLight:hover, .btnOutline:hover { transform: translateY(-2px); background: #fff; }
+
+/* 1. Company context — sizes follow the 1920px Figma frame (px / 19.2 = vw) */
+.context {
+  display: grid;
+  grid-template-columns: 41.25% 1fr;
+  min-height: 33.7vw;
+  background: #f8f7f3;
+  color: #030303;
+  font-family: 'Inter', var(--font-h), sans-serif;
+}
+.contextText {
+  padding: 4.74vw 0.6vw 3vw 5.26vw;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+  position: relative;
+  z-index: 1;
+}
+.context .eyebrow {
+  font-size: clamp(0.62rem, 0.73vw, 0.95rem);
+  font-weight: 700;
+  letter-spacing: 0.225em;
+  color: #60605e;
+  white-space: nowrap;
+}
+.contextTitle {
+  font-family: 'Instrument Sans', 'Inter', sans-serif;
+  font-size: clamp(1.9rem, 2.76vw, 3.4rem);
+  line-height: 1.075;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #030303;
+  margin: 1.8vw 0 1.2vw;
+}
+.contextTitle .line { display: block; color: #030303; white-space: nowrap; }
+.contextTitle .muted { color: #838489; }
+.lead {
+  font-size: clamp(0.85rem, 1.04vw, 1.25rem);
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+  color: rgba(28, 27, 25, 0.8);
+  max-width: 31.5em;
+}
+.rule { border: 0; border-top: 1px solid #dcdbd7; width: 34.6vw; max-width: 100%; margin: 2.1vw 0 1.6vw; }
+.contextImage {
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 12%);
+  mask-image: linear-gradient(90deg, transparent 0%, #000 12%);
+  min-height: 320px;
+}
+
+/* 2. Ecosystem — sizes follow the 1920px Figma frame (px / 19.2 = vw) */
+.ecosystem {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 26.67vw;
+  column-gap: 2.65vw;
+  align-items: start;
+  min-height: 33.3vw;
+  padding: 4.7vw 0 3vw 3.23vw;
+  background: #f8f7f3;
+  color: #030303;
+  font-family: 'Inter', var(--font-h), sans-serif;
+}
+.ecoGrid {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  column-gap: 1.3vw;
+  margin-top: 0.85vw;
+}
+.ecoGrid li { display: flex; flex-direction: column; min-width: 0; }
+.ecoNum {
+  font-size: clamp(0.6rem, 0.68vw, 0.85rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #0d0e0e;
+  padding-left: 0.2vw;
+  margin-bottom: 0.9vw;
+}
+.ecoThumb {
+  width: 100%;
+  aspect-ratio: 195 / 228;
+  object-fit: cover;
+  border-radius: 0.8vw;
+  background: #dadadb;
+  margin-bottom: 0.7vw;
+}
+.ecoGrid h3 {
+  font-size: clamp(0.9rem, 0.99vw, 1.2rem);
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #0d0e0e;
+  white-space: pre-line;
+  min-height: 2.4em;
+  padding-left: 0.2vw;
+  margin-bottom: 0.65vw;
+}
+.ecoGrid p {
+  font-size: clamp(0.72rem, 0.73vw, 0.9rem);
+  line-height: 1.43;
+  letter-spacing: -0.01em;
+  color: #70726f;
+  white-space: pre-line;
+  padding-left: 0.2vw;
+}
+.ecoAside {
+  border-left: 2px solid #e1e0dd;
+  min-height: 21.25vw;
+  padding: 1.1vw 1.4vw 0 2vw;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.ecoAside .eyebrow {
+  font-size: clamp(0.6rem, 0.73vw, 0.9rem);
+  font-weight: 700;
+  letter-spacing: 0.225em;
+  color: #b6b5b3;
+  margin-bottom: 1.8vw;
+}
+.ecoAside h2 {
+  font-size: clamp(1.7rem, 2.5vw, 3rem);
+  line-height: 1.19;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #030303;
+  margin-bottom: 0.9vw;
+}
+.ecoAside p:not(.eyebrow) {
+  font-size: clamp(0.85rem, 0.94vw, 1.15rem);
+  line-height: 1.67;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: #979799;
+  max-width: 24.5em;
+  margin-bottom: 1.4vw;
+}
+.ecoAside .btnLight {
+  justify-content: space-between;
+  gap: 1.3vw;
+  min-width: 14.5vw;
+  height: clamp(2.6rem, 2.53vw, 3.1rem);
+  padding: 0 1.4vw 0 1.45vw;
+  border: 1px solid #e6e5e1;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.5);
+  font-size: clamp(0.78rem, 0.83vw, 1rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #000207;
+}
+
+/* 4. Workflow — sizes follow the 1920px Figma frame (px / 19.2 = vw) */
+.workflow {
+  background: #f8f7f3;
+  color: #030303;
+  font-family: 'Inter', var(--font-h), sans-serif;
+  padding: clamp(2rem, 2.9vw, 3.5rem) 4.27vw clamp(2rem, 3.3vw, 4rem);
+}
+.workflowHead {
+  display: grid;
+  grid-template-columns: 35.2% 1fr auto;
+  align-items: start;
+}
+.workflowHead .eyebrow {
+  font-size: clamp(0.6rem, 0.65vw, 0.8rem);
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: #6f6e6c;
+  margin-bottom: 0.9vw;
+}
+.workflowHead h2 {
+  font-size: clamp(1.9rem, 3.125vw, 3.75rem);
+  line-height: 0.95;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #030303;
+}
+.workflowIntro {
+  font-size: clamp(0.85rem, 1.04vw, 1.25rem);
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+  color: rgba(28, 27, 25, 0.8);
+  max-width: 30em;
+}
+.workflowHead .btnOutline {
+  justify-content: space-between;
+  gap: 2.2vw;
+  min-width: 11vw;
+  padding: 0 1.4vw 0 2.4vw;
+  height: clamp(2.6rem, 2.55vw, 3.1rem);
+  border: 1px solid #e6e5e1;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.5);
+  font-size: clamp(0.75rem, 0.85vw, 1rem);
+  font-weight: 700;
+  color: #000;
+}
+.steps {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr) auto;
+  margin-top: 1.1vw;
+}
+.steps li { position: relative; padding-top: 0; }
+.stepIcon {
+  display: grid;
+  place-items: center;
+  width: clamp(3.2rem, 3.54vw, 4.25rem);
+  height: clamp(3.2rem, 3.54vw, 4.25rem);
+  border: 1px solid #c9c8c4;
+  border-radius: 50%;
+  margin-bottom: 1.7vw;
+}
+.stepIcon img { width: 55%; height: 55%; object-fit: contain; }
+.steps li:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: calc(clamp(3.2rem, 3.54vw, 4.25rem) / 2);
+  left: calc(clamp(3.2rem, 3.54vw, 4.25rem) + 1.6vw);
+  right: 0.1vw;
+  border-top: 1px solid #b5b4b0;
+}
+.steps li:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  top: calc(clamp(3.2rem, 3.54vw, 4.25rem) / 2 - 0.3vw);
+  right: 0.1vw;
+  width: 0.6vw;
+  height: 0.6vw;
+  min-width: 6px;
+  min-height: 6px;
+  border-top: 1px solid #b5b4b0;
+  border-right: 1px solid #b5b4b0;
+  transform: rotate(45deg) translate(-1px, 1px);
+  transform-origin: center;
+}
+.steps h3 {
+  font-size: clamp(1.1rem, 1.3vw, 1.6rem);
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #0c1013;
+  margin-bottom: 0.2vw;
+}
+.steps p {
+  font-size: clamp(0.82rem, 1.04vw, 1.25rem);
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+  color: #878586;
+  max-width: 15.9vw;
+  min-width: 11em;
+}
+
+/* 5. APX Lab — sizes follow the 1920px Figma frame (px / 19.2 = vw) */
+.lab {
+  display: grid;
+  grid-template-columns: 23vw 1fr;
+  column-gap: 1.1vw;
+  align-items: start;
+  min-height: 42.8vw;
+  padding: 7.8vw 4.1vw 5vw;
+  background: #f8f6f1;
+  color: #030303;
+  font-family: 'Inter', var(--font-h), sans-serif;
+}
+.labIntro { display: flex; flex-direction: column; align-items: flex-start; padding-top: 1.75vw; }
+.labIntro .eyebrow { font-size: clamp(0.6rem, 0.73vw, 0.9rem); font-weight: 700; letter-spacing: 0.225em; color: #60605e; margin-bottom: 0.65vw; }
+.labIntro h2 { font-size: clamp(1.9rem, 3.125vw, 3.75rem); line-height: 0.95; font-weight: 600; letter-spacing: -0.01em; color: #030303; margin-bottom: 1.55vw; }
+.labIntro p:not(.eyebrow) { font-size: clamp(0.85rem, 1.09vw, 1.3rem); line-height: 1.43; letter-spacing: 0.01em; color: rgba(28, 27, 25, 0.8); margin-bottom: 2.7vw; }
+.labIntro .btnOutline {
+  justify-content: space-between;
+  gap: 1.5vw;
+  min-width: 19.1vw;
+  height: clamp(3rem, 3.8vw, 4.6rem);
+  padding: 0 1.8vw 0 1.95vw;
+  border: 1px solid #e3e1dc;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 2px 6px rgba(17, 18, 20, 0.08);
+  font-size: clamp(0.85rem, 1.09vw, 1.3rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #000207;
+}
+.labCards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 0.94vw; }
+.labCard {
+  background: #faf8f4;
+  border-radius: 0.8vw;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(17, 18, 20, 0.1);
+  display: flex;
+  flex-direction: column;
+  min-height: 27vw;
+}
+.labCard img { width: 100%; aspect-ratio: 424 / 252; object-fit: cover; background: #d9d9d9; }
+.labCard > div { padding: 1.9vw 1.35vw 1.9vw; display: flex; flex-direction: column; flex: 1; }
+.labCard h3 { font-size: clamp(1.1rem, 1.51vw, 1.8rem); line-height: 1.14; font-weight: 700; letter-spacing: -0.01em; color: #0c1013; white-space: pre-line; margin-bottom: 0.5vw; }
+.labCard p { font-size: clamp(0.82rem, 1.09vw, 1.3rem); line-height: 1.43; letter-spacing: 0.01em; color: rgba(28, 27, 25, 0.8); white-space: pre-line; }
+.labCard footer { margin-top: auto; display: flex; justify-content: space-between; align-items: flex-end; padding-top: 1vw; }
+.labCard time { font-size: clamp(0.6rem, 0.73vw, 0.9rem); font-weight: 700; letter-spacing: 0.225em; color: rgba(72, 72, 69, 0.76); padding-bottom: 0.3vw; }
+.labCard footer span { display: grid; place-items: center; width: clamp(2rem, 2.34vw, 2.8rem); height: clamp(2rem, 2.34vw, 2.8rem); border: 1px solid #8f8f8d; border-radius: 50%; color: #000; margin-right: 0.8vw; }
+
+/* 6. FAQ */
+.faq {
+  position: relative;
+  display: grid;
+  grid-template-columns: 35.56vw 1fr;
+  align-items: start;
+  min-height: 33.3vw;
+  padding: 2.4vw 3.9vw 0 4.74vw;
+  background: #efeeec;
+  color: #030303;
+  font-family: 'Inter', var(--font-h), sans-serif;
+  overflow: hidden;
+  isolation: isolate;
+}
+.faq::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: -7.65vw;
+  width: 54.8vw;
+  height: 41.1vw;
+  background: url('/Assets/Figma/faq-wave.png') center / cover no-repeat;
+  opacity: 0.6;
+  z-index: -1;
+}
+.faqIntro { display: flex; flex-direction: column; padding-top: 0; padding-right: 2vw; }
+.faqIntro .eyebrow { font-size: clamp(0.6rem, 0.73vw, 0.9rem); font-weight: 700; letter-spacing: 0.225em; color: #60605e; margin: 0 0 1.45vw 0.55vw; }
+.faqIntro h2 { font-size: clamp(1.9rem, 3.125vw, 3.75rem); line-height: 1; font-weight: 600; letter-spacing: -0.01em; color: #030303; margin-bottom: 1.45vw; }
+.faqIntro p:not(.eyebrow) { font-size: clamp(0.85rem, 1.09vw, 1.3rem); line-height: 1.43; letter-spacing: 0.01em; color: rgba(28, 27, 25, 0.8); }
+.faqList { list-style: none; border-left: 1px solid rgba(17, 18, 20, 0.12); margin: 0 0 0 0; padding: 0 0 0 2.34vw; min-height: 28.5vw; }
+.faqList li:first-child { margin-top: -0.4vw; }
+.faqList li { border-bottom: 1px solid rgba(17, 18, 20, 0.14); }
+.faqList button {
+  width: 100%;
+  min-height: 2.93vw;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 0 0.5vw 0 0;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  text-align: left;
+  color: rgba(28, 27, 25, 0.8);
+  font-size: clamp(0.85rem, 1.09vw, 1.3rem);
+  line-height: 1.43;
+  font-weight: 400;
+}
+.faqList button svg { flex: none; width: 1.3vw; min-width: 16px; height: auto; stroke-width: 1.4; transition: transform 0.25s; }
+.faqOpen button svg { transform: rotate(45deg); }
+.faqAnswer { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.3s ease; }
+.faqAnswer p { overflow: hidden; font-size: clamp(0.8rem, 0.94vw, 1.1rem); line-height: 1.6; color: #70726f; max-width: 62ch; }
+.faqOpen .faqAnswer { grid-template-rows: 1fr; }
+.faqOpen .faqAnswer p { padding-bottom: 1.1vw; }
+
+/* 8. Footer */
+.footer {
+  position: relative;
+  display: grid;
+  grid-template-columns: 22.1vw 50.9vw 1fr;
+  align-items: start;
+  min-height: 34.4vw;
+  padding: 12.2vw 0 3vw 3.2vw;
+  background: #01040d;
+  color: rgba(244, 244, 244, 0.8);
+  font-family: 'Inter', var(--font-h), sans-serif;
+  overflow: hidden;
+  isolation: isolate;
+}
+.footer::before {
+  content: '';
+  position: absolute;
+  left: -5.88%;
+  top: -32.12%;
+  width: 111.7%;
+  height: 139.24%;
+  background: url('/Assets/Figma/footer-wave.png') center / 100% 100% no-repeat;
+  opacity: 0.4;
+  z-index: -1;
+}
+.footBrand { padding-top: 0; }
+.footLogo { display: flex; align-items: center; gap: 1.1vw; margin-bottom: 1.4vw; }
+.footLogo b { font-size: clamp(2rem, 2.86vw, 3.5rem); line-height: 1; font-weight: 600; letter-spacing: 0.36em; color: #f3f3f3; }
+.footLogo span { font-size: clamp(0.55rem, 0.73vw, 0.9rem); font-weight: 500; letter-spacing: 0.1em; line-height: 1.5; color: #a7b0c6; }
+.footSlogan { font-size: clamp(0.85rem, 1.04vw, 1.25rem); line-height: 1.25; letter-spacing: 0.01em; color: rgba(244, 244, 244, 0.8); }
+.socials { display: flex; gap: 1vw; margin-top: 1.15vw; }
+.socials a { display: grid; place-items: center; width: 2.14vw; min-width: 34px; height: 2.08vw; min-height: 33px; border: 1px solid rgba(255, 255, 255, 0.55); border-radius: 0.55vw; color: #fff; transition: background 0.2s; }
+.socials a:hover { background: rgba(255, 255, 255, 0.14); }
+.footLinks { display: flex; gap: 14.8vw; border-left: 1px solid #fff; padding-left: 2.45vw; min-height: 9vw; margin-top: 0.1vw; }
+.footLinks div { display: flex; flex-direction: column; gap: 0.18vw; }
+.footLinks a { font-size: clamp(0.85rem, 1.04vw, 1.25rem); line-height: 1.5; letter-spacing: 0.01em; color: rgba(244, 244, 244, 0.8); }
+.footLinks a:hover { color: #fff; }
+.footTag { margin-top: 4.4vw; border-left: 1px solid #fff; padding: 0.1vw 0 0 1.4vw; min-height: 5.1vw; font-size: clamp(0.72rem, 0.94vw, 1.1rem); font-weight: 500; letter-spacing: 0.1em; line-height: 1.39; color: #f2f2f2; white-space: nowrap; }
+
+/* Responsive */
+@media (max-width: 1100px) {
+  .ecosystem { grid-template-columns: 1fr; padding: 3rem 1.5rem; row-gap: 2rem; min-height: 0; }
+  .ecoGrid { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 1.8rem; column-gap: 1rem; margin-top: 0; }
+  .ecoThumb { border-radius: 10px; }
+  .ecoNum { margin-bottom: 0.6rem; }
+  .ecoGrid p { font-size: 0.8rem; }
+  .ecoGrid h3 { font-size: 1rem; }
+  .ecoAside { border-left: 0; border-top: 2px solid #e1e0dd; padding: 2rem 0 0; min-height: 0; }
+  .ecoAside .eyebrow { margin-bottom: 1rem; }
+  .ecoAside h2 { margin-bottom: 0.8rem; }
+  .ecoAside p:not(.eyebrow) { margin-bottom: 1.2rem; }
+  .ecoAside .btnLight { min-width: 0; gap: 1rem; padding: 0 1.2rem; }
+  .lab { grid-template-columns: 1fr; padding: 3rem 1.5rem; min-height: 0; row-gap: 2rem; }
+  .labIntro { padding-top: 0; }
+  .labIntro .eyebrow { margin-bottom: 0.8rem; }
+  .labIntro h2 { margin-bottom: 1rem; }
+  .labIntro p:not(.eyebrow) { margin-bottom: 1.4rem; }
+  .labIntro .btnOutline { min-width: 0; gap: 1rem; padding: 0 1.2rem; height: 3rem; }
+  .labCards { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 1rem; row-gap: 1rem; }
+  .labCard { border-radius: 12px; min-height: 0; }
+  .labCard > div { padding: 1.2rem; }
+  .labCard h3 { margin-bottom: 0.4rem; }
+  .labCard footer { padding-top: 1rem; }
+  .labCard footer span { margin-right: 0; }
+  .faq { grid-template-columns: 1fr; padding: 3rem 1.5rem; min-height: 0; row-gap: 2rem; }
+  .faq::before { width: 100%; height: 60%; top: 0; }
+  .faqIntro { padding: 0; }
+  .faqIntro .eyebrow { margin: 0 0 1rem; }
+  .faqIntro h2 { margin-bottom: 1rem; }
+  .faqList { border-left: 0; margin-left: 0; padding: 0; min-height: 0; }
+  .faqList button { min-height: 3.4rem; padding: 0.6rem 0; }
+  .faqList button svg { width: 1.1rem; }
+  .steps { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 2.5rem; column-gap: 1.5rem; }
+  .steps li::after, .steps li::before { display: none; }
+  .workflowHead { grid-template-columns: 1fr; row-gap: 1.2rem; }
+  .workflowHead .btnOutline { min-width: 0; gap: 1rem; padding: 0 1.2rem; }
+  .steps p { max-width: 26ch; }
+  .footer { grid-template-columns: 1fr 1fr; padding: 4rem 1.5rem 3rem; row-gap: 2.5rem; min-height: 0; }
+  .footLogo { gap: 1rem; margin-bottom: 1.2rem; }
+  .socials { gap: 0.8rem; margin-top: 1.2rem; }
+  .footLinks { gap: 3rem; padding-left: 1.5rem; min-height: 0; grid-column: 2; }
+  .footTag { grid-column: 1 / -1; margin-top: 0; justify-self: start; border-left: 0; padding: 0; min-height: 0; white-space: normal; }
+}
+@media (max-width: 760px) {
+  .context { grid-template-columns: 1fr; min-height: 0; }
+  .contextText { padding: 2.5rem 1.5rem; }
+  .rule { width: 100%; margin: 1.6rem 0 1.2rem; }
+  .contextTitle { margin: 1.2rem 0 1rem; }
+  .contextTitle .line { white-space: normal; }
+  .context .eyebrow { white-space: normal; }
+  .contextImage { order: -1; min-height: 260px; -webkit-mask-image: none; mask-image: none; }
+  .ecoGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .steps { grid-template-columns: 1fr 1fr; }
+  .labCards { grid-template-columns: 1fr; }
+  .footer { grid-template-columns: 1fr; }
+  .footLinks { border-left: 0; padding-left: 0; grid-column: 1; }
+}
+
+/* ───────────── Interactions & motion ───────────── */
+
+/* Buttons */
+.btnLight, .btnOutline {
+  transition: transform 0.35s var(--ease-out), box-shadow 0.35s var(--ease-out), background 0.25s, border-color 0.25s;
+}
+.btnLight svg, .btnOutline svg { transition: transform 0.35s var(--ease-out); }
+.btnLight:hover, .btnOutline:hover {
+  transform: translateY(-3px);
+  background: #fff;
+  border-color: #cfcdc7;
+  box-shadow: 0 10px 24px rgba(17, 18, 20, 0.12);
+}
+.btnLight:hover svg, .btnOutline:hover svg { transform: translateX(5px); }
+.btnLight:active, .btnOutline:active { transform: translateY(-1px); }
+.btnLight:focus-visible, .btnOutline:focus-visible { outline: 2px solid #030303; outline-offset: 3px; }
+
+/* Context: slow ambient zoom on the image (outer box carries the mask + reveal) */
+.contextImage { position: relative; overflow: hidden; }
+.contextImageInner {
+  position: absolute;
+  inset: 0;
+  background: url('/Assets/Figma/context-ai-humanoid.png') center / cover no-repeat;
+  animation: kenburns 26s ease-in-out infinite alternate;
+}
+@keyframes kenburns {
+  from { transform: scale(1) translate3d(0, 0, 0); }
+  to { transform: scale(1.07) translate3d(-1.2%, -0.8%, 0); }
+}
+
+/* Ecosystem */
+.ecoThumb { transition: transform 0.55s var(--ease-out), box-shadow 0.55s var(--ease-out), filter 0.4s; }
+.ecoGrid li:hover .ecoThumb { transform: translateY(-8px) scale(1.02); box-shadow: 0 18px 36px rgba(17, 18, 20, 0.2); filter: brightness(1.08); }
+.ecoGrid h3, .ecoNum { transition: transform 0.4s var(--ease-out); }
+.ecoGrid li:hover h3 { transform: translateY(-4px); }
+.ecoGrid li:hover .ecoNum { transform: translateX(4px); }
+
+/* Workflow: connectors draw in, icons react on hover */
+.steps li:not(:last-child)::after { transform: scaleX(0); transform-origin: left center; }
+.steps li:not(:last-child)::before { opacity: 0; }
+.workflow[data-in='true'] .steps li:not(:last-child)::after {
+  transform: scaleX(1);
+  transition: transform 1.4s var(--ease-out) calc((var(--i, 3) - 3) * 220ms + 1000ms);
+}
+.workflow[data-in='true'] .steps li:not(:last-child)::before {
+  opacity: 1;
+  transition: opacity 0.5s ease calc((var(--i, 3) - 3) * 220ms + 1900ms);
+}
+.stepIcon { transition: transform 0.45s var(--ease-out), background 0.3s, border-color 0.3s, box-shadow 0.3s; }
+.stepIcon img { transition: transform 0.45s var(--ease-out); }
+.steps li:hover .stepIcon { transform: scale(1.1); background: #fff; border-color: #0c1013; box-shadow: 0 10px 22px rgba(17, 18, 20, 0.14); }
+.steps li:hover .stepIcon img { transform: rotate(-6deg) scale(1.1); }
+.steps h3 { transition: transform 0.4s var(--ease-out); }
+.steps li:hover h3 { transform: translateX(4px); }
+
+/* Lab cards */
+.labCard { transition: transform 0.5s var(--ease-out), box-shadow 0.5s var(--ease-out); }
+.labCard:hover { transform: translateY(-10px); box-shadow: 0 22px 44px rgba(17, 18, 20, 0.16); }
+.labCard img { transition: transform 0.9s var(--ease-out); }
+.labCard:hover img { transform: scale(1.06); }
+.labCard footer span { transition: background 0.3s, color 0.3s, transform 0.4s var(--ease-out), border-color 0.3s; }
+.labCard:hover footer span { background: #000; color: #fff; border-color: #000; transform: translateX(4px); }
+
+/* FAQ */
+.faqList button { transition: color 0.25s, padding-left 0.35s var(--ease-out); }
+.faqList button:hover, .faqOpen button { color: #030303; }
+.faqList button:hover { padding-left: 0.7vw; }
+.faqList button:focus-visible { outline: 2px solid #030303; outline-offset: 2px; }
+.faqList button svg { transition: transform 0.4s var(--ease-out); }
+.faqList button:hover svg { transform: rotate(90deg); }
+.faqOpen button svg, .faqOpen button:hover svg { transform: rotate(45deg); }
+.faqAnswer p { opacity: 0; transition: opacity 0.4s ease 0.05s; }
+.faqOpen .faqAnswer p { opacity: 1; }
+.faq::before { animation: drift 18s ease-in-out infinite alternate; }
+@keyframes drift {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to { transform: translate3d(2.5%, -2%, 0) scale(1.07); }
+}
+
+/* Footer */
+.footer::before { animation: driftWide 22s ease-in-out infinite alternate; }
+@keyframes driftWide {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to { transform: translate3d(-1.8%, 1.2%, 0) scale(1.05); }
+}
+.footLinks a { position: relative; align-self: flex-start; transition: color 0.25s, transform 0.35s var(--ease-out); }
+.footLinks a::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: 0.1em;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.4s var(--ease-out);
+}
+.footLinks a:hover { text-decoration: none; transform: translateX(5px); }
+.footLinks a:hover::after { transform: scaleX(1); }
+.socials a { transition: transform 0.35s var(--ease-out), background 0.25s, border-color 0.25s, box-shadow 0.3s; }
+.socials a:hover { transform: translateY(-5px); border-color: #fff; box-shadow: 0 8px 20px rgba(80, 140, 255, 0.35); }
+
+@media (prefers-reduced-motion: reduce) {
+  .contextImageInner, .faq::before, .footer::before { animation: none; }
+  .steps li:not(:last-child)::after { transform: none; }
+  .steps li:not(:last-child)::before { opacity: 1; }
+}

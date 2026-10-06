@@ -1,0 +1,32 @@
+/* Scroll-reveal system. A section gets data-in="true" once it enters the viewport;
+   any descendant marked with data-rv animates in, staggered through --i.
+   Keyframes use fill-mode "backwards" so hover transforms keep working afterwards. */
+
+:root {
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+[data-rv] { opacity: 0; }
+
+[data-in='true'] [data-rv] {
+  opacity: 1;
+  animation-duration: 1.4s;
+  animation-timing-function: var(--ease-out);
+  animation-fill-mode: backwards;
+  animation-delay: calc(var(--i, 0) * 150ms);
+}
+[data-in='true'] [data-rv='up']    { animation-name: rv-up; }
+[data-in='true'] [data-rv='fade']  { animation-name: rv-fade; }
+[data-in='true'] [data-rv='left']  { animation-name: rv-left; }
+[data-in='true'] [data-rv='right'] { animation-name: rv-right; animation-duration: 1.9s; }
+[data-in='true'] [data-rv='scale'] { animation-name: rv-scale; }
+
+@keyframes rv-up    { from { opacity: 0; transform: translateY(32px); } }
+@keyframes rv-fade  { from { opacity: 0; } }
+@keyframes rv-left  { from { opacity: 0; transform: translateX(-36px); } }
+@keyframes rv-right { from { opacity: 0; transform: translateX(56px) scale(1.04); } }
+@keyframes rv-scale { from { opacity: 0; transform: scale(0.94) translateY(16px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  [data-rv] { opacity: 1 !important; animation: none !important; }
+}

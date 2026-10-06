@@ -5,11 +5,10 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Ticker from './components/Ticker';
 import Hero from './sections/Hero';
-import About from './sections/About';
-import Process from './sections/Process';
 import Products from './sections/Products';
-import BlogTeaser from './sections/BlogTeaser';
-import Faq from './sections/Faq';
+import {
+  CompanyContext, Ecosystem, Workflow, Lab, LandingFaq, LandingFooter,
+} from './sections/landing/Landing';
 import Stack from './sections/Stack';
 import AIAutomationPage from './pages/AIAutomationPage';
 import AutomatizarPage from './pages/AutomatizarPage';
@@ -59,14 +58,15 @@ function HomePage({ theme, onThemeChange }) {
       <main>
         <Hero theme={theme} onThemeChange={onThemeChange} />
         <Ticker />
-        <About />
-        <Process />
+        <CompanyContext />
+        <Ecosystem />
         <Products />
-        <BlogTeaser />
-        <Faq />
+        <Workflow />
+        <Lab />
+        <LandingFaq />
         <Stack />
       </main>
-      <Footer />
+      <LandingFooter />
     </div>
   );
 }
