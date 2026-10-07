@@ -16,10 +16,12 @@ export function CatalogProvider({ children }) {
   const loadSolutions = useCallback(async (query, signal) => { const result = await catalogRepository.getSolutionsPage(query, signal); rememberSolutions(result.items); return result; }, [rememberSolutions]);
   const loadCategory = useCallback((slug, signal) => catalogRepository.getCategoryBySlug(slug, signal), []);
   const loadSolution = useCallback(async (slug, signal) => { const item = await catalogRepository.getSolutionBySlug(slug, signal); if (item) rememberSolutions([item]); return item; }, [rememberSolutions]);
-  const add = useCallback((solutionId) => { setSelection((items) => items.some(i => i.solutionId === solutionId) ? items : [...items, { solutionId, quantity: 1, addedAt: new Date().toISOString() }]); setDrawerOpen(true); }, []);
+  const add = useCallback((solutionId, { openDrawer = true } = {}) => { setSelection((items) => items.some(i => i.solutionId === solutionId) ? items : [...items, { solutionId, quantity: 1, addedAt: new Date().toISOString() }]); if (openDrawer) setDrawerOpen(true); }, []);
+  const [compare, setCompare] = useState([]);
+  const toggleCompare = useCallback((solutionId) => setCompare((ids) => ids.includes(solutionId) ? ids.filter(id => id !== solutionId) : [...ids, solutionId].slice(-3)), []);
   const remove = useCallback((id) => setSelection(items => items.filter(i => i.solutionId !== id)), []);
   const clearProject = useCallback(() => { setSelection([]); projectStorage.clear(); setDrawerOpen(false); }, []);
-  const value = useMemo(() => ({ categories, solutions, loading, error, retryCategories: loadCategories, loadSolutions, loadCategory, loadSolution, rememberSolutions, selection, add, remove, clearProject, drawerOpen, setDrawerOpen }), [categories, solutions, loading, error, loadCategories, loadSolutions, loadCategory, loadSolution, rememberSolutions, selection, add, remove, clearProject, drawerOpen]);
+  const value = useMemo(() => ({ categories, solutions, loading, error, retryCategories: loadCategories, loadSolutions, loadCategory, loadSolution, rememberSolutions, selection, add, remove, clearProject, drawerOpen, setDrawerOpen, compare, toggleCompare }), [categories, solutions, loading, error, loadCategories, loadSolutions, loadCategory, loadSolution, rememberSolutions, selection, add, remove, clearProject, drawerOpen, compare, toggleCompare]);
   return <CatalogContext.Provider value={value}>{children}</CatalogContext.Provider>;
 }
 // eslint-disable-next-line react-refresh/only-export-components
