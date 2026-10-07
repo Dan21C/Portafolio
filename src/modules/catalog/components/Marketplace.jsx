@@ -154,7 +154,7 @@ export function CatalogFooter() {
     <div className={styles.footBrand}><b>APX</b><p>Tecnología diseñada<br/>alrededor de ideas reales.</p></div>
     <nav aria-label="Soluciones"><h3>Soluciones</h3>{categories.map((category) => <Link key={category.id} to={`/productos/categoria/${category.slug}`}>{category.name}</Link>)}</nav>
     <nav aria-label="APX"><h3>APX</h3><Link to="/">Inicio</Link><Link to="/productos">Soluciones</Link><a href="/#productos">Proyectos</a><a href="/#nosotros">Nosotros</a></nav>
-    <nav aria-label="Soporte"><h3>Soporte</h3><a href="/#faq">Centro de ayuda</a><Link to="/terminos-y-condiciones">Documentación</Link><a href="mailto:contacto@apx.com.co">Contacto</a><Link to="/solicitar-propuesta">Solicitar propuesta</Link></nav>
+    <nav aria-label="Soporte"><h3>Soporte</h3><a href="/#preguntas-frecuentes">Centro de ayuda</a><Link to="/terminos-y-condiciones">Términos y condiciones</Link><a href="mailto:apxtechlab@gmail.com">Contacto</a><Link to="/solicitar-propuesta">Solicitar propuesta</Link></nav>
     <div className={styles.footSocial}>
       <div>
         <a href="https://www.linkedin.com/in/apxtech" target="_blank" rel="noreferrer" aria-label="LinkedIn"><SocialIcon d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2zM4 2a2 2 0 1 1 0 4 2 2 0 0 1 0-4z"/></a>
