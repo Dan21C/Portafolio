@@ -1,4 +1,4 @@
-import { ArrowLeft, ArrowRight, BarChart3, Box, ChevronDown, Cpu, Gamepad2, LayoutGrid, Link2, List, SlidersHorizontal, Sparkles, X } from 'lucide-react';
+import { ArrowLeft, ArrowRight, BarChart3, Box, ChevronDown, Cpu, Gamepad2, LayoutGrid, Link2, List, Search, SlidersHorizontal, Sparkles, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { getSolutionCover } from '../../../../catalog-core/mappers';
 import { useCatalog } from '../hooks/CatalogContext';
@@ -39,6 +39,7 @@ export function MarketplaceHero({ query, setQuery, areas, total }) {
       <h1>Encuentra la tecnología<br/>que necesita tu idea.</h1>
       <p className={styles.lead}>Explora soluciones para experiencias, operaciones y productos digitales.</p>
       <form className={styles.search} role="search" onSubmit={(event) => { event.preventDefault(); document.getElementById('soluciones')?.scrollIntoView({ behavior: 'smooth' }); }}>
+        <Search className={styles.searchIcon} aria-hidden="true"/>
         <label className={styles.srOnly} htmlFor="catalog-search">Buscar soluciones</label>
         <input id="catalog-search" type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Buscar soluciones, tecnologías o experiencias..."/>
         <button type="submit" aria-label="Ver resultados"><ArrowRight/></button>
