@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
-import { Link, Route, Routes, useLocation } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 import './styles/globals.css';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -16,6 +16,7 @@ import ActivarMarcaPage from './pages/ActivarMarcaPage';
 import ProducirEventoPage from './pages/ProducirEventoPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import TermsPage from './pages/TermsPage';
+import NotFoundPage from './pages/NotFoundPage';
 
 const CatalogPage = lazy(() => import('./modules/catalog/pages/CatalogPage'));
 const CategoryPage = lazy(() => import('./modules/catalog/pages/CategoryPage'));
@@ -86,25 +87,6 @@ function CatalogRoute({ children }) {
     <Suspense fallback={catalogLoading}>
       <CatalogProvider>{children}</CatalogProvider>
     </Suspense>
-  );
-}
-
-function NotFoundPage() {
-  return (
-    <main
-      style={{
-        minHeight: '100vh',
-        display: 'grid',
-        placeItems: 'center',
-        textAlign: 'center',
-      }}
-    >
-      <div>
-        <p>404</p>
-        <h1>Pagina no encontrada</h1>
-        <Link to="/">Volver al inicio</Link>
-      </div>
-    </main>
   );
 }
 
@@ -198,23 +180,11 @@ function App() {
       />
       <Route
         path="/politica-de-privacidad"
-        element={
-          <StandalonePage
-            component={PrivacyPolicyPage}
-            theme={theme}
-            onThemeChange={setTheme}
-          />
-        }
+        element={<PrivacyPolicyPage />}
       />
       <Route
         path="/terminos-y-condiciones"
-        element={
-          <StandalonePage
-            component={TermsPage}
-            theme={theme}
-            onThemeChange={setTheme}
-          />
-        }
+        element={<TermsPage />}
       />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
