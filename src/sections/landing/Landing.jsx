@@ -86,12 +86,12 @@ export const Workflow = () => {
 export const Lab = () => {
   const [ref, inView] = useInView();
   return (
-  <section ref={ref} data-in={inView} id="blog" className={styles.lab} aria-labelledby="lab-title">
+  <section ref={ref} data-in={inView} id="lab" className={styles.lab} aria-labelledby="lab-title">
     <div className={styles.labIntro}>
       <p className={styles.eyebrow} {...rv('up', 0)}>APX LAB</p>
       <h2 id="lab-title" {...rv('up', 1)}>Experimentos,<br />ideas y<br />aprendizajes.</h2>
       <p {...rv('up', 2)}>Procesos, tecnología y reflexiones detrás<br />de las experiencias que construimos.</p>
-      <a href="#blog" className={styles.btnOutline} {...rv('up', 3)}>Ver todos los contenidos <ArrowRight size={20} /></a>
+      <a href="#lab" className={styles.btnOutline} {...rv('up', 3)}>Ver todos los contenidos <ArrowRight size={20} /></a>
     </div>
     <div className={styles.labCards}>
       {labPosts.map(({ img, title, text, date }, i) => (
@@ -157,10 +157,12 @@ export const LandingFooter = () => {
     <nav className={styles.footLinks} aria-label="Navegación del pie de página" {...rv('fade', 2)}>
       <div>
         <a href="/#inicio">Inicio</a>
-        <a href="/#servicios">Servicios</a>
-        <a href="/#productos">Proyectos</a>
         <a href="/#nosotros">Nosotros</a>
-        <a href="/#blog">Blog</a>
+        <a href="/#servicios">Servicios</a>
+        <a href="/#productos">Soluciones</a>
+        <a href="/#proceso">Proceso</a>
+        <a href="/#lab">Lab</a>
+        <a href="/#preguntas-frecuentes">Preguntas</a>
       </div>
       <div>
         <a href="/terminos-y-condiciones">Términos</a>

@@ -2,10 +2,11 @@ import styles from './Footer.module.css';
 
 const navLinks = [
   { label: 'Inicio', href: '/#inicio' },
-  { label: 'Servicios', href: '/#servicios' },
-  { label: 'Proceso', href: '/#proceso' },
   { label: 'Nosotros', href: '/#nosotros' },
-  { label: 'Blog', href: '/#blog' },
+  { label: 'Servicios', href: '/#servicios' },
+  { label: 'Soluciones', href: '/#productos' },
+  { label: 'Proceso', href: '/#proceso' },
+  { label: 'Lab', href: '/#lab' },
   { label: 'Preguntas frecuentes', href: '/#preguntas-frecuentes' },
 ];
 const serviceLinks = ['Experiencias', 'Gamificación', 'Análisis de datos', 'Inteligencia artificial', 'Desarrollo de software', 'Automatización'];

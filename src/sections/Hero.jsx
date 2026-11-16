@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Menu, Moon, Sun, X } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import styles from './Hero.module.css';
 
 const darkHeroVideo = '/Assets/Hero/Hero_showreel.mp4';
@@ -10,10 +11,12 @@ const defaultPointer = { x: 0.68, y: 0.45 };
 
 const navLinks = [
   { label: 'Inicio', href: '#inicio' },
-  { label: 'Servicios', href: '#servicios' },
-  { label: 'Proceso', href: '#proceso' },
   { label: 'Nosotros', href: '#nosotros' },
-  { label: 'Blog', href: '#blog' },
+  { label: 'Servicios', href: '#servicios' },
+  { label: 'Soluciones', href: '#productos' },
+  { label: 'Proceso', href: '#proceso' },
+  { label: 'Lab', href: '#lab' },
+  { label: 'Preguntas', href: '#preguntas-frecuentes' },
 ];
 
 const Arrow = () => (
@@ -231,9 +234,9 @@ const Hero = ({ theme = 'dark', onThemeChange = () => {} }) => {
           </p>
 
           <div className={styles.ctas}>
-            <a href="#servicios" className={styles.primaryBtn} onClick={(event) => scrollToTarget(event, '#servicios')}>
+            <Link to="/productos" className={styles.primaryBtn}>
               Ver catálogo <Arrow />
-            </a>
+            </Link>
             <a href="#contacto" className={styles.secondaryBtn} onClick={(event) => scrollToTarget(event, '#contacto')}>
               Hablemos <Arrow />
             </a>
