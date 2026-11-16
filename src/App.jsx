@@ -18,7 +18,7 @@ import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import TermsPage from './pages/TermsPage';
 import NotFoundPage from './pages/NotFoundPage';
 import Seo from './seo/Seo';
-import { servicePages } from './seo/pages';
+import { servicePages, staticPages } from './seo/pages';
 
 const CatalogPage = lazy(() => import('./modules/catalog/pages/CatalogPage'));
 const CategoryPage = lazy(() => import('./modules/catalog/pages/CategoryPage'));
@@ -58,10 +58,7 @@ function HomePage({ theme, onThemeChange }) {
 
   return (
     <div className="app-shell" data-theme={theme}>
-      <Seo
-        description="Diseñamos, desarrollamos e implementamos experiencias interactivas, gamificación, analítica de datos e inteligencia artificial para marcas y eventos en Colombia."
-        path="/"
-      />
+      <Seo {...staticPages.home} />
       <main>
         <Hero theme={theme} onThemeChange={onThemeChange} />
         <Ticker />

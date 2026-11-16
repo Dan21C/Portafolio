@@ -1,4 +1,5 @@
 import Seo from '../seo/Seo';
+import { staticPages } from '../seo/pages';
 import LegalLayout from './legal/LegalLayout';
 
 const sections = [
@@ -82,7 +83,7 @@ const sections = [
 
 const TermsPage = () => (
   <>
-  <Seo title="Términos y condiciones" description="Condiciones de uso del sitio y de los servicios de APX Tech." path="/terminos-y-condiciones" />
+  <Seo {...staticPages.terms} />
   <LegalLayout
     title="Términos y condiciones"
     lead="Las reglas para usar este sitio y solicitar propuestas a APX, explicadas de forma clara."

@@ -1,15 +1,13 @@
-export const SITE_URL = 'https://apxtech.com.co';
-export const SITE_NAME = 'APX Tech';
-const DEFAULT_IMAGE = '/og-image.jpg';
+import { absoluteUrl as absolute, buildTitle, DEFAULT_IMAGE } from './meta';
 
-const absolute = (url) => (/^https?:\/\//.test(url) ? url : `${SITE_URL}${url.startsWith('/') ? '' : '/'}${url}`);
+export { SITE_URL, SITE_NAME } from './meta';
 
 /**
  * Metadatos por página. React 19 sube <title>, <meta> y <link> al <head>.
  * `jsonLd` acepta un objeto o lista de objetos Schema.org.
  */
 export default function Seo({ title, description, path = '/', image = DEFAULT_IMAGE, type = 'website', noindex = false, jsonLd }) {
-  const fullTitle = title ? `${title} | ${SITE_NAME}` : `${SITE_NAME} | Experiencias interactivas, gamificación e IA`;
+  const fullTitle = buildTitle(title);
   const url = absolute(path);
   const img = absolute(image || DEFAULT_IMAGE);
   const data = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
@@ -20,7 +18,7 @@ export default function Seo({ title, description, path = '/', image = DEFAULT_IM
       {description && <meta name="description" content={description} />}
       <link rel="canonical" href={url} />
       {noindex && <meta name="robots" content="noindex, follow" />}
-      <meta property="og:site_name" content={SITE_NAME} />
+      <meta property="og:site_name" content="APX Tech" />
       <meta property="og:locale" content="es_CO" />
       <meta property="og:type" content={type} />
       <meta property="og:title" content={fullTitle} />
