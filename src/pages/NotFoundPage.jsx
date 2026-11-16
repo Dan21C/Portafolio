@@ -1,3 +1,4 @@
+import Seo from '../seo/Seo';
 import { Link } from 'react-router-dom';
 import { LandingFooter } from '../sections/landing/Landing';
 import SiteHeader, { ArrowIcon } from './legal/SiteHeader';
@@ -13,6 +14,7 @@ const SHORTCUTS = [
 
 const NotFoundPage = () => (
   <div className={legal.page}>
+    <Seo title="Página no encontrada" path="/404" noindex />
     <SiteHeader />
     <main className={styles.main}>
       <img className={styles.wave} src="/Assets/Figma/faq-wave.webp" alt="" />

@@ -1,3 +1,4 @@
+import Seo from '../seo/Seo';
 import LegalLayout from './legal/LegalLayout';
 
 const sections = [
@@ -76,12 +77,15 @@ const sections = [
 ];
 
 const PrivacyPolicyPage = () => (
+  <>
+  <Seo title="Política de privacidad" description="Qué datos recopila APX Tech, para qué los usa y cómo puedes ejercer tus derechos sobre ellos." path="/politica-de-privacidad" />
   <LegalLayout
     title="Política de privacidad"
     lead="Qué datos recopilamos, para qué los usamos y cómo puedes ejercer tus derechos sobre ellos."
     updated="27 de agosto de 2026"
     sections={sections}
   />
+  </>
 );
 
 export default PrivacyPolicyPage;

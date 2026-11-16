@@ -17,6 +17,8 @@ import ProducirEventoPage from './pages/ProducirEventoPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import TermsPage from './pages/TermsPage';
 import NotFoundPage from './pages/NotFoundPage';
+import Seo from './seo/Seo';
+import { servicePages } from './seo/pages';
 
 const CatalogPage = lazy(() => import('./modules/catalog/pages/CatalogPage'));
 const CategoryPage = lazy(() => import('./modules/catalog/pages/CategoryPage'));
@@ -56,6 +58,10 @@ function HomePage({ theme, onThemeChange }) {
 
   return (
     <div className="app-shell" data-theme={theme}>
+      <Seo
+        description="Diseñamos, desarrollamos e implementamos experiencias interactivas, gamificación, analítica de datos e inteligencia artificial para marcas y eventos en Colombia."
+        path="/"
+      />
       <main>
         <Hero theme={theme} onThemeChange={onThemeChange} />
         <Ticker />
@@ -72,9 +78,10 @@ function HomePage({ theme, onThemeChange }) {
   );
 }
 
-function StandalonePage({ component: Component, theme, onThemeChange }) {
+function StandalonePage({ component: Component, theme, onThemeChange, seo }) {
   return (
     <div className="app-shell" data-theme={theme}>
+      {seo && <Seo {...seo} />}
       <Navbar theme={theme} onThemeChange={onThemeChange} />
       <Component theme={theme} onThemeChange={onThemeChange} />
       <Footer />
@@ -110,6 +117,7 @@ function App() {
         path="/servicios/ia-automatizacion"
         element={
           <StandalonePage
+            seo={servicePages['ia-automatizacion']}
             component={AIAutomationPage}
             theme={theme}
             onThemeChange={setTheme}
@@ -120,6 +128,7 @@ function App() {
         path="/servicios/automatizar"
         element={
           <StandalonePage
+            seo={servicePages['automatizar']}
             component={AutomatizarPage}
             theme={theme}
             onThemeChange={setTheme}
@@ -130,6 +139,7 @@ function App() {
         path="/servicios/activar-marca"
         element={
           <StandalonePage
+            seo={servicePages['activar-marca']}
             component={ActivarMarcaPage}
             theme={theme}
             onThemeChange={setTheme}
@@ -140,6 +150,7 @@ function App() {
         path="/servicios/producir-evento"
         element={
           <StandalonePage
+            seo={servicePages['producir-evento']}
             component={ProducirEventoPage}
             theme={theme}
             onThemeChange={setTheme}
