@@ -42,7 +42,7 @@ export const Ecosystem = () => {
       {ecosystem.map(({ n, title, text, img }, i) => (
         <li key={n} {...rv('up', i)}>
           <span className={styles.ecoNum}>{n}</span>
-          <img src={img} alt="" loading="lazy" decoding="async" className={styles.ecoThumb} />
+          <img src={img} alt={title} loading="lazy" decoding="async" className={styles.ecoThumb} />
           <h3>{title}</h3>
           <p>{text}</p>
         </li>
@@ -96,7 +96,7 @@ export const Lab = () => {
     <div className={styles.labCards}>
       {labPosts.map(({ img, title, text, date }, i) => (
         <article key={title} className={styles.labCard} {...rv('scale', i + 2)}>
-          <img src={img} alt="" loading="lazy" decoding="async" />
+          <img src={img} alt={title} loading="lazy" decoding="async" />
           <div>
             <h3>{title}</h3>
             <p>{text}</p>
