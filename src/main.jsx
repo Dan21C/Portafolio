@@ -3,6 +3,9 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import App from './App.jsx'
 import ErrorBoundary from './ErrorBoundary.jsx'
+import { trackContactClicks } from './seo/analytics.js'
+
+trackContactClicks()
 
 // Las etiquetas pre-renderizadas en el build se quitan: desde aquí <Seo> controla el <head>.
 document.head.querySelectorAll('[data-prerender]').forEach((node) => node.remove())

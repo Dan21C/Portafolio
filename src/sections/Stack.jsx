@@ -3,6 +3,7 @@ import { ArrowLeft, ArrowRight, ChevronDown, Play } from 'lucide-react';
 import styles from './Stack.module.css';
 import '../styles/motion.css';
 import useInView from './landing/useInView';
+import { trackEvent } from '../seo/analytics';
 
 const rv = (type = 'up', i = 0) => ({ 'data-rv': type, style: { '--i': i } });
 
@@ -84,6 +85,7 @@ const Stack = () => {
       });
       const result = await response.json().catch(() => ({}));
       if (!response.ok || !result.success) throw new Error(result.error || 'No pudimos enviar el mensaje. Intenta nuevamente.');
+      trackEvent('generate_lead', { form_name: 'contacto', project_type: formData.type || undefined });
       setFormSent(true);
     } catch (error) {
       setFormError(error.message || 'No pudimos enviar el mensaje. Intenta nuevamente.');
