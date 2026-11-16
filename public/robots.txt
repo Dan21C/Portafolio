@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /solicitar-propuesta
+
+Sitemap: https://apxtech.com.co/sitemap.xml
