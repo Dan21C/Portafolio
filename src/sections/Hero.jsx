@@ -9,6 +9,12 @@ const heroStaticImage = '/Assets/Hero/herobg.webp';
 const videoLoopsBeforeFreeze = 1;
 const defaultPointer = { x: 0.68, y: 0.45 };
 
+// En móvil, con ahorro de datos o movimiento reducido se muestra la imagen fija sin descargar el video.
+const shouldSkipVideo = () => typeof window !== 'undefined' && (
+  window.matchMedia('(max-width: 768px), (prefers-reduced-motion: reduce)').matches
+  || Boolean(navigator.connection?.saveData)
+);
+
 const navLinks = [
   { label: 'Inicio', href: '#inicio' },
   { label: 'Nosotros', href: '#nosotros' },
@@ -40,6 +46,8 @@ const Hero = ({ theme = 'dark', onThemeChange = () => {} }) => {
   const videoRef = useRef(null);
   const loopCountRef = useRef(0);
   const [showStaticImage, setShowStaticImage] = useState(false);
+  const [playVideo] = useState(() => !shouldSkipVideo());
+  const staticVisible = showStaticImage || !playVideo;
   const [menuOpen, setMenuOpen] = useState(false);
 
   const heroVideoSrc = theme === 'dark' ? darkHeroVideo : lightHeroVideo;
@@ -251,21 +259,21 @@ const Hero = ({ theme = 'dark', onThemeChange = () => {} }) => {
         <div className={styles.visual} aria-hidden="true">
           <div className={styles.lightBeam} />
           <div className={styles.videoStage}>
-            <video
+            {playVideo && <video
               key={heroVideoSrc}
               ref={videoRef}
-              className={`${styles.heroVideo} ${showStaticImage ? styles.heroVideoHidden : ''}`}
+              className={`${styles.heroVideo} ${staticVisible ? styles.heroVideoHidden : ''}`}
               src={heroVideoSrc}
               autoPlay
               muted
               playsInline
               preload="auto"
               onEnded={handleVideoEnded}
-            />
+            />}
             <img
               src={heroStaticImage}
               alt=""
-              className={`${styles.heroStatic} ${showStaticImage ? styles.heroStaticVisible : ''}`}
+              className={`${styles.heroStatic} ${staticVisible ? styles.heroStaticVisible : ''}`}
             />
           </div>
         </div>
