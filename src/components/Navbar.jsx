@@ -3,11 +3,13 @@ import { Moon, Sun } from 'lucide-react';
 import styles from './Navbar.module.css';
 
 const links = [
-  { label: 'Inicio',    href: '/#inicio'    },
-  { label: 'Servicios', href: '/#servicios' },
-  { label: 'Proceso',   href: '/#proceso'   },
-  { label: 'Nosotros',  href: '/#nosotros'  },
-  { label: 'Blog',      href: '/#blog'      },
+  { label: 'Inicio',     href: '/#inicio'     },
+  { label: 'Nosotros',   href: '/#nosotros'   },
+  { label: 'Servicios',  href: '/#servicios'  },
+  { label: 'Soluciones', href: '/#productos'  },
+  { label: 'Proceso',    href: '/#proceso'    },
+  { label: 'Lab',        href: '/#lab'        },
+  { label: 'Preguntas',  href: '/#preguntas-frecuentes' },
 ];
 
 const Navbar = ({ theme = 'dark', onThemeChange = () => {} }) => {

@@ -1,3 +1,5 @@
+import Seo from '../seo/Seo';
+import { staticPages } from '../seo/pages';
 import LegalLayout from './legal/LegalLayout';
 
 const sections = [
@@ -76,12 +78,15 @@ const sections = [
 ];
 
 const PrivacyPolicyPage = () => (
+  <>
+  <Seo {...staticPages.privacy} />
   <LegalLayout
     title="Política de privacidad"
     lead="Qué datos recopilamos, para qué los usamos y cómo puedes ejercer tus derechos sobre ellos."
     updated="27 de agosto de 2026"
     sections={sections}
   />
+  </>
 );
 
 export default PrivacyPolicyPage;

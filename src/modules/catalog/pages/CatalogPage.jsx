@@ -1,3 +1,5 @@
+import Seo from '../../../seo/Seo';
+import { staticPages } from '../../../seo/pages';
 import { useEffect, useState } from 'react';
 import { CatalogError, CatalogLoading, CatalogShell } from '../components/CatalogComponents';
 import { AreaFilters, CatalogToolbar, CustomBanner, HelpStrip, MarketplaceHero, Pagination, SavedSummary, SolutionGrid } from '../components/Marketplace';
@@ -18,7 +20,7 @@ export default function CatalogPage() {
   const chips = [activeCategory && { key: 'area', label: activeCategory.name, onRemove: () => changeCategory('all') }, debouncedQuery && { key: 'search', label: `“${debouncedQuery}”`, onRemove: () => setQuery('') }].filter(Boolean);
   const clearFilters = () => { setQuery(''); changeCategory('all'); };
   const total = catalogTotal ?? result.totalItems;
-  return <CatalogShell header={false}><div className={styles.page}>
+  return <CatalogShell header={false}><Seo {...staticPages.catalog}/><div className={styles.page}>
     <MarketplaceHero query={query} setQuery={setQuery} areas={categories.length || 6} total={total}/>
     <section className={styles.filters} aria-labelledby="explora-area">
       <p className={styles.label} id="explora-area">EXPLORA POR ÁREA</p>

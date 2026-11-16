@@ -1195,7 +1195,7 @@
   box-shadow: 0 0 18px rgba(var(--rgb),.72);
 }
 
-.activationHeroCopy h2 {
+.activationHeroCopy h1 {
   max-width: 13ch;
   margin-top: 14px;
   color: var(--section-text);
@@ -1876,7 +1876,7 @@
   align-items: center;
 }
 
-.activationHeroCopy h2 {
+.activationHeroCopy h1 {
   max-width: 17ch;
   margin-top: 10px;
   font-size: clamp(2rem, 2.85vw, 2.95rem);
@@ -2226,7 +2226,7 @@
   box-shadow: 0 0 18px rgba(var(--rgb), .72);
 }
 
-.eventHeroCopy h2 {
+.eventHeroCopy h1 {
   max-width: 10ch;
   margin-top: 16px;
   color: var(--section-text);
@@ -2237,7 +2237,7 @@
   letter-spacing: -.04em;
 }
 
-.eventHeroCopy h2 em {
+.eventHeroCopy h1 em {
   color: var(--accent);
   font-style: normal;
 }
@@ -2981,7 +2981,7 @@
   content: '';
 }
 
-.automationIntro h2 {
+.automationIntro h1 {
   max-width: 12ch;
   margin-top: 14px;
   color: var(--section-text);
@@ -4246,7 +4246,7 @@
     border-radius: 18px;
   }
 
-  .activationHeroCopy h2 {
+  .activationHeroCopy h1 {
     max-width: none;
   }
 
@@ -4408,7 +4408,7 @@
     width: 100%;
   }
 
-  .activationHeroCopy h2 {
+  .activationHeroCopy h1 {
     font-size: clamp(2rem, 11vw, 3.1rem);
   }
 
@@ -4429,7 +4429,7 @@
     border-radius: 18px;
   }
 
-  .eventHeroCopy h2 {
+  .eventHeroCopy h1 {
     max-width: none;
     font-size: clamp(2.25rem, 13vw, 3.6rem);
   }

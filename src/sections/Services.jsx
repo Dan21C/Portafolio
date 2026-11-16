@@ -935,7 +935,7 @@ export const BrandActivationCatalogSection = () => {
       >
         <div className={styles.activationHeroCopy}>
           <span><i /> ACTIVAR MI MARCA</span>
-          <h2>Experiencias que la gente vive, recuerda y comparte.</h2>
+          <h1>Experiencias que la gente vive, recuerda y comparte.</h1>
           <p>Creamos activaciones que conectan con las personas a través de tecnología, pantallas, juegos e inteligencia artificial.</p>
           <a href="/#contacto" className={styles.activationPrimaryCta}>
             Hablemos <ArrowRight />
@@ -1227,7 +1227,7 @@ export const EventProductionSection = () => {
       >
         <div className={styles.eventHeroCopy}>
           <span><i /> SERVICIO 03</span>
-          <h2>Producir un <em>evento</em></h2>
+          <h1>Producir un <em>evento</em></h1>
           <p>Planeamos, diseñamos y ejecutamos eventos 360° que se ven bien, funcionan perfecto y dejan resultados.</p>
           <a href="/#contacto" className={styles.eventPrimaryCta}>
             Hablemos <ArrowRight />
@@ -1336,7 +1336,7 @@ export const AutomationProductsSection = () => {
       >
         <div className={styles.automationIntro}>
           <span><i /> AUTOMATIZAR TAREAS</span>
-          <h2>Automatización simple para trabajar mejor</h2>
+          <h1>Automatización simple para trabajar mejor</h1>
           <p>Soluciones inteligentes que eliminan lo repetitivo, conectan herramientas y le dan información clara a tu equipo para tomar mejores decisiones.</p>
           <div className={styles.automationBenefits}>
             {[

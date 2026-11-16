@@ -6,8 +6,8 @@
   "scripts": {
     "dev": "vite",
     "dev:admin": "vite --config admin/vite.config.js",
-    "build": "vite build && vite build --config admin/vite.config.js",
-    "build:web": "vite build",
+    "build": "vite build && node scripts/seo-build.mjs && vite build --config admin/vite.config.js",
+    "build:web": "vite build && node scripts/seo-build.mjs",
     "build:admin": "vite build --config admin/vite.config.js",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",

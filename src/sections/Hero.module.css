@@ -866,6 +866,14 @@
   .servicesPanel {
     width: 230px;
   }
+
+  .nav {
+    grid-template-columns: auto 1fr auto;
+  }
+
+  .navLinks {
+    gap: clamp(14px, 1.7vw, 22px);
+  }
 }
 
 @media (max-width: 1020px) {
